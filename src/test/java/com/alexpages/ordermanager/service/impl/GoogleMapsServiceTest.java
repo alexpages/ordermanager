@@ -32,7 +32,7 @@ public class GoogleMapsServiceTest {
     void testGetDistanceFromDistanceMatrixSuccess() 
 	throws Exception 
 	{
-		if (!"YOUR_API_KEY".equals(key)) { //TODO Precondition to avoid failing test: Introduce key on application.yml
+		if (!"YOUR_API_KEY".equals(key)) { //TODO Precondition to avoid failing test: Introduce a valid key on application.yml
 	        ReflectionTestUtils.setField(googleMapsServiceImpl, "key", key);
 			assertNotNull(googleMapsServiceImpl.getDistanceFromDistanceMatrix(generateValidPlaceOrderRequest()));
 		}
@@ -42,7 +42,7 @@ public class GoogleMapsServiceTest {
     void testGetDistanceFromDistanceMatrixError() 
 	throws Exception 
 	{
-		if (!"YOUR_API_KEY".equals(key)) { //TODO Precondition to avoid failing test: Introduce key on application.yml
+		if (!"YOUR_API_KEY".equals(key)) { //TODO Precondition to avoid failing test: Introduce a valid key on application.yml
 	        ReflectionTestUtils.setField(googleMapsServiceImpl, "key", key);
 	        assertThrows(OrderManagerException500.class, () ->googleMapsServiceImpl.getDistanceFromDistanceMatrix(generateWrongPlaceOrderRequest()));
 		}
