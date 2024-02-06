@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: standalone
+#   when running docker, it overrides the profile using the .env file 
+    
+#logging:
+#  level:
+#    org.springframework: DEBUG
+
+thirdparties:
+  google:
+    key: YOUR_API_KEY
+    url: https://maps.googleapis.com/maps/api/distancematrix/json

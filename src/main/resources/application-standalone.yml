@@ -1,0 +1,31 @@
+spring:
+  config:
+     activate:
+        on-profile: standalone
+  datasource:
+    initialization-mode: ALWAYS #use same schema as in start.sh
+    url: jdbc:h2:mem:testdb;MODE=MySql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false
+    username: sa
+    password: sa
+  jpa:
+    database: h2
+    show-sql: true
+    generate-ddl: true
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        ddl_auto: create-drop
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+  sql:
+    init:
+      data-locations: classpath:data.sql
+
+logging:
+  level:
+    root: INFO
+    org:
+      hibernate:
+        SQL: INFO
+        type:
+          descriptor: INFO

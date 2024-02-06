@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+   ordermanager:
+      container_name: ordermanager
+      depends_on:
+         - mysql
+      build:
+         context: .
+         dockerfile: Dockerfile
+      ports:
+         - "8080:8080"
+      restart: on-failure
+      networks:
+         - internal-net
+      env_file:
+         - .env
+
+   mysql:
+      container_name: mysql
+      image: mysql:latest
+      restart: unless-stopped
+      volumes:
+         - rv-volume:/var/lib/mysql
+      env_file:
+         - .env
+      networks:
+         - internal-net
+
+networks:
+   internal-net:
+
+volumes:
+   rv-volume:
