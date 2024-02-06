@@ -22,7 +22,7 @@ Here are some features from the overall configuration:
 
 - First, as an invoker, you need to use your Google Maps API Key:
 
-Replace `YOUR_API_KEY` with your actual Google Maps API Key in the application.yml as follows:
+Replace `YOUR_API_KEY` with your actual Google Maps API Key in the `application.yml` as follows:
 
 ```
 thirdparties:
@@ -39,5 +39,3 @@ Open the terminal, navigate to the root of the project, and execute the `start.s
 ```
 ./start.sh
 ```
-
-
