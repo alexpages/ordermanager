@@ -39,3 +39,13 @@ Open the terminal, navigate to the root of the project, and execute the `start.s
 ```
 ./start.sh
 ```
+
+### Note for Mac M1 users
+NOTE: The project is designed with the assumption that Docker runs on a Windows operating system. Due to compatibility issues between certain versions of JDK and Mac M1 devices, and the limitation of docker-compose.yml in supporting multiplatform image building at runtime, it is needed to include a specific line in the docker-compose.yml file to specify the platform, so the user can run the microservice on Mac M1 devices.
+```
+      build:
+         context: .
+         dockerfile: Dockerfile
+         platform: linux/amd64      #Specifies platform
+      ports:
+```
