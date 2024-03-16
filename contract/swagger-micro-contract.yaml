@@ -1,0 +1,563 @@
+openapi: 3.0.3
+info:
+  description: >-
+    Service that allows you to place orders by
+    associating a customer and seller. In addition, you can also consult
+    detailed order information / Servicio que permite realizar pedidos de
+    artículos relacionados con Star wars asociando un customere y vendedor.
+    Además, también se podrá consultar la información detallada de los orders 
+  version: 1.0.0
+  title: ordermanager
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    name: Alex Pages Andreu
+    email: TBD@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+  - url: 'http://localhost:3000'
+tags:
+  - name: orders
+    description: Services related to orders
+  - name: users
+    description: Services related to users
+paths:
+
+  /orders:
+    post:
+      tags:
+        - orders
+      summary: Allows you to post an order
+      operationId: postOrders
+      description: >-
+        Service that allows you to register an order. The order will have
+        related information about customers, employees and items
+      requestBody:
+        $ref: '#/components/requestBodies/PostOrderBodyRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostOrderOutResponse'
+        '403':
+          $ref: '#/components/responses/403'  
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /orders/request:
+    post:
+      tags:
+        - orders
+      summary: Allows you to request a list of orders
+      operationId: postOrdersRequest
+      x-certification:
+        certification: A
+        objective: A
+        year: 2023
+      x-typology:
+        typology: external
+      description: >-
+        Service that allows you to recover all the information related to a
+        order (employee, customer, items, etc.). The result will be paginated
+        from BD
+      requestBody:
+        $ref: '#/components/requestBodies/PostOrdersBodyRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostOrdersOutResponse'
+        '204':
+          description: No Content
+        '500':
+          $ref: '#/components/responses/500'
+          
+  /orders/{orderId}:
+    get:
+      tags:
+        - orders
+      summary: Allows you to request a order
+      operationId: getOrderById
+      description: >-
+        Service that allows you to recover all the information related to a
+        order (employee, customer, items, etc.)
+      parameters:
+        - in: path
+          name: orderId
+          description: identifier of a order id value
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderOutResponse'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    patch:
+      tags:
+        - orders
+      summary: Allows you to change status of an order
+      operationId: takeOrderById
+      description: >-
+        Service that allows you to change the status of an order.
+      parameters:
+        - in: path
+          name: orderId
+          description: identifier of a order id value
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+          content:
+            application/json:
+              schema:
+                properties:
+                  status:
+                    description: status to be changed
+                    type: string
+                    example: 'TAKEN'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchOrderOutResponse'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+        - orders
+      summary: Allows you to delete a order
+      operationId: deleterOrderById
+      description: >-
+        Service that allows you to delete a order.
+      parameters:
+        - in: path
+          name: orderId
+          description: identifier of a order id value
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+
+  /users:
+    post:
+      tags:
+        - users
+      summary: Allows you to create a user
+      description: Create a new user profile.
+      operationId: addUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Client created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clientId:
+                    description: User identifier
+                    type: string
+                    example: client_01
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+  /users/{userId}:
+    get:
+      tags:
+        - users
+      summary: Allows you to request a user
+      operationId: getUserById
+      description: Service that allows you to recover all the information related to a user.
+      parameters:
+        - in: path
+          name: userId
+          description: identifier of a user id value
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserOutResponse'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+        - users
+      summary: Allows you to delete a user
+      operationId: deleteUserById
+      description: >-
+        Service that allows you to delete a user.
+      parameters:
+        - in: path
+          name: userId
+          description: identifier of a user id value
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          $ref: '#/components/responses/204'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+          
+  /users/{userId}/authenticate:
+    post:
+      tags:
+        - users
+      summary: Allows you to authenticate a user
+      description: This method allows you to retrieve a **JWT** for the user.
+      operationId: authenticateUser
+      parameters:
+        - in: path
+          name: userId
+          description: identifier of a user id value
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticateRequest'
+      responses:
+        '200':
+          description: JWT created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticateResponse'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+
+components:
+  responses:
+    '204':
+      description: No Content
+    '400':
+      description: Bad request. The request body does not follow the expected format.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              timestamp:
+                type: string
+              throwable:
+                type: string
+    '403':
+      description: Unauthorized request. The user is not authorized or JWT was expired.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Unauthorized request"
+    '404':
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Resource not found"
+    '500':
+      description: Internal Server Error.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Internal Server Error"
+                
+  requestBodies:
+    PostOrdersBodyRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PostOrdersBodyRequest'
+      description: Request body orders
+    PostOrderBodyRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PostOrderBodyRequest'
+      description: Request body orders
+  
+  schemas:
+    PostOrderBodyRequest:
+      required:
+        - coordinates
+        - description
+      type: object
+      description: PosOrderBodyRequest with buy to articles
+      properties:
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        description:
+          type: string
+          example: "Pickup for Carlos"
+          description: description of the order
+    PostOrdersBodyRequest:
+      type: object
+      description: PostOrdersBodyRequest with params to filter
+      properties:
+        filterData:
+          type: object
+          properties:
+            orderId:
+              type: integer
+              format: int64
+              example: 1
+              description: id of order request
+            status:
+              type: string
+              enum:
+                - CREATED
+                - TAKEN
+                - SUCCESS
+            creationDate:
+              type: string
+              example: "2024-03-16"
+              description: Date of creation of the order
+        paginationBody:
+          $ref: '#/components/schemas/PaginationBody'
+    OrderDTO:
+      type: object
+      description: Information specific order
+      properties:
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        description:
+          type: string
+          example: "Pickup for Carlos"
+          description: description of the order
+        creationDate:
+          type: string
+          format: date-time
+          description: create date of the order
+          example: '2017-07-21T17:32:28Z'
+        lastModified:
+          type: string
+          format: date-time
+          description: create date of the order
+          example: '2017-08-21T17:32:28Z'
+        status:
+          enum:
+            - CREATED
+            - TAKEN
+            - SUCCESS
+    Coordinates:
+      description: Coordinates of the order
+      type: object
+      properties:
+        origin:
+          type: array
+          items:
+            type: string
+            pattern: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$'
+          description: Array containing [latitude, longitude] for origin
+          example: '41.412061, 2.016507'
+        destination:
+          type: array
+          items:
+            type: string
+            pattern: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$'
+          description: Array containing [latitude, longitude] for destination
+          example: '41.381115, 2.119482'
+    User:
+      description: User that will post or take orders
+      type: object
+      properties:
+        clientId:
+          description: Client Id
+          type: integer
+          example: 1
+        name:
+          description: Name of the client
+          type: string
+          example: client_01
+        password:
+          description: Password of the account. Not the bank account.
+          type: string
+          example: encryptedPassword
+        role:
+          enum:
+            - USER
+            - ADMIN
+    PatchOrderOutResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: 'SUCCESS'
+          description: result of the patch action
+          
+    PostOrderOutResponse:
+      type: object
+      properties:
+        orderId:
+          type: integer
+          format: int64
+          example: 1
+          description: id of order creation
+    GetOrderOutResponse:
+      allOf:
+        - $ref: '#/components/schemas/OrderDTO'
+    GetUserOutResponse:
+      allOf:
+        - $ref: '#/components/schemas/User'
+    PostOrdersOutResponse:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderDTO'
+        pageResponse:
+          $ref: '#/components/schemas/PageResponse'
+
+    AuthenticateResponse:
+      description: Response body from authentication
+      type: object
+      properties:  
+        jwt:
+          description: Client temporary JWT
+          type: string
+          example: jwt0000001
+    AuthenticateRequest:
+      description: Request body for client authentication
+      type: object
+      properties:
+        username:
+          description: User name of the client
+          type: string  
+          example: username123 
+        password:
+          description: Password of the client
+          type: string   
+          example: password123  
+      required:
+        - username
+        - password
+    PaginationBody:
+      description: Pagination fields for request body
+      type: object
+      properties:
+        page:
+          description: Page key
+          type: number
+          example: 1
+        size:
+          description: Page size
+          type: number
+          example: 10
+    PageResponse:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          description: Número total de páginas existentes
+        totalElements:
+          type: integer
+          format: int64
+          description: Número total de registros existentes
+        size:
+          type: integer
+          description: Número total de registros por página
+        number:
+          type: integer
+          description: Número de registro de la primera página
+        numberOfElements:
+          type: integer
+          description: Número de registros de la página devuelta
+        last:
+          type: boolean
+          description: true si es la última página
+        first:
+          type: boolean
+          description: true si es la primera página
+        empty:
+          type: boolean
+          description: true si la página devuelta no contiene registros
+        sort:
+          $ref: '#/components/schemas/Sort'
+      required:
+        - totalPages
+        - totalElements
+        - size
+        - number
+        - numberOfElements
+        - last
+        - first
+        - empty
+        - sort
+    Sort:
+      type: object
+      properties:
+        sorted:
+          type: boolean
+          description: true if sorting has been requested for some field
+        unsorted:
+          type: boolean
+          description: true if no sorting has been requested for any field
+        empty:
+          type: boolean
+          description: true if the returned page contains no records, and this field does not apply
+      required:
+        - sorted
+        - unsorted
+        - empty
