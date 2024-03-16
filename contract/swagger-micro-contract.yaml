@@ -34,14 +34,14 @@ paths:
         Service that allows you to register an order. The order will have
         related information about customers, employees and items
       requestBody:
-        $ref: '#/components/requestBodies/PostOrderRequest'
+        $ref: '#/components/requestBodies/OrderPostRequest'
       responses:
         '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PostOrderResponse'
+                $ref: '#/components/schemas/OrderPostResponse'
         '403':
           $ref: '#/components/responses/403'  
         '404':
@@ -126,14 +126,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/OrderId'
       requestBody:
-          content:
-            application/json:
-              schema:
-                properties:
-                  status:
-                    description: status to be changed
-                    type: string
-                    example: 'TAKEN'
+        $ref: '#/components/requestBodies/OrderPatchInput'
       responses:
         '200':
           description: OK
@@ -190,6 +183,52 @@ paths:
           $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
+
+  /users/request:
+    post:
+      tags:
+        - users
+      summary: Allows you to request a list of users
+      operationId: getUserData
+      description: >-
+        Service that allows you to recover all the information related to users according to search criteria. The result will be paginated.
+        from BD
+      requestBody:
+        $ref: '#/components/requestBodies/UserInputData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOuputData'
+        '204':
+          description: No Content
+        '500':
+          $ref: '#/components/responses/500'
+  
+  /users/request/audit:
+    post:
+      tags:
+        - users
+      summary: Allows you to audit users
+      operationId: getUserAudit
+      description: >-
+        Service that allows you to recover all the information related to users audit according to search criteria. The result will be paginated.
+      requestBody:
+        $ref: '#/components/requestBodies/UserInputAudit'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOutputAudit'
+        '204':
+          description: No Content
+        '500':
+          $ref: '#/components/responses/500'
+            
   /users/{userId}:
     get:
       tags:
@@ -235,13 +274,7 @@ paths:
       description: This method allows you to retrieve a **JWT** for the user.
       operationId: authenticateUser
       parameters:
-        - in: path
-          name: userId
-          description: identifier of a user id value
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/UserId'
       requestBody:
         content:
           application/json:
@@ -258,8 +291,8 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
-
 components:
+  
   parameters:
     UserId:
       in: path
@@ -298,15 +331,175 @@ components:
           schema:
             $ref: '#/components/schemas/OrderInputData'
       description: Request body orders
-    PostOrderRequest:
+    OrderPatchInput:
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/PostOrderBodyRequest'
+            properties:
+              status:
+                type: string
+                example: 'TAKEN'
+                description: order update status
+    UserInputAudit:
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+              userInputAudit:
+                $ref: '#/components/schemas/UserInputAudit'
+              paginationBody:
+                $ref: '#/components/schemas/PaginationBody'
+    UserInputData:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserInputData'
+      description: Filter criteria for user search
+    OrderPostRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OrderPostRequest'
       description: Request body orders
-  
   schemas:
+    AuthenticateRequest:
+      description: Request body for client authentication
+      type: object
+      properties:
+        username:
+          description: User name of the client
+          type: string  
+          example: username123 
+        password:
+          description: Password of the client
+          type: string   
+          example: password123  
+      required:
+        - username
+        - password    
+    AuthenticateResponse:
+      description: Response body from authentication
+      type: object
+      properties:  
+        jwt:
+          description: Client temporary JWT
+          type: string
+          example: jwt0000001
+    UserInputAudit:
+      type: object
+      properties:
+        name:
+          type: string
+          description: name of the user
+          example: Alex
+        userId:
+          type: integer
+          description: user identifier
+          example: 1
+        role:
+          type: string
+          enum:
+            - USER
+            - ADMIN
+        actionDate:
+          type: string
+          format: date
+          description: Date of the action
+        action:
+          type: string
+          enum:
+            - CREATE
+            - UPDATE
+            - DELETE
+    UserOutputAudit:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        pageResponse:
+          $ref: '#/components/schemas/PageResponse'
+    UserInputData:
+      type: object
+      description: Search criteria to obtain users information
+      properties:
+        inputSearch:
+          type: object
+          properties:
+            name:
+              type: string
+              description: name of the user
+              example: Alex
+            userId:
+              type: integer
+              description: user identifier
+              example: 1
+            role:
+              type: string
+              enum:
+                - USER
+                - ADMIN
+            creationDate:
+              type: string
+              example: "2024-03-16"
+              description: Date of creation of the order
+        paginationBody:
+          $ref: '#/components/schemas/PaginationBody'    
+    UserOuputData:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        pageResponse:
+          $ref: '#/components/schemas/PageResponse'
+    UserDetailResponse:
+      allOf:
+        - $ref: '#/components/schemas/User' 
+    User:
+      description: User that will post or take orders
+      type: object
+      properties:
+        name:
+          description: Name of the user
+          type: string
+          example: Alex
+        password:
+          description: Password of the account
+          type: string
+          example: encryptedPassword
+        role:
+          enum:
+            - USER
+            - ADMIN
+    Order:
+      type: object
+      description: Information specific order
+      properties:
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        description:
+          type: string
+          example: "Pickup for Carlos"
+          description: description of the order
+        creationDate:
+          type: string
+          format: date-time
+          description: create date of the order
+          example: '2017-07-21T17:32:28Z'
+        lastModified:
+          type: string
+          format: date-time
+          description: create date of the order
+          example: '2017-08-21T17:32:28Z'
+        status:
+            $ref: '#/components/schemas/Status'
     OrderInputAudit:
       type: object
       properties:
@@ -336,7 +529,7 @@ components:
         orders:
           type: array
           items:
-            $ref: '#/components/schemas/OrderDTO'
+            $ref: '#/components/schemas/Order'
         pageResponse:
           $ref: '#/components/schemas/PageResponse'
     OrderInputData:
@@ -369,10 +562,10 @@ components:
         orders:
           type: array
           items:
-            $ref: '#/components/schemas/OrderDTO'
+            $ref: '#/components/schemas/Order'
         pageResponse:
           $ref: '#/components/schemas/PageResponse'
-    PostOrderBodyRequest:
+    OrderPostRequest:
       required:
         - coordinates
         - description
@@ -385,69 +578,6 @@ components:
           type: string
           example: "Pickup for Carlos"
           description: description of the order
-    OrderDTO:
-      type: object
-      description: Information specific order
-      properties:
-        coordinates:
-          $ref: '#/components/schemas/Coordinates'
-        description:
-          type: string
-          example: "Pickup for Carlos"
-          description: description of the order
-        creationDate:
-          type: string
-          format: date-time
-          description: create date of the order
-          example: '2017-07-21T17:32:28Z'
-        lastModified:
-          type: string
-          format: date-time
-          description: create date of the order
-          example: '2017-08-21T17:32:28Z'
-        status:
-            $ref: '#/components/schemas/Status'
-    Status:
-      description: Status of the order
-      type: string
-      enum:
-        - CREATED
-        - TAKEN
-        - SUCCESS
-    Coordinates:
-      description: Coordinates of the order
-      type: object
-      properties:
-        origin:
-          type: array
-          items:
-            type: string
-            pattern: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$'
-          description: Array containing [latitude, longitude] for origin
-          example: '41.412061, 2.016507'
-        destination:
-          type: array
-          items:
-            type: string
-            pattern: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$'
-          description: Array containing [latitude, longitude] for destination
-          example: '41.381115, 2.119482'
-    User:
-      description: User that will post or take orders
-      type: object
-      properties:
-        name:
-          description: Name of the user
-          type: string
-          example: Alex
-        password:
-          description: Password of the account
-          type: string
-          example: encryptedPassword
-        role:
-          enum:
-            - USER
-            - ADMIN
     OrderPatchResponse:
       type: object
       properties:
@@ -455,7 +585,7 @@ components:
           type: string
           example: 'SUCCESS'
           description: result of the patch action
-    PostOrderResponse:
+    OrderPostResponse:
       type: object
       properties:
         orderId:
@@ -465,44 +595,7 @@ components:
           description: id of order creation
     OrderDetailResponse:
       allOf:
-        - $ref: '#/components/schemas/OrderDTO'
-    UserDetailResponse:
-      allOf:
-        - $ref: '#/components/schemas/User'
-    
-    GetOrdersDataResponse:
-      type: object
-      properties:
-        orders:
-          type: array
-          items:
-            $ref: '#/components/schemas/OrderDTO'
-        pageResponse:
-          $ref: '#/components/schemas/PageResponse'
-
-    AuthenticateResponse:
-      description: Response body from authentication
-      type: object
-      properties:  
-        jwt:
-          description: Client temporary JWT
-          type: string
-          example: jwt0000001
-    AuthenticateRequest:
-      description: Request body for client authentication
-      type: object
-      properties:
-        username:
-          description: User name of the client
-          type: string  
-          example: username123 
-        password:
-          description: Password of the client
-          type: string   
-          example: password123  
-      required:
-        - username
-        - password
+        - $ref: '#/components/schemas/Order'
     PaginationBody:
       description: Pagination fields for request body
       type: object
@@ -571,7 +664,31 @@ components:
         - sorted
         - unsorted
         - empty
-  
+    Status:
+      description: Status of the order
+      type: string
+      enum:
+        - CREATED
+        - TAKEN
+        - SUCCESS
+    Coordinates:
+      description: Coordinates of the order
+      type: object
+      properties:
+        origin:
+          type: array
+          items:
+            type: string
+            pattern: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$'
+          description: Array containing [latitude, longitude] for origin
+          example: '41.412061, 2.016507'
+        destination:
+          type: array
+          items:
+            type: string
+            pattern: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$'
+          description: Array containing [latitude, longitude] for destination
+          example: '41.381115, 2.119482'    
   responses:
     '204':
       description: No Content
