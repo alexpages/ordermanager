@@ -578,13 +578,6 @@ components:
           type: string
           example: "Pickup for Carlos"
           description: description of the order
-    OrderPatchResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          example: 'SUCCESS'
-          description: result of the patch action
     OrderPostResponse:
       type: object
       properties:
@@ -592,7 +585,14 @@ components:
           type: integer
           format: int64
           example: 1
-          description: id of order creation
+          description: id of order creation    
+    OrderPatchResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: 'SUCCESS'
+          description: result of the patch action
     OrderDetailResponse:
       allOf:
         - $ref: '#/components/schemas/Order'
