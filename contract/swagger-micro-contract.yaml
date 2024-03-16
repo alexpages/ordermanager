@@ -184,10 +184,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  clientId:
+                  userId:
                     description: User identifier
                     type: string
-                    example: client_01
+                    example: 1
         '400':
           $ref: '#/components/responses/400'
         '500':
@@ -285,10 +285,6 @@ components:
             type: object
             properties:
               error:
-                type: string
-              timestamp:
-                type: string
-              throwable:
                 type: string
     '403':
       description: Unauthorized request. The user is not authorized or JWT was expired.
@@ -396,10 +392,14 @@ components:
           description: create date of the order
           example: '2017-08-21T17:32:28Z'
         status:
-          enum:
-            - CREATED
-            - TAKEN
-            - SUCCESS
+            $ref: '#/components/schemas/Status'
+    Status:
+      description: Status of the order
+      type: string
+      enum:
+        - CREATED
+        - TAKEN
+        - SUCCESS
     Coordinates:
       description: Coordinates of the order
       type: object
@@ -422,16 +422,12 @@ components:
       description: User that will post or take orders
       type: object
       properties:
-        clientId:
-          description: Client Id
-          type: integer
-          example: 1
         name:
-          description: Name of the client
+          description: Name of the user
           type: string
-          example: client_01
+          example: Alex
         password:
-          description: Password of the account. Not the bank account.
+          description: Password of the account
           type: string
           example: encryptedPassword
         role:
@@ -445,7 +441,6 @@ components:
           type: string
           example: 'SUCCESS'
           description: result of the patch action
-          
     PostOrderOutResponse:
       type: object
       properties:
