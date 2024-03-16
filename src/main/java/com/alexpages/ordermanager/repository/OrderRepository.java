@@ -9,7 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
 
 @Repository
-public interface OrderRepository extends CrudRepository<OrderEntity, Long>, QueryByExampleExecutor<OrderEntity>,
-		PagingAndSortingRepository<OrderEntity, Long> {
+public interface OrderRepository 
+extends CrudRepository<OrderEntity, Long>, QueryByExampleExecutor<OrderEntity>,	PagingAndSortingRepository<OrderEntity, Long> {
 
 }

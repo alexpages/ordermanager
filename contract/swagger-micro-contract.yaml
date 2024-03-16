@@ -34,14 +34,14 @@ paths:
         Service that allows you to register an order. The order will have
         related information about customers, employees and items
       requestBody:
-        $ref: '#/components/requestBodies/PostOrderBodyRequest'
+        $ref: '#/components/requestBodies/PostOrderRequest'
       responses:
         '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PostOrderOutResponse'
+                $ref: '#/components/schemas/PostOrderResponse'
         '403':
           $ref: '#/components/responses/403'  
         '404':
@@ -54,25 +54,41 @@ paths:
         - orders
       summary: Allows you to request a list of orders
       operationId: postOrdersRequest
-      x-certification:
-        certification: A
-        objective: A
-        year: 2023
-      x-typology:
-        typology: external
       description: >-
         Service that allows you to recover all the information related to a
         order (employee, customer, items, etc.). The result will be paginated
         from BD
       requestBody:
-        $ref: '#/components/requestBodies/PostOrdersBodyRequest'
+        $ref: '#/components/requestBodies/OrderInputData'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PostOrdersOutResponse'
+                $ref: '#/components/schemas/OrderOuputData'
+        '204':
+          description: No Content
+        '500':
+          $ref: '#/components/responses/500'
+  
+  /orders/request/audit:
+    post:
+      tags:
+        - orders
+      summary: Allows you to audit orders
+      operationId: getOrderAudit
+      description: >-
+        Service that allows you to audit orders, retrieving information about employees, customers, items, etc. The results will be paginated.
+      requestBody:
+        $ref: '#/components/requestBodies/OrderInputAudit'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderOutputAudit'
         '204':
           description: No Content
         '500':
@@ -88,20 +104,14 @@ paths:
         Service that allows you to recover all the information related to a
         order (employee, customer, items, etc.)
       parameters:
-        - in: path
-          name: orderId
-          description: identifier of a order id value
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/OrderId'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetOrderOutResponse'
+                $ref: '#/components/schemas/OrderDetailResponse'
         '404':
           $ref: '#/components/responses/404'
         '500':
@@ -114,13 +124,7 @@ paths:
       description: >-
         Service that allows you to change the status of an order.
       parameters:
-        - in: path
-          name: orderId
-          description: identifier of a order id value
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/OrderId'
       requestBody:
           content:
             application/json:
@@ -136,7 +140,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatchOrderOutResponse'
+                $ref: '#/components/schemas/OrderPatchResponse'
         '404':
           $ref: '#/components/responses/404'
         '500':
@@ -149,13 +153,7 @@ paths:
       description: >-
         Service that allows you to delete a order.
       parameters:
-        - in: path
-          name: orderId
-          description: identifier of a order id value
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/OrderId'
       responses:
         '204':
           $ref: '#/components/responses/204'
@@ -196,24 +194,18 @@ paths:
     get:
       tags:
         - users
-      summary: Allows you to request a user
+      summary: Allows you to request user details
       operationId: getUserById
       description: Service that allows you to recover all the information related to a user.
       parameters:
-        - in: path
-          name: userId
-          description: identifier of a user id value
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/UserId'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetUserOutResponse'
+                $ref: '#/components/schemas/UserDetailResponse'
         '404':
           $ref: '#/components/responses/404'
         '500':
@@ -226,13 +218,7 @@ paths:
       description: >-
         Service that allows you to delete a user.
       parameters:
-        - in: path
-          name: userId
-          description: identifier of a user id value
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/UserId'
       responses:
         '204':
           $ref: '#/components/responses/204'
@@ -274,58 +260,45 @@ paths:
           $ref: '#/components/responses/500'
 
 components:
-  responses:
-    '204':
-      description: No Content
-    '400':
-      description: Bad request. The request body does not follow the expected format.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-    '403':
-      description: Unauthorized request. The user is not authorized or JWT was expired.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Unauthorized request"
-    '404':
-      description: Resource not found.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Resource not found"
-    '500':
-      description: Internal Server Error.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Internal Server Error"
-                
+  parameters:
+    UserId:
+      in: path
+      name: userId
+      description: Identifier of a user id value
+      required: true
+      schema:
+        type: integer
+        format: int64
+        example: 1
+    OrderId:
+      in: path
+      name: orderId
+      description: Identifier of a user id value
+      required: true
+      schema:
+        type: integer
+        format: int64
+        example: 1
+  
   requestBodies:
-    PostOrdersBodyRequest:
+    OrderInputAudit:
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/PostOrdersBodyRequest'
+            properties:
+              orderInputAudit:
+                $ref: '#/components/schemas/OrderInputAudit'
+              paginationBody:
+                $ref: '#/components/schemas/PaginationBody'
+    OrderInputData:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OrderInputData'
       description: Request body orders
-    PostOrderBodyRequest:
+    PostOrderRequest:
       required: true
       content:
         application/json:
@@ -334,24 +307,43 @@ components:
       description: Request body orders
   
   schemas:
-    PostOrderBodyRequest:
-      required:
-        - coordinates
-        - description
+    OrderInputAudit:
       type: object
-      description: PosOrderBodyRequest with buy to articles
       properties:
-        coordinates:
-          $ref: '#/components/schemas/Coordinates'
-        description:
+        startDate:
           type: string
-          example: "Pickup for Carlos"
-          description: description of the order
-    PostOrdersBodyRequest:
+          format: date
+          description: Start date for the audit period
+        endDate:
+          type: string
+          format: date
+          description: End date for the audit period
+        actionDate:
+          type: string
+          format: date
+          description: Date of the action
+        action:
+          type: string
+          enum:
+            - CREATE
+            - UPDATE
+            - DELETE
+          description: Action performed on the order
+          example: CREATE
+    OrderOutputAudit:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderDTO'
+        pageResponse:
+          $ref: '#/components/schemas/PageResponse'
+    OrderInputData:
       type: object
       description: PostOrdersBodyRequest with params to filter
       properties:
-        filterData:
+        inputSearch:
           type: object
           properties:
             orderId:
@@ -370,7 +362,29 @@ components:
               example: "2024-03-16"
               description: Date of creation of the order
         paginationBody:
-          $ref: '#/components/schemas/PaginationBody'
+          $ref: '#/components/schemas/PaginationBody'    
+    OrderOuputData:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderDTO'
+        pageResponse:
+          $ref: '#/components/schemas/PageResponse'
+    PostOrderBodyRequest:
+      required:
+        - coordinates
+        - description
+      type: object
+      description: PosOrderBodyRequest with buy to articles
+      properties:
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        description:
+          type: string
+          example: "Pickup for Carlos"
+          description: description of the order
     OrderDTO:
       type: object
       description: Information specific order
@@ -434,14 +448,14 @@ components:
           enum:
             - USER
             - ADMIN
-    PatchOrderOutResponse:
+    OrderPatchResponse:
       type: object
       properties:
         status:
           type: string
           example: 'SUCCESS'
           description: result of the patch action
-    PostOrderOutResponse:
+    PostOrderResponse:
       type: object
       properties:
         orderId:
@@ -449,13 +463,14 @@ components:
           format: int64
           example: 1
           description: id of order creation
-    GetOrderOutResponse:
+    OrderDetailResponse:
       allOf:
         - $ref: '#/components/schemas/OrderDTO'
-    GetUserOutResponse:
+    UserDetailResponse:
       allOf:
         - $ref: '#/components/schemas/User'
-    PostOrdersOutResponse:
+    
+    GetOrdersDataResponse:
       type: object
       properties:
         orders:
@@ -556,3 +571,47 @@ components:
         - sorted
         - unsorted
         - empty
+  
+  responses:
+    '204':
+      description: No Content
+    '400':
+      description: Bad request. The request body does not follow the expected format.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+    '403':
+      description: Unauthorized request. The user is not authorized or JWT was expired.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Unauthorized request"
+    '404':
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Resource not found"
+    '500':
+      description: Internal Server Error.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Internal Server Error"
+                
