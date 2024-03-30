@@ -42,21 +42,18 @@ public class OrderManagerExceptionHandler extends ResponseEntityExceptionHandler
 		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
 	}
 
-	@Override
 	public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
 															   HttpStatus status, WebRequest request){
 		OrderManagerException exception = new OrderManagerException("Validation failed for the request: [" + ex.getMessage() + "]");
 		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
 	}
 
-	@Override
 	public ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers,
 																	  HttpStatus status, WebRequest request){
 		OrderManagerException exception = new OrderManagerException("The specified request method is not supported: [" + ex.getMessage() + "]");
 		return new ResponseEntity<>(exception, HttpStatus.METHOD_NOT_ALLOWED);
 	}
 
-	@Override
 	protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers,
 														HttpStatus status, WebRequest request){
 		OrderManagerException exception = new OrderManagerException("Parameter type is not valid for this request: [" + ex.getMessage() + "]");
