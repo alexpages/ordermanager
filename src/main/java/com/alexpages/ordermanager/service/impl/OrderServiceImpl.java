@@ -10,11 +10,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alexpages.ordermanager.domain.OrderListResponse;
+import com.alexpages.ordermanager.domain.OrderPatchResponse;
+import com.alexpages.ordermanager.domain.OrderPostRequest;
+import com.alexpages.ordermanager.domain.OrderPostResponse;
 import com.alexpages.ordermanager.domain.PaginationBody;
-import com.alexpages.ordermanager.domain.PlaceOrderRequest;
-import com.alexpages.ordermanager.domain.PlaceOrderResponse;
-import com.alexpages.ordermanager.domain.TakeOrderRequest;
-import com.alexpages.ordermanager.domain.TakeOrderResponse;
+import com.alexpages.ordermanager.domain.Status;
+import com.alexpages.ordermanager.domain.TakeOrderByIdRequest;
 import com.alexpages.ordermanager.entity.OrderEntity;
 import com.alexpages.ordermanager.enums.OrderStatusEnum;
 import com.alexpages.ordermanager.error.OrderManagerException400;
@@ -44,20 +45,21 @@ public class OrderServiceImpl implements OrderService {
 
 	@Transactional
 	@Override
-	public PlaceOrderResponse placeOrder(@NonNull PlaceOrderRequest placeOrderRequest) {
+	public OrderPostResponse placeOrder(@NonNull OrderPostRequest orderPostRequest) {
 		try {
-			log.info("OrderServiceImpl > placeOrder > PlaceOrderRequest: {}", placeOrderRequest);
-			validatePlaceOrderRequest(placeOrderRequest);
+			log.info("OrderServiceImpl > placeOrder > PlaceOrderRequest: {}", orderPostRequest);
+			validatePlaceOrderRequest(orderPostRequest);
 			log.info("OrderServiceImpl > placeOrder > PlaceOrderRequest validated correctly");
-			int distance = googleMapsServiceImpl.getDistanceFromDistanceMatrix(placeOrderRequest);
+			int distance = googleMapsServiceImpl.getDistanceFromDistanceMatrix(orderPostRequest);
 			log.info("OrderServiceImpl > placeOrder > Distance calculated: {}", distance);
 
 			OrderEntity savedEntity = orderRepository.save(OrderEntity.builder().distance(distance).status("UNASSIGNED").build());
-			return PlaceOrderResponse.builder()
-					.distance(savedEntity.getDistance())
-					.id(savedEntity.getId())
-					.status(savedEntity.getStatus())
-					.build();
+			
+			OrderPostResponse response = new OrderPostResponse();
+			response.setDistance(savedEntity.getDistance());
+			response.setOrderId(savedEntity.getId());
+			response.setStatus(Status.fromValue(savedEntity.getStatus()));
+			return response;
 			
 		} catch (Exception e) {
 			log.error("OrderServiceImpl > placeOrder > There was an issue placing the order: {}", e);
@@ -88,11 +90,11 @@ public class OrderServiceImpl implements OrderService {
 
 	@Transactional
 	@Override
-	public TakeOrderResponse takeOrder(@NonNull Long orderId, @NonNull TakeOrderRequest takeOrderRequest) {
+	public OrderPatchResponse takeOrder(@NonNull Long orderId, @NonNull TakeOrderByIdRequest takeOrderByIdRequest) {
 		try {
-			if (!OrderStatusEnum.TAKEN.getValue().equals(takeOrderRequest.getStatus())) {
-				log.error("Order status not valid: {}", takeOrderRequest.getStatus());
-				throw new OrderManagerException400(	"The provided order status is not valid: [" + takeOrderRequest.getStatus() + "]");
+			if (!OrderStatusEnum.TAKEN.getValue().equals(takeOrderByIdRequest.getStatus())) {
+				log.error("Order status not valid: {}", takeOrderByIdRequest.getStatus());
+				throw new OrderManagerException400(	"The provided order status is not valid: [" + takeOrderByIdRequest.getStatus() + "]");
 			}
 			Optional<OrderEntity> orderEntityOptional = orderRepository.findById(orderId);
 			if (!orderEntityOptional.isPresent()) {
@@ -106,7 +108,9 @@ public class OrderServiceImpl implements OrderService {
 			}
 			orderEntity.setStatus(OrderStatusEnum.TAKEN.getValue());
 			orderRepository.save(orderEntity);
-			return TakeOrderResponse.builder().status(OrderStatusEnum.SUCCESS.getValue()).build();
+			OrderPatchResponse response = new OrderPatchResponse();
+			response.setStatus(Status.SUCCESS.getValue());
+			return response;
 
 		} catch (OptimisticLockingFailureException e) {
 			log.error("OrderServiceImpl > takeOrder > Order with ID: [" + orderId + "] was locked by another user");
@@ -114,11 +118,11 @@ public class OrderServiceImpl implements OrderService {
 		}
 	}
 
-	private void validatePlaceOrderRequest(PlaceOrderRequest placeOrderRequest) {
- 		if (!placeOrderRequest.getOrigin()[0].matches(LATITUDE_PATTERN)	|| !placeOrderRequest.getOrigin()[1].matches(LONGITUDE_PATTERN)) {
+	private void validatePlaceOrderRequest(OrderPostRequest orderPostRequest) {
+ 		if (!orderPostRequest.getCoordinates().getOrigin().get(0).matches(LATITUDE_PATTERN)	|| !orderPostRequest.getCoordinates().getOrigin().get(1).matches(LONGITUDE_PATTERN)) {
 			throw new OrderManagerException400("Orgin coordinates are incorrect");
 		}
-		if (!placeOrderRequest.getDestination()[0].matches(LATITUDE_PATTERN) || !placeOrderRequest.getDestination()[1].matches(LONGITUDE_PATTERN)) {
+		if (!orderPostRequest.getCoordinates().getDestination().get(0).matches(LATITUDE_PATTERN) || !orderPostRequest.getCoordinates().getDestination().get(1).matches(LONGITUDE_PATTERN)) {
 			throw new OrderManagerException400("Destination coordinates are incorrect");
 		}
 	}

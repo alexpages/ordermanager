@@ -4,6 +4,7 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.alexpages.ordermanager.domain.OrderPostRequest;
 import com.alexpages.ordermanager.domain.PlaceOrderRequest;
 import com.alexpages.ordermanager.error.OrderManagerException500;
 import com.alexpages.ordermanager.service.GoogleMapsService;
@@ -15,6 +16,7 @@ import com.google.maps.errors.ApiException;
 import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.DistanceMatrixRow;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,11 +29,11 @@ public class GoogleMapsServiceImpl implements GoogleMapsService
 	private String key;
 
 	@Override
-	public int getDistanceFromDistanceMatrix(PlaceOrderRequest placeOrderRequest) throws Exception 
+	public int getDistanceFromDistanceMatrix(@NonNull OrderPostRequest orderPostRequest) throws Exception 
 	{
-	    log.info("GoogleMapsServiceImpl > getDistanceFromDistanceMatrix > PlaceOrderRequest: {}", placeOrderRequest);
+	    log.info("GoogleMapsServiceImpl > getDistanceFromDistanceMatrix > PlaceOrderRequest: {}", orderPostRequest);
 	    try {    	
-	    	DistanceMatrixRow[] rows = getDistanceMatrixRow(placeOrderRequest);
+	    	DistanceMatrixRow[] rows = getDistanceMatrixRow(orderPostRequest);
 	        if (rows.length > 0 && rows[0].elements.length > 0 && rows[0].elements[0].distance != null) {
 	            long distanceInMeters = Math.toIntExact(rows[0].elements[0].distance.inMeters);
 	            log.info("Distance Matrix result: {} meters", distanceInMeters);
@@ -46,14 +48,14 @@ public class GoogleMapsServiceImpl implements GoogleMapsService
 	    }
 	}
 	
-	private DistanceMatrixRow[] getDistanceMatrixRow(PlaceOrderRequest placeOrderRequest) 
+	private DistanceMatrixRow[] getDistanceMatrixRow(@NonNull OrderPostRequest orderPostRequest) 
 	throws ApiException, InterruptedException, IOException
 	{
         GeoApiContext context = new GeoApiContext.Builder().apiKey(key).build();   
         
         DistanceMatrix distanceMatrix = DistanceMatrixApi.newRequest(context)
-                .origins(String.join(",", placeOrderRequest.getOrigin()))
-                .destinations(String.join(",", placeOrderRequest.getDestination()))
+                .origins(String.join(",", orderPostRequest.getCoordinates().getOrigin()))
+                .destinations(String.join(",", orderPostRequest.getCoordinates().getDestination()))
                 .await();
         
         log.info("GoogleMapsServiceImpl > getDistanceMatrixRow > DistanceMatrix: " + printObject(distanceMatrix));       
