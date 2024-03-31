@@ -77,7 +77,6 @@ import java.util.concurrent.CompletableFuture;
 {{/async}}
 import {{javaxPackage}}.annotation.Generated;
 
-{{>generatedAnnotation}}
 {{#useBeanValidation}}
 @Validated
 {{/useBeanValidation}}
@@ -89,9 +88,6 @@ import {{javaxPackage}}.annotation.Generated;
 @RestController
 {{/useResponseEntity}}
 {{/useSpringController}}
-{{#swagger2AnnotationLibrary}}
-@Tag(name = "{{{tagName}}}", description = {{#tagDescription}}"{{{.}}}"{{/tagDescription}}{{^tagDescription}}"the {{{tagName}}} API"{{/tagDescription}})
-{{/swagger2AnnotationLibrary}}
 {{#swagger1AnnotationLibrary}}
 @Api(value = "{{{tagName}}}", description = {{#tagDescription}}"{{{.}}}"{{/tagDescription}}{{^tagDescription}}"the {{{tagName}}} API"{{/tagDescription}})
 {{/swagger1AnnotationLibrary}}
