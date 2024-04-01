@@ -92,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public OrderPatchResponse takeOrder(@NonNull Long orderId, @NonNull TakeOrderByIdRequest takeOrderByIdRequest) {
 		try {
-			if (!OrderStatusEnum.TAKEN.getValue().equals(takeOrderByIdRequest.getStatus())) {
+			if (!Status.TAKEN.getValue().equals(takeOrderByIdRequest.getStatus().getValue())) {
 				log.error("Order status not valid: {}", takeOrderByIdRequest.getStatus());
 				throw new OrderManagerException400(	"The provided order status is not valid: [" + takeOrderByIdRequest.getStatus() + "]");
 			}
@@ -102,11 +102,11 @@ public class OrderServiceImpl implements OrderService {
 				throw new OrderManagerException404("Order with ID: [" + orderId + "] was not found");
 			}
 			OrderEntity orderEntity = orderEntityOptional.get();
-			if (OrderStatusEnum.TAKEN.getValue().equals((orderEntity.getStatus()))) {
+			if (Status.TAKEN.getValue().equals((orderEntity.getStatus()))) {
 				log.error("Order with ID: [" + orderId + "] was already taken");
 				throw new OrderManagerException409("Order with ID: [" + orderId + "] was already taken");
 			}
-			orderEntity.setStatus(OrderStatusEnum.TAKEN.getValue());
+			orderEntity.setStatus(Status.TAKEN.getValue());
 			orderRepository.save(orderEntity);
 			OrderPatchResponse response = new OrderPatchResponse();
 			response.setStatus(Status.SUCCESS.getValue());

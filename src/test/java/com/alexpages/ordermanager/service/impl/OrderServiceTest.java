@@ -1,8 +1,7 @@
 package com.alexpages.ordermanager.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-import org.springframework.data.domain.Pageable;
-
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -24,19 +23,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.alexpages.ordermanager.domain.Coordinates;
 import com.alexpages.ordermanager.domain.OrderDTO;
 import com.alexpages.ordermanager.domain.OrderPostRequest;
-import com.alexpages.ordermanager.domain.PlaceOrderRequest;
-import com.alexpages.ordermanager.domain.TakeOrderRequest;
+import com.alexpages.ordermanager.domain.Status;
+import com.alexpages.ordermanager.domain.TakeOrderByIdRequest;
 import com.alexpages.ordermanager.entity.OrderEntity;
 import com.alexpages.ordermanager.enums.OrderStatusEnum;
-import com.alexpages.ordermanager.error.OrderManagerException500;
-import com.alexpages.ordermanager.mapper.OrderMapper;
 import com.alexpages.ordermanager.error.OrderManagerException400;
 import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.error.OrderManagerException409;
+import com.alexpages.ordermanager.error.OrderManagerException500;
+import com.alexpages.ordermanager.mapper.OrderMapper;
 import com.alexpages.ordermanager.repository.OrderRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -115,7 +115,7 @@ public class OrderServiceTest {
 	{
 		when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
 		when(orderRepository.save(any())).thenReturn(easyRandom.nextObject(OrderEntity.class));
-		assertNotNull(orderServiceImpl.takeOrder(1L, generateValidTakeOrderRequest()));
+		assertNotNull(orderServiceImpl.takeOrder(1L, generateValidTakeOrderByIdRequest()));
 	}
 	
 	@Test
@@ -123,55 +123,53 @@ public class OrderServiceTest {
 	{
 		when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
 		when(orderRepository.save(any())).thenThrow(new OptimisticLockingFailureException("some error"));
-		assertThrows(OrderManagerException409.class, () -> orderServiceImpl.takeOrder(1L, generateValidTakeOrderRequest()));
+		assertThrows(OrderManagerException409.class, () -> orderServiceImpl.takeOrder(1L, generateValidTakeOrderByIdRequest()));
 	}
 	
 	@Test
 	void testTakeOrderError_OrderNotFound() 
 	{
 		when(orderRepository.findById(any())).thenReturn(Optional.empty());
-		assertThrows(OrderManagerException404.class, () -> orderServiceImpl.takeOrder(1L, generateValidTakeOrderRequest()));
+		assertThrows(OrderManagerException404.class, () -> orderServiceImpl.takeOrder(1L, generateValidTakeOrderByIdRequest()));
 	}
 	
 	@Test
 	void testTakeOrderError_WrongStatus() 
 	{
-		assertThrows(OrderManagerException400.class, () -> orderServiceImpl.takeOrder(1L, generateWrongTakeOrderRequest()));
+		assertThrows(OrderManagerException400.class, () -> orderServiceImpl.takeOrder(1L, generateWrongTakeOrderByIdRequest()));
 	}
 	
 	@Test
 	void testTakeOrderError_OrderTaken() 
 	{
 		when(orderRepository.findById(any())).thenReturn(Optional.of(generateTakenOrderEntity()));
-		assertThrows(OrderManagerException409.class, () -> orderServiceImpl.takeOrder(1L, generateValidTakeOrderRequest()));
+		assertThrows(OrderManagerException409.class, () -> orderServiceImpl.takeOrder(1L, generateValidTakeOrderByIdRequest()));
 	}
 	
 	@Test
 	void testTakeOrderError_Null() 
 	{
-		assertThrows(NullPointerException.class, () -> orderServiceImpl.takeOrder(null, generateValidTakeOrderRequest()));
+		assertThrows(NullPointerException.class, () -> orderServiceImpl.takeOrder(null, generateValidTakeOrderByIdRequest()));
 		assertThrows(NullPointerException.class, () -> orderServiceImpl.takeOrder(1L, null));
 	}
 
-
-	private TakeOrderRequest generateValidTakeOrderRequest() {
-		TakeOrderRequest takeOrderRequest = new TakeOrderRequest();
-		takeOrderRequest.setStatus(OrderStatusEnum.TAKEN.getValue());
-		return takeOrderRequest;
+	private TakeOrderByIdRequest generateValidTakeOrderByIdRequest() {
+		TakeOrderByIdRequest request = new TakeOrderByIdRequest();
+		request.setStatus(Status.TAKEN);
+		return request;
 	}
 	
-	private TakeOrderRequest generateWrongTakeOrderRequest() {
-		TakeOrderRequest takeOrderRequest = new TakeOrderRequest();
-		takeOrderRequest.setStatus("wrongStatus");
-		return takeOrderRequest;
+	private TakeOrderByIdRequest generateWrongTakeOrderByIdRequest() {
+		TakeOrderByIdRequest request = new TakeOrderByIdRequest();
+		request.setStatus(Status.SUCCESS);
+		return request;
 	}
 
-	
 	private OrderPostRequest generateWrongOrderPostRequest() {
 	    OrderPostRequest request = new OrderPostRequest();
 	    Coordinates coordinates = new Coordinates();
 	    coordinates.setOrigin(Arrays.asList("22.319", "114.169"));
-	    coordinates.setDestination(Arrays.asList("22.2948341", "114.2329"));
+	    coordinates.setDestination(Arrays.asList("-1212.2948341", "114.2329"));
 	    request.setCoordinates(coordinates);
 	    return request;
 	}
@@ -180,7 +178,8 @@ public class OrderServiceTest {
 	    OrderPostRequest request = new OrderPostRequest();
 	    Coordinates coordinates = new Coordinates();
 	    coordinates.setOrigin(Arrays.asList("22.319", "114.169"));
-	    coordinates.setDestination(Arrays.asList("-1122.2948341", "114.2329"));
+	    coordinates.setDestination(Arrays.asList("22.2948341", "114.2329"));
+
 	    request.setCoordinates(coordinates);
 	    return request;
 	}
