@@ -45,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
 
 	@Transactional
 	@Override
-	public OrderPostResponse placeOrder(@NonNull OrderPostRequest orderPostRequest) {
+	public OrderPostResponse postOrder(@NonNull OrderPostRequest orderPostRequest) {
 		try {
 			log.info("OrderServiceImpl > placeOrder > PlaceOrderRequest: {}", orderPostRequest);
 			validatePlaceOrderRequest(orderPostRequest);

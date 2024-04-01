@@ -3,6 +3,7 @@ package com.alexpages.ordermanager.service.impl;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,7 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.alexpages.ordermanager.domain.PlaceOrderRequest;
+import com.alexpages.ordermanager.domain.Coordinates;
+import com.alexpages.ordermanager.domain.OrderPostRequest;
 import com.alexpages.ordermanager.error.OrderManagerException500;
 
 @SpringBootTest
@@ -34,7 +36,7 @@ public class GoogleMapsServiceTest {
 	{
 		if (!"YOUR_API_KEY".equals(key)) { //TODO Precondition to avoid failing test: Introduce a valid key on application.yml
 	        ReflectionTestUtils.setField(googleMapsServiceImpl, "key", key);
-			assertNotNull(googleMapsServiceImpl.getDistanceFromDistanceMatrix(generateValidPlaceOrderRequest()));
+			assertNotNull(googleMapsServiceImpl.getDistanceFromDistanceMatrix(generateValidOrderPostRequest()));
 		}
     }
 	
@@ -44,17 +46,25 @@ public class GoogleMapsServiceTest {
 	{
 		if (!"YOUR_API_KEY".equals(key)) { //TODO Precondition to avoid failing test: Introduce a valid key on application.yml
 	        ReflectionTestUtils.setField(googleMapsServiceImpl, "key", key);
-	        assertThrows(OrderManagerException500.class, () ->googleMapsServiceImpl.getDistanceFromDistanceMatrix(generateWrongPlaceOrderRequest()));
+	        assertThrows(OrderManagerException500.class, () ->googleMapsServiceImpl.getDistanceFromDistanceMatrix(generateWrongOrderPostRequest()));
 		}
     }
 	
-    private PlaceOrderRequest generateValidPlaceOrderRequest() {
-		return PlaceOrderRequest.builder().origin(new String[] { "22.319", "114.169" })
-				.destination(new String[] { "22.2948341", "114.2329" }).build();
+	private OrderPostRequest generateWrongOrderPostRequest() {
+	    OrderPostRequest request = new OrderPostRequest();
+	    Coordinates coordinates = new Coordinates();
+	    coordinates.setOrigin(Arrays.asList("22.319", "114.169"));
+	    coordinates.setDestination(Arrays.asList("22.2948341", "114.2329"));
+	    request.setCoordinates(coordinates);
+	    return request;
 	}
-    
-    private PlaceOrderRequest generateWrongPlaceOrderRequest() {
-		return PlaceOrderRequest.builder().origin(new String[] { "22.319", "114.169" })
-				.destination(new String[] { "-1122.2948341", "114.2329" }).build();
+	
+	private OrderPostRequest generateValidOrderPostRequest() {
+	    OrderPostRequest request = new OrderPostRequest();
+	    Coordinates coordinates = new Coordinates();
+	    coordinates.setOrigin(Arrays.asList("22.319", "114.169"));
+	    coordinates.setDestination(Arrays.asList("-1122.2948341", "114.2329"));
+	    request.setCoordinates(coordinates);
+	    return request;
 	}
 }

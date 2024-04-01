@@ -29,7 +29,7 @@ paths:
       tags:
         - orders
       summary: Allows you to post an order
-      operationId: postOrders
+      operationId: postOrder
       description: >-
         Service that allows you to register an order. The order will have
         related information about customers, employees and items
@@ -608,10 +608,12 @@ components:
         page:
           description: Page key
           type: number
+          minimum: 1
           example: 1
         size:
           description: Page size
           type: number
+          minimum: 1
           example: 10
     PageResponse:
       type: object

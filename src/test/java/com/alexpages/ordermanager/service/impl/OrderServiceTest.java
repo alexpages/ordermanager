@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,7 +25,9 @@ import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import com.alexpages.ordermanager.domain.Coordinates;
 import com.alexpages.ordermanager.domain.OrderDTO;
+import com.alexpages.ordermanager.domain.OrderPostRequest;
 import com.alexpages.ordermanager.domain.PlaceOrderRequest;
 import com.alexpages.ordermanager.domain.TakeOrderRequest;
 import com.alexpages.ordermanager.entity.OrderEntity;
@@ -63,28 +66,25 @@ public class OrderServiceTest {
     {
     	when(googleMapsServiceImpl.getDistanceFromDistanceMatrix(any())).thenReturn(1);
     	when(orderRepository.save(any(OrderEntity.class))).thenReturn(generateValidOrderEntity());
-    	assertNotNull(orderServiceImpl.placeOrder(generateValidPlaceOrderRequest()));
+    	assertNotNull(orderServiceImpl.postOrder(generateValidOrderPostRequest()));
     }
 
 	@Test
     void testPlaceOrderError() throws Exception 
     {
     	when(googleMapsServiceImpl.getDistanceFromDistanceMatrix(any())).thenThrow(new RuntimeException("some error"));
-    	assertThrows(OrderManagerException500.class, () -> orderServiceImpl.placeOrder(generateValidPlaceOrderRequest()));
+    	assertThrows(OrderManagerException500.class, () -> orderServiceImpl.postOrder(generateValidOrderPostRequest()));
     }
 	
 	@Test
     void testPlaceOrderError_Regex() throws Exception 
     {
-      	assertThrows(OrderManagerException500.class, () -> orderServiceImpl.placeOrder(generateWrongPlaceOrderRequest1()));
-      	assertThrows(OrderManagerException500.class, () -> orderServiceImpl.placeOrder(generateWrongPlaceOrderRequest2()));
-      	assertThrows(OrderManagerException500.class, () -> orderServiceImpl.placeOrder(generateWrongPlaceOrderRequest3()));
-      	assertThrows(OrderManagerException500.class, () -> orderServiceImpl.placeOrder(generateWrongPlaceOrderRequest4()));
+      	assertThrows(OrderManagerException500.class, () -> orderServiceImpl.postOrder(generateWrongOrderPostRequest()));
     }
 
 	@Test
 	void testPlaceOrderError_Null() {
-		assertThrows(NullPointerException.class, () -> orderServiceImpl.placeOrder(null));
+		assertThrows(NullPointerException.class, () -> orderServiceImpl.postOrder(null));
 	}
 
 	@Test
@@ -166,37 +166,23 @@ public class OrderServiceTest {
 		return takeOrderRequest;
 	}
 
-	private PlaceOrderRequest generateValidPlaceOrderRequest() {
-		return PlaceOrderRequest.builder()
-				.origin(new String[] { "22.319", "114.169" })
-				.destination(new String[] { "22.2948341", "114.2329" })
-				.build();
+	
+	private OrderPostRequest generateWrongOrderPostRequest() {
+	    OrderPostRequest request = new OrderPostRequest();
+	    Coordinates coordinates = new Coordinates();
+	    coordinates.setOrigin(Arrays.asList("22.319", "114.169"));
+	    coordinates.setDestination(Arrays.asList("22.2948341", "114.2329"));
+	    request.setCoordinates(coordinates);
+	    return request;
 	}
 	
-	private PlaceOrderRequest generateWrongPlaceOrderRequest1() {
-		return PlaceOrderRequest.builder()
-				.origin(new String[] { "-95.319", "114.169" })
-				.destination(new String[] { "22.2948341", "114.2329" })
-				.build();
-	}
-	private PlaceOrderRequest generateWrongPlaceOrderRequest2() {
-		return PlaceOrderRequest.builder()
-				.origin(new String[] { "22.294", "-190.169" })
-				.destination(new String[] { "22.2948341", "114.2329" })
-				.build();
-	}
-	
-	private PlaceOrderRequest generateWrongPlaceOrderRequest3() {
-		return PlaceOrderRequest.builder()
-				.origin(new String[] { "22.2948341", "114.2329" })
-				.destination(new String[] { "-90.2948341", "114.2329" })
-				.build();
-	}
-	private PlaceOrderRequest generateWrongPlaceOrderRequest4() {
-		return PlaceOrderRequest.builder()
-				.origin(new String[] { "22.2948341", "114.2329" })
-				.destination(new String[] { "22.2948341", "190.2329" })
-				.build();
+	private OrderPostRequest generateValidOrderPostRequest() {
+	    OrderPostRequest request = new OrderPostRequest();
+	    Coordinates coordinates = new Coordinates();
+	    coordinates.setOrigin(Arrays.asList("22.319", "114.169"));
+	    coordinates.setDestination(Arrays.asList("-1122.2948341", "114.2329"));
+	    request.setCoordinates(coordinates);
+	    return request;
 	}
 
 	private OrderEntity generateValidOrderEntity() {

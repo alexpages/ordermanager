@@ -11,7 +11,7 @@ import lombok.NonNull;
 public interface OrderService 
 {
 
-	public OrderPostResponse placeOrder(@NonNull OrderPostRequest orderPostRequest);
+	public OrderPostResponse postOrder(@NonNull OrderPostRequest orderPostRequest);
 
 	public OrderListResponse getOrderList(@NonNull Integer page, @NonNull Integer limit);
 

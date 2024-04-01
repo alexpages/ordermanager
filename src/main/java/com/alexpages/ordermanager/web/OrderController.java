@@ -1,6 +1,5 @@
 package com.alexpages.ordermanager.web;
 
-import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +17,7 @@ import com.alexpages.ordermanager.domain.OrderPostResponse;
 import com.alexpages.ordermanager.domain.TakeOrderByIdRequest;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -27,8 +27,8 @@ public class OrderController implements OrdersApi {
 	private final OrderServiceImpl orderServiceImpl;
 
 	@Override
-	public ResponseEntity<OrderPostResponse> postOrders(@jakarta.validation.Valid OrderPostRequest orderPostRequest) {
-		OrderPostResponse response = orderServiceImpl.placeOrder(orderPostRequest);
+	public ResponseEntity<OrderPostResponse> postOrder(@Valid OrderPostRequest orderPostRequest) {
+		OrderPostResponse response = orderServiceImpl.postOrder(orderPostRequest);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	

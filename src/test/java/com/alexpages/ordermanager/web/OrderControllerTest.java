@@ -28,6 +28,8 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
 import com.alexpages.ordermanager.domain.OrderDTO;
 import com.alexpages.ordermanager.domain.OrderListResponse;
+import com.alexpages.ordermanager.domain.OrderPatchResponse;
+import com.alexpages.ordermanager.domain.OrderPostResponse;
 import com.alexpages.ordermanager.domain.PlaceOrderResponse;
 import com.alexpages.ordermanager.domain.TakeOrderResponse;
 import com.alexpages.ordermanager.error.OrderManagerException400;
@@ -55,9 +57,9 @@ class OrderControllerTest {
     }
     
     @Test
-    void testPlaceOrderSuccess_200() throws Exception 
+    void testPostOrderSuccess_200() throws Exception 
     {
-    	when(orderServiceImpl.placeOrder(any())).thenReturn(easyRandom.nextObject(PlaceOrderResponse.class)); 	
+    	when(orderServiceImpl.postOrder(any())).thenReturn(easyRandom.nextObject(OrderPostResponse.class)); 
         mockMvc.perform(post("/orders")
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(header())
@@ -68,7 +70,7 @@ class OrderControllerTest {
     @Test
     void testTakeOrderSuccess_200() throws Exception 
     {
-    	when(orderServiceImpl.takeOrder(any(), any())).thenReturn(easyRandom.nextObject(TakeOrderResponse.class)); 	
+    	when(orderServiceImpl.takeOrder(any(), any())).thenReturn(easyRandom.nextObject(OrderPatchResponse.class)); 	
         mockMvc.perform(patch("/orders/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(header())

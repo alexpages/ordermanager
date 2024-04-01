@@ -1,2 +1,4 @@
 INSERT INTO orders (ID, DISTANCE, VERSION, STATUS) VALUES (2, 16, 1, 'TAKEN');
 
+INSERT INTO users (ID, NAME, PASSWORD, ROLE) VALUES (1, 'name', 'encryptedPass', 'ADMIN');
+
