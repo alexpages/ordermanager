@@ -30,13 +30,10 @@ import org.springframework.web.util.NestedServletException;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
 import com.alexpages.ordermanager.domain.Order;
-import com.alexpages.ordermanager.domain.OrderDTO;
-import com.alexpages.ordermanager.domain.OrderListResponse;
 import com.alexpages.ordermanager.domain.OrderOuputData;
+import com.alexpages.ordermanager.domain.OrderOutputAudit;
 import com.alexpages.ordermanager.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.domain.OrderPostResponse;
-import com.alexpages.ordermanager.domain.PlaceOrderResponse;
-import com.alexpages.ordermanager.domain.TakeOrderResponse;
 import com.alexpages.ordermanager.error.OrderManagerException400;
 import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
@@ -106,6 +103,27 @@ class OrderControllerTest {
     }
 	
 	@Test
+	void testGetOrderAuditSuccess_204() throws Exception {
+		when(orderServiceImpl.getAuditList(any())).thenReturn(new OrderOutputAudit());
+        mockMvc.perform(post("/orders/request/audit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(header())
+                .content(generateValidOrderInputData()))
+                .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
+    }
+	
+	@Test
+	void testGetOrderAuditSuccess_200() throws Exception {
+		OrderOutputAudit orderOutputAudit = new OrderOutputAudit();
+		when(orderServiceImpl.getAuditList(any())).thenReturn(new OrderOutputAudit());
+        mockMvc.perform(post("/orders/request/audit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(header())
+                .content(generateValidOrderInputData()))
+                .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
+    }
+	
+	@Test
 	void testDeleteOrder_204() throws Exception {
 	    doNothing().when(orderServiceImpl).deleteOrderById(any());
 	    mockMvc.perform(delete("/orders/{id}", 1L)
@@ -164,8 +182,8 @@ class OrderControllerTest {
         return response;
     }
     
-    private OrderListResponse generateEmptyOrderListResponse() {
-        ArrayList<OrderDTO> lOrderDTO = new ArrayList<>();
-        return OrderListResponse.builder().orders(lOrderDTO).build();
-    }
+//    private OrderPostResponse generateEmptyOrderListResponse() {
+//        ArrayList<OrderDTO> lOrderDTO = new ArrayList<>();
+//        return OrderListResponse.builder().orders(lOrderDTO).build();
+//    }
 }

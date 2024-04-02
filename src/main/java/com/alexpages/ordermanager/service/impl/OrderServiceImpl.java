@@ -9,15 +9,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alexpages.ordermanager.domain.GetOrderAuditRequest;
 import com.alexpages.ordermanager.domain.OrderInputData;
-import com.alexpages.ordermanager.domain.OrderListResponse;
 import com.alexpages.ordermanager.domain.OrderOuputData;
+import com.alexpages.ordermanager.domain.OrderOutputAudit;
+import com.alexpages.ordermanager.domain.OrderPatchInput;
 import com.alexpages.ordermanager.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.domain.OrderPostRequest;
 import com.alexpages.ordermanager.domain.OrderPostResponse;
 import com.alexpages.ordermanager.domain.PaginationBody;
 import com.alexpages.ordermanager.domain.Status;
-import com.alexpages.ordermanager.domain.TakeOrderByIdRequest;
 import com.alexpages.ordermanager.entity.OrderEntity;
 import com.alexpages.ordermanager.enums.OrderStatusEnum;
 import com.alexpages.ordermanager.error.OrderManagerException400;
@@ -29,6 +30,7 @@ import com.alexpages.ordermanager.repository.OrderRepository;
 import com.alexpages.ordermanager.service.OrderService;
 import com.alexpages.ordermanager.utils.PageableUtils;
 
+import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,11 +90,11 @@ public class OrderServiceImpl implements OrderService {
 
 	@Transactional
 	@Override
-	public OrderPatchResponse takeOrder(@NonNull Long orderId, @NonNull TakeOrderByIdRequest takeOrderByIdRequest) {
+	public OrderPatchResponse takeOrder(@NonNull Long orderId, @NonNull OrderPatchInput orderPatchInput) {
 		try {
-			if (!Status.TAKEN.getValue().equals(takeOrderByIdRequest.getStatus().getValue())) {
-				log.error("Order status not valid: {}", takeOrderByIdRequest.getStatus());
-				throw new OrderManagerException400(	"The provided order status is not valid: [" + takeOrderByIdRequest.getStatus() + "]");
+			if (!Status.TAKEN.getValue().equals(orderPatchInput.getStatus().getValue())) {
+				log.error("Order status not valid: {}", orderPatchInput.getStatus());
+				throw new OrderManagerException400(	"The provided order status is not valid: [" + orderPatchInput.getStatus() + "]");
 			}
 			Optional<OrderEntity> orderEntityOptional = orderRepository.findById(orderId);
 			if (!orderEntityOptional.isPresent()) {
@@ -124,6 +126,12 @@ public class OrderServiceImpl implements OrderService {
 	    }
 	    orderRepository.deleteById(orderId);
 	}
+	
+	@Override
+	public OrderOutputAudit getAuditList(@Valid GetOrderAuditRequest getOrderAuditRequest) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	private void validatePlaceOrderRequest(OrderPostRequest orderPostRequest) {
  		if (!orderPostRequest.getCoordinates().getOrigin().get(0).matches(LATITUDE_PATTERN)	|| !orderPostRequest.getCoordinates().getOrigin().get(1).matches(LONGITUDE_PATTERN)) {
@@ -133,5 +141,6 @@ public class OrderServiceImpl implements OrderService {
 			throw new OrderManagerException400("Destination coordinates are incorrect");
 		}
 	}
+
 
 }

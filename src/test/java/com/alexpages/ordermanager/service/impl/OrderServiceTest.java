@@ -29,12 +29,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.alexpages.ordermanager.domain.Coordinates;
-import com.alexpages.ordermanager.domain.OrderDTO;
 import com.alexpages.ordermanager.domain.OrderInputData;
+import com.alexpages.ordermanager.domain.OrderPatchInput;
 import com.alexpages.ordermanager.domain.OrderPostRequest;
 import com.alexpages.ordermanager.domain.PaginationBody;
 import com.alexpages.ordermanager.domain.Status;
-import com.alexpages.ordermanager.domain.TakeOrderByIdRequest;
 import com.alexpages.ordermanager.entity.OrderEntity;
 import com.alexpages.ordermanager.enums.OrderStatusEnum;
 import com.alexpages.ordermanager.error.OrderManagerException400;
@@ -125,7 +124,7 @@ public class OrderServiceTest {
 	{
 		when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
 		when(orderRepository.save(any())).thenReturn(easyRandom.nextObject(OrderEntity.class));
-		assertNotNull(orderServiceImpl.takeOrder(1L, generateValidTakeOrderByIdRequest()));
+		assertNotNull(orderServiceImpl.takeOrder(1L, generateValidOrderPatchInput()));
 	}
 	
 	@Test
@@ -133,14 +132,14 @@ public class OrderServiceTest {
 	{
 		when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
 		when(orderRepository.save(any())).thenThrow(new OptimisticLockingFailureException("some error"));
-		assertThrows(OrderManagerException409.class, () -> orderServiceImpl.takeOrder(1L, generateValidTakeOrderByIdRequest()));
+		assertThrows(OrderManagerException409.class, () -> orderServiceImpl.takeOrder(1L, generateValidOrderPatchInput()));
 	}
 	
 	@Test
 	void testTakeOrderError_OrderNotFound() 
 	{
 		when(orderRepository.findById(any())).thenReturn(Optional.empty());
-		assertThrows(OrderManagerException404.class, () -> orderServiceImpl.takeOrder(1L, generateValidTakeOrderByIdRequest()));
+		assertThrows(OrderManagerException404.class, () -> orderServiceImpl.takeOrder(1L, generateValidOrderPatchInput()));
 	}
 	
 	@Test
@@ -153,13 +152,13 @@ public class OrderServiceTest {
 	void testTakeOrderError_OrderTaken() 
 	{
 		when(orderRepository.findById(any())).thenReturn(Optional.of(generateTakenOrderEntity()));
-		assertThrows(OrderManagerException409.class, () -> orderServiceImpl.takeOrder(1L, generateValidTakeOrderByIdRequest()));
+		assertThrows(OrderManagerException409.class, () -> orderServiceImpl.takeOrder(1L, generateValidOrderPatchInput()));
 	}
 	
 	@Test
 	void testTakeOrderError_Null() 
 	{
-		assertThrows(NullPointerException.class, () -> orderServiceImpl.takeOrder(null, generateValidTakeOrderByIdRequest()));
+		assertThrows(NullPointerException.class, () -> orderServiceImpl.takeOrder(null, generateValidOrderPatchInput()));
 		assertThrows(NullPointerException.class, () -> orderServiceImpl.takeOrder(1L, null));
 	}
 	
@@ -173,16 +172,16 @@ public class OrderServiceTest {
 		return orderInputData;
 	}
 
-	private TakeOrderByIdRequest generateValidTakeOrderByIdRequest() {
-		TakeOrderByIdRequest request = new TakeOrderByIdRequest();
-		request.setStatus(Status.TAKEN);
-		return request;
+	private OrderPatchInput generateValidOrderPatchInput() {
+		OrderPatchInput input = new OrderPatchInput();
+		input.setStatus(Status.TAKEN);
+		return input;
 	}
 	
-	private TakeOrderByIdRequest generateWrongTakeOrderByIdRequest() {
-		TakeOrderByIdRequest request = new TakeOrderByIdRequest();
-		request.setStatus(Status.SUCCESS);
-		return request;
+	private OrderPatchInput generateWrongTakeOrderByIdRequest() {
+		OrderPatchInput input = new OrderPatchInput();
+		input.setStatus(Status.SUCCESS);
+		return input;
 	}
 
 	private OrderPostRequest generateWrongOrderPostRequest() {

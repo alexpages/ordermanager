@@ -336,6 +336,7 @@ components:
       content:
         application/json:
           schema:
+            title: OrderPatchInput
             properties:
               status:
                 $ref: '#/components/schemas/Status'
@@ -344,6 +345,7 @@ components:
       content:
         application/json:
           schema:
+            title: UserInputAudit
             properties:
               userInputAudit:
                 $ref: '#/components/schemas/UserInputAudit'
@@ -533,6 +535,7 @@ components:
     OrderInputData:
       type: object
       description: PostOrdersBodyRequest with params to filter
+      title: OrderInputData
       properties:
         inputSearch:
           type: object

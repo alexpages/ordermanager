@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.alexpages.ordermanager.domain.OrderPostRequest;
-import com.alexpages.ordermanager.domain.PlaceOrderRequest;
 import com.alexpages.ordermanager.error.OrderManagerException500;
 import com.alexpages.ordermanager.service.GoogleMapsService;
 import com.fasterxml.jackson.core.JsonProcessingException;
