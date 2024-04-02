@@ -543,12 +543,7 @@ components:
               example: 1
               description: id of order request
             status:
-              type: string
-              enum:
-                - CREATED
-                - TAKEN
-                - SUCCESS
-              example: 'TAKEN'
+              $ref: '#/components/schemas/Status'
             creationDate:
               type: string
               example: "2024-03-16"
@@ -675,7 +670,7 @@ components:
       description: Status of the order
       type: string
       enum:
-        - CREATED
+        - UNASSIGNED
         - TAKEN
         - SUCCESS
     Coordinates:

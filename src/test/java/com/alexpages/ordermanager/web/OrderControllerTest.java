@@ -26,8 +26,10 @@ import org.springframework.web.util.NestedServletException;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
+import com.alexpages.ordermanager.domain.Order;
 import com.alexpages.ordermanager.domain.OrderDTO;
 import com.alexpages.ordermanager.domain.OrderListResponse;
+import com.alexpages.ordermanager.domain.OrderOuputData;
 import com.alexpages.ordermanager.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.domain.OrderPostResponse;
 import com.alexpages.ordermanager.domain.PlaceOrderResponse;
@@ -80,63 +82,35 @@ class OrderControllerTest {
     
     @Test
     void testGetOrderListSuccess_200() throws Exception {
-        when(orderServiceImpl.getOrderList(any(), any())).thenReturn(generateValidOrderListResponse());
-        mockMvc.perform(get("/orders")
+        when(orderServiceImpl.getOrderList(any())).thenReturn(generateValidOrderOuputData());
+        mockMvc.perform(post("/orders/request")
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(header())
-                .queryParam("page", "1")  
-                .queryParam("limit", "10"))
+                .content(generateValidOrderInputData()))
                 .andExpect(status().is(HttpStatus.OK.value()));
     }
     
-    @Test
+	@Test
     void testGetOrderListSuccess_204() throws Exception 
     {
-    	when(orderServiceImpl.getOrderList(any(), any())).thenReturn(generateEmptyOrderListResponse()); 	
-        mockMvc.perform(get("/orders", 1L)
+    	when(orderServiceImpl.getOrderList(any())).thenReturn(new OrderOuputData()); 	
+        mockMvc.perform(post("/orders/request")
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(header())
-                .queryParam("page", "1")
-                .queryParam("limit", "10"))
-                .andExpect(status().is(HttpStatus.OK.value()));
+                .content(generateValidOrderInputData()))
+                .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
     }
-    
-    @Test
-    void testGetOrderListError_400_1() 
-	throws Exception 
-    {
-	  	try {
-            mockMvc.perform(get("/orders")
-                    .param("page", "0")
-                    .param("limit", "10")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .headers(header()));	
-    	} catch (NestedServletException e) {
-    		assertThat(e.getCause()).isInstanceOf(OrderManagerException400.class);
-    	}
-    }
-    
-    @Test
-    void testGetOrderListError_400_2() 
-	throws Exception 
-    {
-	  	try {
-            mockMvc.perform(get("/orders")
-                    .param("page", "1") 
-                    .param("limit", "0")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .headers(header()));	
-    	} catch (NestedServletException e) {
-    		assertThat(e.getCause()).isInstanceOf(OrderManagerException400.class);
-    	}
-    } 
-    
-    private String generateValidPlaceOrderRequestContent() {
-        return "{\n" +
-                "  \"origin\": [\"22.319\", \"114.169\"],\n" +
-                "  \"destination\": [\"22.2948341\", \"114.2329\"]\n" +
-                "}";
-    }
+        
+	private String generateValidPlaceOrderRequestContent() {
+	    return "{\n" +
+	            "  \"coordinates\": {\n" +  // Change to object instead of array
+	            "    \"origin\": [\"22.319\", \"114.169\"],\n" +
+	            "    \"destination\": [\"22.2948341\", \"114.2329\"]\n" +
+	            "  },\n" +
+	            "  \"description\": \"Pick up for Carlos\"\n" +
+	            "}";
+	}
+
 
     private String generateValidTakeOrderRequestContent() {
         return "{\n" +
@@ -144,10 +118,27 @@ class OrderControllerTest {
                 "}";
     }
     
-    private OrderListResponse generateValidOrderListResponse() {
-        ArrayList<OrderDTO> lOrderDTO = new ArrayList<>();
-        lOrderDTO.add(easyRandom.nextObject(OrderDTO.class));
-        return OrderListResponse.builder().orders(lOrderDTO).build();
+    private String generateValidOrderInputData() {
+        return "{\n" +
+                "  \"inputSearch\": {\n" +
+                "    \"orderId\": 123456,\n" +
+                "    \"status\": \"TAKEN\",\n" +
+                "    \"creationDate\": \"2024-04-02\"\n" +
+                "  },\n" +
+                "  \"paginationBody\": {\n" +
+                "    \"page\": 1,\n" +
+                "    \"size\": 10\n" +
+                "  }\n" +
+                "}";
+    }
+    
+    private OrderOuputData generateValidOrderOuputData() {
+        ArrayList<Order> lOrder = new ArrayList<>();
+        lOrder.add(easyRandom.nextObject(Order.class));
+        
+        OrderOuputData response = new OrderOuputData();
+        response.setOrders(lOrder);
+        return response;
     }
     
     private OrderListResponse generateEmptyOrderListResponse() {

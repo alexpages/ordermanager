@@ -27,7 +27,9 @@ import org.springframework.data.domain.Pageable;
 
 import com.alexpages.ordermanager.domain.Coordinates;
 import com.alexpages.ordermanager.domain.OrderDTO;
+import com.alexpages.ordermanager.domain.OrderInputData;
 import com.alexpages.ordermanager.domain.OrderPostRequest;
+import com.alexpages.ordermanager.domain.PaginationBody;
 import com.alexpages.ordermanager.domain.Status;
 import com.alexpages.ordermanager.domain.TakeOrderByIdRequest;
 import com.alexpages.ordermanager.entity.OrderEntity;
@@ -93,21 +95,14 @@ public class OrderServiceTest {
 	    List<OrderEntity> orderEntities = easyRandom.objects(OrderEntity.class, 2).collect(Collectors.toList());
 	    Pageable pageable = PageRequest.of(1, 10);
 	    when(orderRepository.findAll(pageable)).thenReturn(new PageImpl<>(orderEntities, pageable, orderEntities.size()));
-	    when(orderMapper.toOrderDTOList(any())).thenReturn(easyRandom.objects(OrderDTO.class, 2).collect(Collectors.toList()));
-	    assertNotNull(orderServiceImpl.getOrderList(2, 10));
+	    assertNotNull(orderServiceImpl.getOrderList(generateValidOrderInputData()));
 	}
 
 	@Test
     void testGetOrderListError()
     {
 	   	when(orderRepository.findAll()).thenThrow(new RuntimeException("some error"));
-		assertThrows(OrderManagerException500.class, () -> orderServiceImpl.getOrderList(1, 10));
-    }
-	@Test
-    void testGetOrderListError_Null()
-    {
-		assertThrows(NullPointerException.class, () -> orderServiceImpl.getOrderList(null, 1));
-		assertThrows(NullPointerException.class, () -> orderServiceImpl.getOrderList(1, null));
+		assertThrows(OrderManagerException500.class, () -> orderServiceImpl.getOrderList(generateValidOrderInputData()));
     }
 	
 	@Test
@@ -151,6 +146,16 @@ public class OrderServiceTest {
 	{
 		assertThrows(NullPointerException.class, () -> orderServiceImpl.takeOrder(null, generateValidTakeOrderByIdRequest()));
 		assertThrows(NullPointerException.class, () -> orderServiceImpl.takeOrder(1L, null));
+	}
+	
+	private OrderInputData generateValidOrderInputData() {
+		OrderInputData orderInputData = new OrderInputData();
+		orderInputData.setInputSearch(null);
+		PaginationBody pagination = new PaginationBody();
+		pagination.setPage(new BigDecimal(2));
+		pagination.setSize(new BigDecimal(10));
+		orderInputData.setPaginationBody(pagination);
+		return orderInputData;
 	}
 
 	private TakeOrderByIdRequest generateValidTakeOrderByIdRequest() {

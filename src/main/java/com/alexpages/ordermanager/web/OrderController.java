@@ -14,8 +14,11 @@ import com.alexpages.ordermanager.domain.OrderOutputAudit;
 import com.alexpages.ordermanager.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.domain.OrderPostRequest;
 import com.alexpages.ordermanager.domain.OrderPostResponse;
+import com.alexpages.ordermanager.domain.PaginationBody;
 import com.alexpages.ordermanager.domain.TakeOrderByIdRequest;
+import com.alexpages.ordermanager.error.OrderManagerException400;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
+import com.alexpages.ordermanager.utils.ListUtils;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +42,24 @@ public class OrderController implements OrdersApi {
 	}
 	
 	@Override
+	public ResponseEntity<OrderOuputData> postOrdersRequest(@Valid OrderInputData orderInputData) 
+	{
+		PaginationBody pagination = orderInputData.getPaginationBody();
+		if (pagination.getPage().intValue() < 1) {
+			throw new OrderManagerException400("Page number must start with 1");
+		}
+		if (pagination.getSize().intValue() <= 0) {
+			throw new OrderManagerException400("Limit should be a positive integer higher than 0");
+		}
+		OrderOuputData response = orderServiceImpl.getOrderList(orderInputData);
+		if (ListUtils.isBlank(response.getOrders())){
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		} else {
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+	}
+
+	@Override
 	public ResponseEntity<Void> deleterOrderById(Long orderId) 
 	{
 		return null;
@@ -57,26 +78,5 @@ public class OrderController implements OrdersApi {
 
 
 
-	@Override
-	public ResponseEntity<OrderOuputData> postOrdersRequest(@Valid OrderInputData orderInputData) 
-	{
-		
-		return null;
-	}
-
-
-//
-//	@Override
-//	public ResponseEntity<List<OrderDTO>> getOrderList(int page, int limit) {
-//		if (page < 1) {
-//			throw new OrderManagerException400("Page number must start with 1");
-//		}
-//		if (limit <= 0) {
-//			throw new OrderManagerException400("Limit should be a positive integer higher than 0");
-//		}
-//		OrderListResponse orderListResponse = orderServiceImpl.getOrderList(page, limit);
-//		return new ResponseEntity<>(orderListResponse.getOrders(), HttpStatus.OK);
-//	}
-	
 	
 }

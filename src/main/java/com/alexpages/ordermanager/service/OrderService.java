@@ -1,6 +1,8 @@
 package com.alexpages.ordermanager.service;
 
+import com.alexpages.ordermanager.domain.OrderInputData;
 import com.alexpages.ordermanager.domain.OrderListResponse;
+import com.alexpages.ordermanager.domain.OrderOuputData;
 import com.alexpages.ordermanager.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.domain.OrderPostRequest;
 import com.alexpages.ordermanager.domain.OrderPostResponse;
@@ -13,8 +15,8 @@ public interface OrderService
 
 	public OrderPostResponse postOrder(@NonNull OrderPostRequest orderPostRequest);
 
-	public OrderListResponse getOrderList(@NonNull Integer page, @NonNull Integer limit);
+	public OrderOuputData getOrderList(OrderInputData orderInputData);
 
 	public OrderPatchResponse takeOrder(@NonNull Long orderId, @NonNull TakeOrderByIdRequest takeOrderByIdRequest);
-	
+
 }

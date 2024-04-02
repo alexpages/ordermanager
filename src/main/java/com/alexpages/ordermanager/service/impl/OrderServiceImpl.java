@@ -9,7 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alexpages.ordermanager.domain.OrderInputData;
 import com.alexpages.ordermanager.domain.OrderListResponse;
+import com.alexpages.ordermanager.domain.OrderOuputData;
 import com.alexpages.ordermanager.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.domain.OrderPostRequest;
 import com.alexpages.ordermanager.domain.OrderPostResponse;
@@ -68,19 +70,15 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public OrderListResponse getOrderList(@NonNull Integer page, @NonNull Integer limit) {
+	public OrderOuputData getOrderList(OrderInputData orderInputData) {
 		try {
-			log.info("OrderServiceImpl > listOrders > page: {}, limit: {}", page, limit);
-			PaginationBody paginationBody = new PaginationBody();
-			paginationBody.setPage(new BigDecimal(page));
-			paginationBody.setSize(new BigDecimal(limit));
-			Pageable pageable = PageableUtils.getPageable(paginationBody);
+			Pageable pageable = PageableUtils.getPageable(orderInputData.getPaginationBody());
 			Page<OrderEntity> pOrderEntityPageable = orderRepository.findAll(pageable);
 			log.info("OrderServiceImpl > listOrders > Page found: {}", pOrderEntityPageable);
 			
-			return OrderListResponse.builder()
-					.orders(orderMapper.toOrderDTOList(pOrderEntityPageable.getContent()))
-					.build();
+			OrderOuputData response = new OrderOuputData();
+			response.setOrders(orderMapper.toOrder(pOrderEntityPageable.getContent()));
+			return response;
 			
 		} catch (Exception e) {
 			log.error("OrderServiceImpl > listOrders > It could not get the list of orders: [" + e.getMessage() + "]");
