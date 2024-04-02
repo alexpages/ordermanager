@@ -115,6 +115,15 @@ public class OrderServiceImpl implements OrderService {
 			throw new OrderManagerException409("Order with ID: [" + orderId + "] was locked by another user");
 		}
 	}
+	
+	@Transactional
+	@Override
+	public void deleteOrderById(@NonNull Long orderId) {
+	    if (!orderRepository.existsById(orderId)) {
+	        throw new OrderManagerException404("Order with id: [" + orderId + "] was not found");
+	    }
+	    orderRepository.deleteById(orderId);
+	}
 
 	private void validatePlaceOrderRequest(OrderPostRequest orderPostRequest) {
  		if (!orderPostRequest.getCoordinates().getOrigin().get(0).matches(LATITUDE_PATTERN)	|| !orderPostRequest.getCoordinates().getOrigin().get(1).matches(LONGITUDE_PATTERN)) {
@@ -124,4 +133,5 @@ public class OrderServiceImpl implements OrderService {
 			throw new OrderManagerException400("Destination coordinates are incorrect");
 		}
 	}
+
 }

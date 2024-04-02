@@ -3,6 +3,7 @@ package com.alexpages.ordermanager.service.impl;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -17,6 +18,8 @@ import org.jeasy.random.api.Randomizer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -87,6 +90,18 @@ public class OrderServiceTest {
 	@Test
 	void testPlaceOrderError_Null() {
 		assertThrows(NullPointerException.class, () -> orderServiceImpl.postOrder(null));
+	}
+	
+	@Test
+	void testDeleteOrderSuccess() throws Exception {
+		when(orderRepository.existsById(any())).thenReturn(true);
+	    doNothing().when(orderRepository).deleteById(any());
+	    assertDoesNotThrow(() -> orderServiceImpl.deleteOrderById(1L));
+	}
+	@Test
+	void testDeleteOrderError() throws Exception {
+		when(orderRepository.existsById(any())).thenReturn(false);
+	    assertThrows(OrderManagerException404.class, () -> orderServiceImpl.deleteOrderById(1L));
 	}
 
 	@Test

@@ -62,7 +62,8 @@ public class OrderController implements OrdersApi {
 	@Override
 	public ResponseEntity<Void> deleterOrderById(Long orderId) 
 	{
-		return null;
+		orderServiceImpl.deleteOrderById(orderId);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 	@Override

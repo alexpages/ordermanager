@@ -19,4 +19,6 @@ public interface OrderService
 
 	public OrderPatchResponse takeOrder(@NonNull Long orderId, @NonNull TakeOrderByIdRequest takeOrderByIdRequest);
 
+	public void deleteOrderById(@NonNull Long orderId);
+
 }

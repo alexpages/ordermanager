@@ -2,7 +2,10 @@ package com.alexpages.ordermanager.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -35,6 +38,7 @@ import com.alexpages.ordermanager.domain.OrderPostResponse;
 import com.alexpages.ordermanager.domain.PlaceOrderResponse;
 import com.alexpages.ordermanager.domain.TakeOrderResponse;
 import com.alexpages.ordermanager.error.OrderManagerException400;
+import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
 
 @SpringBootTest
@@ -100,7 +104,26 @@ class OrderControllerTest {
                 .content(generateValidOrderInputData()))
                 .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
     }
-        
+	
+	@Test
+	void testDeleteOrder_204() throws Exception {
+	    doNothing().when(orderServiceImpl).deleteOrderById(any());
+	    mockMvc.perform(delete("/orders/{id}", 1L)
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .headers(header())
+	            .content("{}"))
+	            .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
+	}
+	
+	@Test
+	void testDeleteOrder_404() throws Exception {
+	    mockMvc.perform(delete("/orders/{id}", 1L)
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .headers(header())
+	            .content("{}"))
+	            .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
+	}
+
 	private String generateValidPlaceOrderRequestContent() {
 	    return "{\n" +
 	            "  \"coordinates\": {\n" +  // Change to object instead of array
