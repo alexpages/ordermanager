@@ -31,20 +31,15 @@ public class GoogleMapsServiceImpl implements GoogleMapsService
 	public int getDistanceFromDistanceMatrix(@NonNull OrderPostRequest orderPostRequest) throws Exception 
 	{
 	    log.info("GoogleMapsServiceImpl > getDistanceFromDistanceMatrix > PlaceOrderRequest: {}", orderPostRequest);
-	    try {    	
-	    	DistanceMatrixRow[] rows = getDistanceMatrixRow(orderPostRequest);
-	        if (rows.length > 0 && rows[0].elements.length > 0 && rows[0].elements[0].distance != null) {
-	            long distanceInMeters = Math.toIntExact(rows[0].elements[0].distance.inMeters);
-	            log.info("Distance Matrix result: {} meters", distanceInMeters);
-	            return Math.toIntExact(distanceInMeters);
-	        } else {
-	            log.error("GoogleMapsServiceImpl > getDistanceFromDistanceMatrix > Invalid set of coordinates. Empty or invalid Distance Matrix result");
-				throw new OrderManagerException500("GoogleMapsServiceImpl > getDistanceFromDistanceMatrix > Invalid set of coordinates. Empty or invalid Distance Matrix result");
-	        }
-	    } catch (Exception eException) {
-	        log.error("GoogleMapsServiceImpl > getDistanceFromDistanceMatrix > Error in GoogleMapsServiceImpl", eException);
-			throw eException; //handled on service layer
-	    }
+    	DistanceMatrixRow[] rows = getDistanceMatrixRow(orderPostRequest);
+        if (rows.length > 0 && rows[0].elements.length > 0 && rows[0].elements[0].distance != null) {
+            long distanceInMeters = Math.toIntExact(rows[0].elements[0].distance.inMeters);
+            log.info("Distance Matrix result: {} meters", distanceInMeters);
+            return Math.toIntExact(distanceInMeters);
+        } else {
+            log.error("GoogleMapsServiceImpl > getDistanceFromDistanceMatrix > Invalid set of coordinates. Empty or invalid Distance Matrix result");
+			throw new OrderManagerException500("GoogleMapsServiceImpl > getDistanceFromDistanceMatrix > Invalid set of coordinates. Empty or invalid Distance Matrix result");
+        }
 	}
 	
 	private DistanceMatrixRow[] getDistanceMatrixRow(@NonNull OrderPostRequest orderPostRequest) 

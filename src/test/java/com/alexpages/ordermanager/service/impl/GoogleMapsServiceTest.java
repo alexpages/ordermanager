@@ -46,11 +46,12 @@ public class GoogleMapsServiceTest {
 	{
 		if (!"YOUR_API_KEY".equals(key)) { //TODO Precondition to avoid failing test: Introduce a valid key on application.yml
 	        ReflectionTestUtils.setField(googleMapsServiceImpl, "key", key);
-	        assertThrows(OrderManagerException500.class, () ->googleMapsServiceImpl.getDistanceFromDistanceMatrix(generateWrongOrderPostRequest()));
+            assertThrows(OrderManagerException500.class, () -> googleMapsServiceImpl.getDistanceFromDistanceMatrix(generateWrongOrderPostRequest()));     
+
 		}
     }
 	
-	private OrderPostRequest generateWrongOrderPostRequest() {
+	private OrderPostRequest generateValidOrderPostRequest() {
 	    OrderPostRequest request = new OrderPostRequest();
 	    Coordinates coordinates = new Coordinates();
 	    coordinates.setOrigin(Arrays.asList("22.319", "114.169"));
@@ -59,7 +60,7 @@ public class GoogleMapsServiceTest {
 	    return request;
 	}
 	
-	private OrderPostRequest generateValidOrderPostRequest() {
+	private OrderPostRequest generateWrongOrderPostRequest() {
 	    OrderPostRequest request = new OrderPostRequest();
 	    Coordinates coordinates = new Coordinates();
 	    coordinates.setOrigin(Arrays.asList("22.319", "114.169"));
