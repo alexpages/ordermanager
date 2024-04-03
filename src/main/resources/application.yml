@@ -9,4 +9,4 @@ spring:
 
 thirdparties:
   google:
-    key: AIzaSyAtmF-sdGsz0tdqnxqSilJ6kVagwsMie90
+    key: YOUR_API_KEY
