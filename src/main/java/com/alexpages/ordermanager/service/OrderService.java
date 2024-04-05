@@ -1,13 +1,13 @@
 package com.alexpages.ordermanager.service;
 
-import com.alexpages.ordermanager.domain.GetOrderAuditRequest;
-import com.alexpages.ordermanager.domain.OrderInputData;
-import com.alexpages.ordermanager.domain.OrderOutputAudit;
-import com.alexpages.ordermanager.domain.OrderOutputData;
-import com.alexpages.ordermanager.domain.OrderPatchInput;
-import com.alexpages.ordermanager.domain.OrderPatchResponse;
-import com.alexpages.ordermanager.domain.OrderPostRequest;
-import com.alexpages.ordermanager.domain.OrderPostResponse;
+import com.alexpages.ordermanager.api.domain.GetOrderAuditRequest;
+import com.alexpages.ordermanager.api.domain.OrderInputData;
+import com.alexpages.ordermanager.api.domain.OrderOutputAudit;
+import com.alexpages.ordermanager.api.domain.OrderOutputData;
+import com.alexpages.ordermanager.api.domain.OrderPatchInput;
+import com.alexpages.ordermanager.api.domain.OrderPatchResponse;
+import com.alexpages.ordermanager.api.domain.OrderPostRequest;
+import com.alexpages.ordermanager.api.domain.OrderPostResponse;
 
 import jakarta.validation.Valid;
 import lombok.NonNull;

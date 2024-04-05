@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.alexpages.ordermanager.domain.Coordinates;
-import com.alexpages.ordermanager.domain.OrderPostRequest;
+import com.alexpages.ordermanager.api.domain.Coordinates;
+import com.alexpages.ordermanager.api.domain.OrderPostRequest;
 import com.alexpages.ordermanager.error.OrderManagerException500;
 
 @SpringBootTest

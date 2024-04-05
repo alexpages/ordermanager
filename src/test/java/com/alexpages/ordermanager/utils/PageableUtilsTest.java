@@ -11,7 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 
-import com.alexpages.ordermanager.domain.PaginationBody;
+import com.alexpages.ordermanager.api.domain.PaginationBody;
 
 @ExtendWith(MockitoExtension.class)
 public class PageableUtilsTest

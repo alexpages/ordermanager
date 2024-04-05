@@ -4,8 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.alexpages.ordermanager.domain.PageResponse;
-import com.alexpages.ordermanager.domain.PaginationBody;
+import com.alexpages.ordermanager.api.domain.PageResponse;
+import com.alexpages.ordermanager.api.domain.PaginationBody;
 
 public class PageableUtils
 {

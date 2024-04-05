@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
-import com.alexpages.ordermanager.domain.OrderDetails;
+import com.alexpages.ordermanager.api.domain.OrderDetails;
 import com.alexpages.ordermanager.entity.OrderEntity;
 
 import jakarta.validation.Valid;

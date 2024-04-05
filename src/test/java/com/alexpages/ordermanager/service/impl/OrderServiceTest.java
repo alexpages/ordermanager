@@ -28,12 +28,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.alexpages.ordermanager.domain.Coordinates;
-import com.alexpages.ordermanager.domain.OrderInputData;
-import com.alexpages.ordermanager.domain.OrderPatchInput;
-import com.alexpages.ordermanager.domain.OrderPostRequest;
-import com.alexpages.ordermanager.domain.PaginationBody;
-import com.alexpages.ordermanager.domain.Status;
+import com.alexpages.ordermanager.api.domain.Coordinates;
+import com.alexpages.ordermanager.api.domain.OrderInputData;
+import com.alexpages.ordermanager.api.domain.OrderPatchInput;
+import com.alexpages.ordermanager.api.domain.OrderPostRequest;
+import com.alexpages.ordermanager.api.domain.PaginationBody;
+import com.alexpages.ordermanager.api.domain.Status;
 import com.alexpages.ordermanager.entity.OrderEntity;
 import com.alexpages.ordermanager.error.OrderManagerException400;
 import com.alexpages.ordermanager.error.OrderManagerException404;

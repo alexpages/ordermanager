@@ -25,11 +25,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
-import com.alexpages.ordermanager.domain.OrderDetails;
-import com.alexpages.ordermanager.domain.OrderOutputAudit;
-import com.alexpages.ordermanager.domain.OrderOutputData;
-import com.alexpages.ordermanager.domain.OrderPatchResponse;
-import com.alexpages.ordermanager.domain.OrderPostResponse;
+import com.alexpages.ordermanager.api.domain.OrderDetails;
+import com.alexpages.ordermanager.api.domain.OrderOutputAudit;
+import com.alexpages.ordermanager.api.domain.OrderOutputData;
+import com.alexpages.ordermanager.api.domain.OrderPatchResponse;
+import com.alexpages.ordermanager.api.domain.OrderPostResponse;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
 
 @SpringBootTest

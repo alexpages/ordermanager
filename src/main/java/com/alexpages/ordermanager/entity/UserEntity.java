@@ -11,7 +11,7 @@ import jakarta.persistence.Column;
 
 import org.springframework.validation.annotation.Validated;
 
-import com.alexpages.ordermanager.domain.User;
+import com.alexpages.ordermanager.api.domain.User;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
