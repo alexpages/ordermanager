@@ -1,6 +1,7 @@
 package com.alexpages.ordermanager.entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +13,8 @@ import jakarta.persistence.Version;
 
 import org.hibernate.annotations.OptimisticLocking;
 import org.springframework.validation.annotation.Validated;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -37,6 +40,10 @@ implements Serializable
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
     
+    @Column(name = "DESCRIPTION")
+	@NotNull
+    private String description;
+    
     @Column(name = "DISTANCE")
 	@NotNull
     private int distance;
@@ -44,6 +51,10 @@ implements Serializable
     @Column(name = "STATUS")
 	@NotNull
     private String status;
+    
+    @Column(name = "CREATION_DATE")
+	@NotNull
+    private LocalDateTime creationDate;
 	
     @Column(name = "VERSION")
     @Version

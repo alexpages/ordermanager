@@ -2,8 +2,8 @@ package com.alexpages.ordermanager.service;
 
 import com.alexpages.ordermanager.domain.GetOrderAuditRequest;
 import com.alexpages.ordermanager.domain.OrderInputData;
-import com.alexpages.ordermanager.domain.OrderOuputData;
 import com.alexpages.ordermanager.domain.OrderOutputAudit;
+import com.alexpages.ordermanager.domain.OrderOutputData;
 import com.alexpages.ordermanager.domain.OrderPatchInput;
 import com.alexpages.ordermanager.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.domain.OrderPostRequest;
@@ -17,7 +17,7 @@ public interface OrderService
 
 	public OrderPostResponse postOrder(@NonNull OrderPostRequest orderPostRequest);
 
-	public OrderOuputData getOrderList(OrderInputData orderInputData);
+	public OrderOutputData getOrderList(OrderInputData orderInputData);
 
 	public void deleteOrderById(@NonNull Long orderId);
 

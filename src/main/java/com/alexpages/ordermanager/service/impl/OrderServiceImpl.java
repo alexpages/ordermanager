@@ -1,8 +1,9 @@
 package com.alexpages.ordermanager.service.impl;
 
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.mapstruct.ap.shaded.freemarker.template.utility.DateUtil;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,8 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alexpages.ordermanager.domain.GetOrderAuditRequest;
 import com.alexpages.ordermanager.domain.OrderInputData;
-import com.alexpages.ordermanager.domain.OrderOuputData;
+import com.alexpages.ordermanager.domain.OrderInputDataInputSearch;
 import com.alexpages.ordermanager.domain.OrderOutputAudit;
+import com.alexpages.ordermanager.domain.OrderOutputData;
 import com.alexpages.ordermanager.domain.OrderPatchInput;
 import com.alexpages.ordermanager.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.domain.OrderPostRequest;
@@ -26,6 +28,7 @@ import com.alexpages.ordermanager.error.OrderManagerException500;
 import com.alexpages.ordermanager.mapper.OrderMapper;
 import com.alexpages.ordermanager.repository.OrderRepository;
 import com.alexpages.ordermanager.service.OrderService;
+import com.alexpages.ordermanager.utils.DateUtils;
 import com.alexpages.ordermanager.utils.PageableUtils;
 
 import jakarta.validation.Valid;
@@ -55,7 +58,13 @@ public class OrderServiceImpl implements OrderService {
 			int distance = googleMapsServiceImpl.getDistanceFromDistanceMatrix(orderPostRequest);
 			log.info("OrderServiceImpl > placeOrder > Distance calculated: {}", distance);
 
-			OrderEntity savedEntity = orderRepository.save(OrderEntity.builder().distance(distance).status("UNASSIGNED").build());
+			OrderEntity savedEntity = orderRepository.save(
+					OrderEntity.builder()
+					.distance(distance)
+					.description(orderPostRequest.getDescription())
+					.creationDate(LocalDateTime.now())
+					.status("UNASSIGNED")
+					.build());
 			
 			OrderPostResponse response = new OrderPostResponse();
 			response.setDistance(savedEntity.getDistance());
@@ -70,14 +79,27 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public OrderOuputData getOrderList(OrderInputData orderInputData) {
+	public OrderOutputData getOrderList(OrderInputData orderInputData) {
 		try {
 			Pageable pageable = PageableUtils.getPageable(orderInputData.getPaginationBody());
-			Page<OrderEntity> pOrderEntityPageable = orderRepository.findAll(pageable);
-			log.info("OrderServiceImpl > listOrders > Page found: {}", pOrderEntityPageable);
+			OrderInputDataInputSearch inputSearch;
 			
-			OrderOuputData response = new OrderOuputData();
-			response.setOrders(orderMapper.toOrder(pOrderEntityPageable.getContent()));
+			if(orderInputData.getInputSearch() != null) {
+				inputSearch = orderInputData.getInputSearch();
+			} else {
+				inputSearch = new OrderInputDataInputSearch();	// Object with nulls
+			}
+			log.info("OrderServiceImpl > listOrders > Orders: {}", orderInputData.toString());
+			Page<OrderEntity> pageOrderEntity = orderRepository.filterByParams(
+					inputSearch.getOrderId(),
+					getStatus(inputSearch.getStatus()),
+					DateUtils.toLocalDateTime(inputSearch.getStartCreationDate()),
+					DateUtils.toLocalDateTime(inputSearch.getEndCreationDate()),
+					pageable);
+			log.info("OrderServiceImpl > listOrders > Orders: {}", pageOrderEntity.getContent());
+			OrderOutputData response = new OrderOutputData();
+			response.setOrders(orderMapper.toOrderList(pageOrderEntity.getContent()));
+			response.setPageResponse(PageableUtils.getPaginationResponse(pageOrderEntity, pageOrderEntity.getPageable()));
 			return response;
 			
 		} catch (Exception e) {
@@ -85,7 +107,7 @@ public class OrderServiceImpl implements OrderService {
 			throw new OrderManagerException500("OrderServiceImpl > listOrders > Order list could not get retrieved, Exception: [" + e.getMessage() + "]");
 		}
 	}
-
+	
 	@Transactional
 	@Override
 	public OrderPatchResponse takeOrder(@NonNull Long orderId, @NonNull OrderPatchInput orderPatchInput) {
@@ -139,6 +161,13 @@ public class OrderServiceImpl implements OrderService {
 			throw new OrderManagerException400("Destination coordinates are incorrect");
 		}
 	}
-
+	
+	private String getStatus(Status status) {
+		String statusValue = null;
+		if (status != null) {
+			statusValue = status.getValue();
+		}
+		return statusValue;
+	}
 
 }

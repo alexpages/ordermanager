@@ -1,12 +1,9 @@
 package com.alexpages.ordermanager.web;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,17 +22,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.util.NestedServletException;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
-import com.alexpages.ordermanager.domain.Order;
-import com.alexpages.ordermanager.domain.OrderOuputData;
+import com.alexpages.ordermanager.domain.OrderDetails;
 import com.alexpages.ordermanager.domain.OrderOutputAudit;
+import com.alexpages.ordermanager.domain.OrderOutputData;
 import com.alexpages.ordermanager.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.domain.OrderPostResponse;
-import com.alexpages.ordermanager.error.OrderManagerException400;
-import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
 
 @SpringBootTest
@@ -83,7 +77,7 @@ class OrderControllerTest {
     
     @Test
     void testGetOrderListSuccess_200() throws Exception {
-        when(orderServiceImpl.getOrderList(any())).thenReturn(generateValidOrderOuputData());
+        when(orderServiceImpl.getOrderList(any())).thenReturn(generateValidOrderOutputData());
         mockMvc.perform(post("/orders/request")
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(header())
@@ -94,7 +88,7 @@ class OrderControllerTest {
 	@Test
     void testGetOrderListSuccess_204() throws Exception 
     {
-    	when(orderServiceImpl.getOrderList(any())).thenReturn(new OrderOuputData()); 	
+    	when(orderServiceImpl.getOrderList(any())).thenReturn(new OrderOutputData()); 	
         mockMvc.perform(post("/orders/request")
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(header())
@@ -173,17 +167,14 @@ class OrderControllerTest {
                 "}";
     }
     
-    private OrderOuputData generateValidOrderOuputData() {
-        ArrayList<Order> lOrder = new ArrayList<>();
-        lOrder.add(easyRandom.nextObject(Order.class));
+    private OrderOutputData generateValidOrderOutputData() {
+        ArrayList<OrderDetails> lOrderDetails = new ArrayList<>();
+        lOrderDetails.add(easyRandom.nextObject(OrderDetails.class));
         
-        OrderOuputData response = new OrderOuputData();
-        response.setOrders(lOrder);
+        OrderOutputData response = new OrderOutputData();
+        response.setOrders(lOrderDetails);
         return response;
     }
     
-//    private OrderPostResponse generateEmptyOrderListResponse() {
-//        ArrayList<OrderDTO> lOrderDTO = new ArrayList<>();
-//        return OrderListResponse.builder().orders(lOrderDTO).build();
-//    }
+
 }

@@ -66,7 +66,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrderOuputData'
+                $ref: '#/components/schemas/OrderOutputData'
         '204':
           description: No Content
         '500':
@@ -409,6 +409,7 @@ components:
           type: string
           format: date
           description: Date of the action
+          example: '2023-12-01'
         action:
           type: string
           enum:
@@ -446,6 +447,7 @@ components:
                 - ADMIN
             creationDate:
               type: string
+              format: date
               example: "2024-03-16"
               description: Date of creation of the order
         paginationBody:
@@ -490,12 +492,12 @@ components:
           description: description of the order
         creationDate:
           type: string
-          format: date-time
+          format: date
           description: create date of the order
           example: '2017-07-21T17:32:28Z'
         lastModified:
           type: string
-          format: date-time
+          format: date
           description: create date of the order
           example: '2017-08-21T17:32:28Z'
         status:
@@ -547,21 +549,52 @@ components:
               description: id of order request
             status:
               $ref: '#/components/schemas/Status'
-            creationDate:
+            startCreationDate:
               type: string
-              example: "2024-03-16"
-              description: Date of creation of the order
+              example: "2023-01-01"
+              format: date
+              description: Start date to be considered when filtering orders
+            endCreationDate:
+              type: string
+              format: date
+              example: "2024-04-20"
+              description: End date to be considered when filtering orders
         paginationBody:
           $ref: '#/components/schemas/PaginationBody'    
-    OrderOuputData:
+    OrderOutputData:
       type: object
       properties:
         orders:
           type: array
           items:
-            $ref: '#/components/schemas/Order'
+            $ref: '#/components/schemas/OrderDetails'
         pageResponse:
           $ref: '#/components/schemas/PageResponse'
+    OrderDetails:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the order
+        description:
+          type: string
+          example: "Pickup for Carlos"
+          description: description of the order
+        distance:
+          $ref: '#/components/schemas/Distance'
+        status:
+          $ref: '#/components/schemas/Status'
+        creationDate:
+          type: string
+          format: date
+          example: "2024-04-20"
+          description: Date of creation of the order  
+        version:
+          type: integer
+          format: int64
+          description: Version of the order
+          example: 1
     OrderPostRequest:
       required:
         - coordinates
@@ -579,9 +612,7 @@ components:
       type: object
       properties:
         distance:
-          type: integer
-          example: 2040
-          description: distance between origin and destination coordinates
+         $ref: '#/components/schemas/Distance'
         status:
           $ref: '#/components/schemas/Status'
         orderId:
@@ -589,6 +620,10 @@ components:
           format: int64
           example: 1
           description: id of order creation    
+    Distance:
+      type: integer
+      example: 2040
+      description: distance between origin and destination coordinates
     OrderPatchResponse:
       type: object
       properties:

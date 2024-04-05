@@ -7,10 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alexpages.ordermanager.api.OrdersApi;
 import com.alexpages.ordermanager.domain.GetOrderAuditRequest;
 import com.alexpages.ordermanager.domain.OrderDetailResponse;
-import com.alexpages.ordermanager.domain.OrderInputAudit;
 import com.alexpages.ordermanager.domain.OrderInputData;
-import com.alexpages.ordermanager.domain.OrderOuputData;
 import com.alexpages.ordermanager.domain.OrderOutputAudit;
+import com.alexpages.ordermanager.domain.OrderOutputData;
 import com.alexpages.ordermanager.domain.OrderPatchInput;
 import com.alexpages.ordermanager.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.domain.OrderPostRequest;
@@ -42,7 +41,7 @@ public class OrderController implements OrdersApi {
 	}
 	
 	@Override
-	public ResponseEntity<OrderOuputData> postOrdersRequest(@Valid OrderInputData orderInputData) 
+	public ResponseEntity<OrderOutputData> postOrdersRequest(OrderInputData orderInputData) 
 	{
 		PaginationBody pagination = orderInputData.getPaginationBody();
 		if (pagination.getPage().intValue() < 1) {
@@ -51,7 +50,7 @@ public class OrderController implements OrdersApi {
 		if (pagination.getSize().intValue() <= 0) {
 			throw new OrderManagerException400("Limit should be a positive integer higher than 0");
 		}
-		OrderOuputData response = orderServiceImpl.getOrderList(orderInputData);
+		OrderOutputData response = orderServiceImpl.getOrderList(orderInputData);
 		if (ListUtils.isBlank(response.getOrders())){
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} else {

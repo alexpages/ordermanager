@@ -1,8 +1,10 @@
 package com.alexpages.ordermanager.utils;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.alexpages.ordermanager.domain.PageResponse;
 import com.alexpages.ordermanager.domain.PaginationBody;
 
 public class PageableUtils
@@ -21,18 +23,19 @@ public class PageableUtils
 		}
 		return pageable;
 	}
-//	public static PageResponse getPaginationResponse(Page<?> page, Pageable pageable)
-//	{
-//		PageResponse paginationResponse = null;
-//		if(pageable.isPaged())
-//		{
-//			paginationResponse = new PageResponse();
-//			Integer pageNumer = page.getNumber() + 1;
-//			paginationResponse.setNumber(pageNumer);
-//			paginationResponse.setSize(page.getSize());
-//			paginationResponse.setTotalPages(page.getTotalPages());
-//			paginationResponse.setTotalElements((long) page.getTotalElements());
-//		}
-//		return paginationResponse;
-//	}
+	
+	public static PageResponse getPaginationResponse(Page<?> page, Pageable pageable)
+	{
+		PageResponse paginationResponse = null;
+		if(pageable.isPaged())
+		{
+			paginationResponse = new PageResponse();
+			Integer pageNumer = page.getNumber() + 1;
+			paginationResponse.setNumber(pageNumer);
+			paginationResponse.setSize(page.getSize());
+			paginationResponse.setTotalPages(page.getTotalPages());
+			paginationResponse.setTotalElements((long) page.getTotalElements());
+		}
+		return paginationResponse;
+	}
 }

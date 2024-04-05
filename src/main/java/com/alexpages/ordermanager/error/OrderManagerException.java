@@ -13,13 +13,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderManagerException {
 
-	private final String error; 
-	
 	private HttpStatus status;
 	
 	private Throwable throwable;
 	
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime timestamp;
+    
+	private final String error; 
     
 }
