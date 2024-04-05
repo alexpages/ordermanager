@@ -686,14 +686,14 @@ components:
             type: string
             pattern: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$'
           description: Array containing [latitude, longitude] for origin
-          example: '41.412061, 2.016507'
+          example: ["41.412061", "2.016507"]
         destination:
           type: array
           items:
             type: string
             pattern: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$'
           description: Array containing [latitude, longitude] for destination
-          example: '41.381115, 2.119482'    
+          example: ["41.381115", "2.119482"]    
   responses:
     '204':
       description: No Content

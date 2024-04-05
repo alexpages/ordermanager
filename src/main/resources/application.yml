@@ -1,8 +1,11 @@
 spring:
+  h2:
+    console:
+      enabled: true
+      path: /console/ # http://localhost:8080/console
   profiles:
-    active: standalone
-#   when running docker, it overrides the profile using the spring profile "docker" defined in .env 
-    
+    active: standalone # when running docker, it overrides the profile using the spring profile "docker" defined in .env
+
 #logging:
 #  level:
 #    org.springframework: DEBUG
