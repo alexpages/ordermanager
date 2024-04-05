@@ -35,7 +35,6 @@ import com.alexpages.ordermanager.domain.OrderPostRequest;
 import com.alexpages.ordermanager.domain.PaginationBody;
 import com.alexpages.ordermanager.domain.Status;
 import com.alexpages.ordermanager.entity.OrderEntity;
-import com.alexpages.ordermanager.enums.OrderStatusEnum;
 import com.alexpages.ordermanager.error.OrderManagerException400;
 import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.error.OrderManagerException409;
@@ -204,10 +203,10 @@ public class OrderServiceTest {
 	}
 
 	private OrderEntity generateValidOrderEntity() {
-		return OrderEntity.builder().distance(1).status(OrderStatusEnum.UNASSIGNED.getValue()).build();
+		return OrderEntity.builder().distance(1).status(Status.UNASSIGNED.getValue()).build();
 	}
 	
 	private OrderEntity generateTakenOrderEntity() {
-		return OrderEntity.builder().distance(1).status(OrderStatusEnum.TAKEN.getValue()).build();
+		return OrderEntity.builder().distance(1).status(Status.TAKEN.getValue()).build();
 	}
 }

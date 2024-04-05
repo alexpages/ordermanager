@@ -1,5 +1,7 @@
 package com.alexpages.ordermanager.error;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,9 @@ public class OrderManagerExceptionHandler extends ResponseEntityExceptionHandler
 	public ResponseEntity<Object> handleExceptions(OrderManagerException404 e, WebRequest webRequest)
 	{
 		OrderManagerException exception = new OrderManagerException(e.getMessage());
+        exception.setStatus(HttpStatus.NOT_FOUND);
+        exception.setTimestamp(LocalDateTime.now());
+        exception.setThrowable(e.getCause());
 		return new ResponseEntity<>(exception, HttpStatus.NOT_FOUND);
 	}
 
@@ -25,6 +30,9 @@ public class OrderManagerExceptionHandler extends ResponseEntityExceptionHandler
 	public ResponseEntity<Object> handleExceptions(OrderManagerException500 e, WebRequest webRequest)
 	{
 		OrderManagerException exception = new OrderManagerException(e.getMessage());
+        exception.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        exception.setTimestamp(LocalDateTime.now());
+        exception.setThrowable(e.getCause());
 		return new ResponseEntity<>(exception, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
@@ -32,6 +40,9 @@ public class OrderManagerExceptionHandler extends ResponseEntityExceptionHandler
 	public ResponseEntity<Object> handleExceptions(OrderManagerException409 e, WebRequest webRequest) 
 	{
 		OrderManagerException exception = new OrderManagerException(e.getMessage());
+        exception.setStatus(HttpStatus.CONFLICT);
+        exception.setTimestamp(LocalDateTime.now());
+        exception.setThrowable(e.getCause());
 		return new ResponseEntity<>(exception, HttpStatus.CONFLICT);
 	}
 
@@ -39,24 +50,36 @@ public class OrderManagerExceptionHandler extends ResponseEntityExceptionHandler
 	public ResponseEntity<Object> handleExceptions(OrderManagerException400 e, WebRequest webRequest) 
 	{
 		OrderManagerException exception = new OrderManagerException(e.getMessage());
+        exception.setStatus(HttpStatus.BAD_REQUEST);
+        exception.setTimestamp(LocalDateTime.now());
+        exception.setThrowable(e.getCause());
 		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
 	}
 
-	public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
+	public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpHeaders headers,
 															   HttpStatus status, WebRequest request){
-		OrderManagerException exception = new OrderManagerException("Validation failed for the request: [" + ex.getMessage() + "]");
+		OrderManagerException exception = new OrderManagerException("Validation failed for the request: [" + e.getMessage() + "]");
+        exception.setStatus(HttpStatus.BAD_REQUEST);
+        exception.setTimestamp(LocalDateTime.now());
+        exception.setThrowable(e.getCause());
 		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
 	}
 
-	public ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers,
+	public ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException e, HttpHeaders headers,
 																	  HttpStatus status, WebRequest request){
-		OrderManagerException exception = new OrderManagerException("The specified request method is not supported: [" + ex.getMessage() + "]");
+		OrderManagerException exception = new OrderManagerException("The specified request method is not supported: [" + e.getMessage() + "]");
+        exception.setStatus(HttpStatus.BAD_REQUEST);
+        exception.setTimestamp(LocalDateTime.now());
+        exception.setThrowable(e.getCause());
 		return new ResponseEntity<>(exception, HttpStatus.METHOD_NOT_ALLOWED);
 	}
 
-	protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers,
+	protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException e, HttpHeaders headers,
 														HttpStatus status, WebRequest request){
-		OrderManagerException exception = new OrderManagerException("Parameter type is not valid for this request: [" + ex.getMessage() + "]");
+		OrderManagerException exception = new OrderManagerException("Parameter type is not valid for this request: [" + e.getMessage() + "]");
+        exception.setStatus(HttpStatus.BAD_REQUEST);
+        exception.setTimestamp(LocalDateTime.now());
+        exception.setThrowable(e.getCause());
 		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
 	}
 }

@@ -1,5 +1,11 @@
 package com.alexpages.ordermanager.error;
 
+import java.time.LocalDateTime;
+
+import org.springframework.http.HttpStatus;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -7,6 +13,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderManagerException {
 
-	private final String error; //message
-
+	private final String error; 
+	
+	private HttpStatus status;
+	
+	private Throwable throwable;
+	
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private LocalDateTime timestamp;
+    
 }
