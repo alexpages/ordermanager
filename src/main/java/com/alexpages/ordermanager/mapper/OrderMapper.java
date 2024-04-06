@@ -10,6 +10,7 @@ import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import com.alexpages.ordermanager.api.domain.OrderDetails;
+import com.alexpages.ordermanager.api.domain.Status;
 import com.alexpages.ordermanager.entity.OrderEntity;
 
 import jakarta.validation.Valid;
@@ -21,10 +22,20 @@ public interface OrderMapper {
 
 	@Mapping(target = "creationDate", source = "creationDate", qualifiedByName = "localDateTimeToLocalDate")
 	List<@Valid OrderDetails> toOrderList(List<OrderEntity> content);
+	
+	@Mapping(target = "creationDate", source = "creationDate", qualifiedByName = "localDateTimeToLocalDate")
+	@Mapping(target = "status", source = "status", qualifiedByName = "stringToStatus")
+	OrderDetails toOrderDetails(OrderEntity content);
 
 	@Named("localDateTimeToLocalDate")
 	default LocalDate localDateTimeToLocalDate(LocalDateTime localDatetime)
 	{
 		return localDatetime.toLocalDate();
+	}
+	
+	@Named("stringToStatus")
+	default Status stringToStatus(String status)
+	{
+		return Status.fromValue(status); // no need to check for null
 	}
 }

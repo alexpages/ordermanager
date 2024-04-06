@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alexpages.ordermanager.api.domain.GetOrderAuditRequest;
+import com.alexpages.ordermanager.api.domain.OrderDetails;
 import com.alexpages.ordermanager.api.domain.OrderInputData;
 import com.alexpages.ordermanager.api.domain.OrderInputDataInputSearch;
 import com.alexpages.ordermanager.api.domain.OrderOutputAudit;
@@ -96,12 +97,18 @@ public class OrderServiceImpl implements OrderService {
 					DateUtils.toLocalDateTime(inputSearch.getStartCreationDate()),
 					DateUtils.toLocalDateTime(inputSearch.getEndCreationDate()),
 					pageable);
-			log.info("OrderServiceImpl > listOrders > Orders: {}", pageOrderEntity.getContent());
-			OrderOutputData response = new OrderOutputData();
-			response.setOrders(orderMapper.toOrderList(pageOrderEntity.getContent()));
-			response.setPageResponse(PageableUtils.getPaginationResponse(pageOrderEntity, pageOrderEntity.getPageable()));
-			return response;
 			
+			if (pageOrderEntity != null) {
+			    log.info("OrderServiceImpl > listOrders > Orders: {}", pageOrderEntity.getContent());
+				log.info("OrderServiceImpl > listOrders > Orders: {}", pageOrderEntity.getContent());
+				OrderOutputData response = new OrderOutputData();
+				response.setOrders(orderMapper.toOrderList(pageOrderEntity.getContent()));
+				response.setPageResponse(PageableUtils.getPaginationResponse(pageOrderEntity, pageOrderEntity.getPageable()));
+				return response;
+			} else {
+			    log.error("OrderServiceImpl > listOrders > pageOrderEntity is null");
+			    return null;
+			}
 		} catch (Exception e) {
 			log.error("OrderServiceImpl > listOrders > It could not get the list of orders: [" + e.getMessage() + "]");
 			throw new OrderManagerException500("OrderServiceImpl > listOrders > Order list could not get retrieved, Exception: [" + e.getMessage() + "]");
@@ -152,6 +159,16 @@ public class OrderServiceImpl implements OrderService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public OrderDetails getOrderDetail(Long orderId) 
+	{
+		Optional<OrderEntity> oOrderEntity = orderRepository.findById(orderId);
+		if (oOrderEntity.isPresent()) {
+			return orderMapper.toOrderDetails(oOrderEntity.get());
+		}
+		return null;
+	}
 
 	private void validatePlaceOrderRequest(OrderPostRequest orderPostRequest) {
  		if (!orderPostRequest.getCoordinates().getOrigin().get(0).matches(LATITUDE_PATTERN)	|| !orderPostRequest.getCoordinates().getOrigin().get(1).matches(LONGITUDE_PATTERN)) {
@@ -169,5 +186,7 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return statusValue;
 	}
+	
+
 
 }

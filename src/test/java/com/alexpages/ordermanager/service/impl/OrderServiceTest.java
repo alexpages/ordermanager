@@ -1,12 +1,16 @@
 package com.alexpages.ordermanager.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -24,11 +28,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.alexpages.ordermanager.api.domain.Coordinates;
+import com.alexpages.ordermanager.api.domain.OrderDetails;
 import com.alexpages.ordermanager.api.domain.OrderInputData;
 import com.alexpages.ordermanager.api.domain.OrderPatchInput;
 import com.alexpages.ordermanager.api.domain.OrderPostRequest;
@@ -105,16 +111,17 @@ public class OrderServiceTest {
 	@Test
 	void testGetOrderListSuccess() 
 	{
-	    List<OrderEntity> orderEntities = easyRandom.objects(OrderEntity.class, 2).collect(Collectors.toList());
+	    List<OrderEntity> lOrderEntities = new ArrayList<>();
+	    lOrderEntities.add(generateValidOrderEntity());
 	    Pageable pageable = PageRequest.of(1, 10);
-	    when(orderRepository.findAll(pageable)).thenReturn(new PageImpl<>(orderEntities, pageable, orderEntities.size()));
+	    when(orderRepository.filterByParams(any(), any(), any(), any(), any())).thenReturn(new PageImpl<>(lOrderEntities, pageable, lOrderEntities.size()));
 	    assertNotNull(orderServiceImpl.getOrderList(generateValidOrderInputData()));
 	}
 
 	@Test
     void testGetOrderListError()
     {
-	   	when(orderRepository.findAll()).thenThrow(new RuntimeException("some error"));
+	    when(orderRepository.filterByParams(any(), any(), any(), any(), any())).thenThrow(new RuntimeException("some error"));
 		assertThrows(OrderManagerException500.class, () -> orderServiceImpl.getOrderList(generateValidOrderInputData()));
     }
 	
@@ -161,6 +168,30 @@ public class OrderServiceTest {
 		assertThrows(NullPointerException.class, () -> orderServiceImpl.takeOrder(1L, null));
 	}
 	
+	@Test
+	void testGetOrderDetails_success() 
+	{
+		when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
+		when(orderMapper.toOrderDetails(any(OrderEntity.class))).thenReturn(generateValidOrderDetails());
+		assertNotNull(orderServiceImpl.getOrderDetail(1L));
+	}
+	
+	private OrderDetails generateValidOrderDetails() {
+		OrderDetails orderDetails = new OrderDetails();
+		orderDetails.setCreationDate(LocalDate.now());
+		orderDetails.setDescription("Pickup for Carlos");
+		orderDetails.setId(1L);
+		orderDetails.setStatus(Status.UNASSIGNED);
+		orderDetails.setVersion(1L);
+		return orderDetails;
+	}
+
+	@Test
+	void testGetOrderDetails_null() {
+	    when(orderRepository.findById(any())).thenReturn(Optional.empty());
+	    assertNull(orderServiceImpl.getOrderDetail(1L));
+	}
+	
 	private OrderInputData generateValidOrderInputData() {
 		OrderInputData orderInputData = new OrderInputData();
 		orderInputData.setInputSearch(null);
@@ -203,7 +234,13 @@ public class OrderServiceTest {
 	}
 
 	private OrderEntity generateValidOrderEntity() {
-		return OrderEntity.builder().distance(1).status(Status.UNASSIGNED.getValue()).build();
+		return OrderEntity.builder()
+				.id(1L)
+				.distance(100)
+				.status(Status.UNASSIGNED.getValue())
+				.description("Pickup for Carlos")
+				.creationDate(LocalDateTime.now())
+				.build();
 	}
 	
 	private OrderEntity generateTakenOrderEntity() {

@@ -4,11 +4,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +32,7 @@ import com.alexpages.ordermanager.api.domain.OrderOutputAudit;
 import com.alexpages.ordermanager.api.domain.OrderOutputData;
 import com.alexpages.ordermanager.api.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.api.domain.OrderPostResponse;
+import com.alexpages.ordermanager.entity.OrderEntity;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
 
 @SpringBootTest
@@ -128,7 +131,8 @@ class OrderControllerTest {
 	}
 	
 	@Test
-	void testDeleteOrder_404() throws Exception {
+	void testDeleteOrder_404() throws Exception 
+	{
 	    mockMvc.perform(delete("/orders/{id}", 1L)
 	            .contentType(MediaType.APPLICATION_JSON)
 	            .headers(header())
@@ -136,6 +140,30 @@ class OrderControllerTest {
 	            .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
 	}
 
+	@Test
+	void testGetOrderDetail_200() throws Exception 
+	{
+		when(orderServiceImpl.getOrderDetail(1L)).thenReturn(easyRandom.nextObject(OrderDetails.class));
+		mockMvc.perform(get("/orders/{id}", 1L)
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .headers(header())
+	            .content("{}"))
+	            .andExpect(status().is(HttpStatus.OK.value()));
+	}
+	
+	@Test
+	void testGetOrderDetail_404() throws Exception 
+	{
+	    when(orderServiceImpl.getOrderDetail(1L)).thenReturn(null);
+	    mockMvc.perform(get("/orders/{id}", 1L)
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .headers(header())
+	            .content("{}"))
+	            .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
+	}
+
+	//Private functions
+	
 	private String generateValidPlaceOrderRequestContent() {
 	    return "{\n" +
 	            "  \"coordinates\": {\n" +  // Change to object instead of array

@@ -98,7 +98,7 @@ paths:
     get:
       tags:
         - orders
-      summary: Allows you to request a order
+      summary: Allows you to get the details of an order
       operationId: getOrderById
       description: >-
         Service that allows you to recover all the information related to a
@@ -111,7 +111,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrderDetailResponse'
+                $ref: '#/components/schemas/OrderDetails'
         '404':
           $ref: '#/components/responses/404'
         '500':

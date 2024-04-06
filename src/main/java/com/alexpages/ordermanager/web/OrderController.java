@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alexpages.ordermanager.api.OrdersApi;
 import com.alexpages.ordermanager.api.domain.GetOrderAuditRequest;
 import com.alexpages.ordermanager.api.domain.OrderDetailResponse;
+import com.alexpages.ordermanager.api.domain.OrderDetails;
 import com.alexpages.ordermanager.api.domain.OrderInputData;
 import com.alexpages.ordermanager.api.domain.OrderOutputAudit;
 import com.alexpages.ordermanager.api.domain.OrderOutputData;
@@ -15,6 +16,7 @@ import com.alexpages.ordermanager.api.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.api.domain.OrderPostRequest;
 import com.alexpages.ordermanager.api.domain.OrderPostResponse;
 import com.alexpages.ordermanager.api.domain.PaginationBody;
+import com.alexpages.ordermanager.entity.OrderEntity;
 import com.alexpages.ordermanager.error.OrderManagerException400;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
 import com.alexpages.ordermanager.utils.ListUtils;
@@ -66,9 +68,14 @@ public class OrderController implements OrdersApi {
 	}
 
 	@Override
-	public ResponseEntity<OrderDetailResponse> getOrderById(Long orderId) 
+	public ResponseEntity<OrderDetails> getOrderById(Long orderId) 
 	{
-		return null;
+		OrderDetails orderDetails = orderServiceImpl.getOrderDetail(orderId);
+		if (orderDetails != null) {
+			return new ResponseEntity<>(orderDetails, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 
 	@Override
