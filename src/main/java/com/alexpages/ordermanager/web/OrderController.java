@@ -22,6 +22,7 @@ import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
 import com.alexpages.ordermanager.utils.ListUtils;
 
 import jakarta.validation.Valid;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -45,13 +46,6 @@ public class OrderController implements OrdersApi {
 	@Override
 	public ResponseEntity<OrderOutputData> postOrdersRequest(OrderInputData orderInputData) 
 	{
-		PaginationBody pagination = orderInputData.getPaginationBody();
-		if (pagination.getPage().intValue() < 1) {
-			throw new OrderManagerException400("Page number must start with 1");
-		}
-		if (pagination.getSize().intValue() <= 0) {
-			throw new OrderManagerException400("Limit should be a positive integer higher than 0");
-		}
 		OrderOutputData response = orderServiceImpl.getOrderList(orderInputData);
 		if (ListUtils.isBlank(response.getOrders())){
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -61,11 +55,12 @@ public class OrderController implements OrdersApi {
 	}
 
 	@Override
-	public ResponseEntity<Void> deleterOrderById(Long orderId) 
+	public ResponseEntity<Void> deleterOrderById(Long orderId)
 	{
 		orderServiceImpl.deleteOrderById(orderId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
+	
 
 	@Override
 	public ResponseEntity<OrderDetails> getOrderById(Long orderId) 
@@ -81,13 +76,6 @@ public class OrderController implements OrdersApi {
 	@Override
 	public ResponseEntity<OrderOutputAudit> getOrderAudit(@Valid GetOrderAuditRequest getOrderAuditRequest) 
 	{
-		PaginationBody pagination = getOrderAuditRequest.getPaginationBody();
-		if (pagination.getPage().intValue() < 1) {
-			throw new OrderManagerException400("Page number must start with 1");
-		}
-		if (pagination.getSize().intValue() <= 0) {
-			throw new OrderManagerException400("Limit should be a positive integer higher than 0");
-		}
 		OrderOutputAudit response = orderServiceImpl.getAuditList(getOrderAuditRequest);
 		if (ListUtils.isBlank(response.getOrders())){
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);

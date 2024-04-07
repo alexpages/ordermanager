@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.alexpages.ordermanager.api.domain.PageResponse;
 import com.alexpages.ordermanager.api.domain.PaginationBody;
+import com.alexpages.ordermanager.error.OrderManagerException400;
 
 public class PageableUtils
 {
@@ -18,10 +19,21 @@ public class PageableUtils
 		if(paginationBody == null) {
 			pageable = Pageable.unpaged();
 		} else {
+			validatePaginationData(paginationBody);
 			int pageIndex = paginationBody.getPage().intValueExact() - 1;
 			pageable = PageRequest.of(pageIndex, paginationBody.getSize().intValueExact());
 		}
 		return pageable;
+	}
+	
+	public static void validatePaginationData(PaginationBody paginationBody) 
+	{
+		if (paginationBody.getPage().intValue() < 1) {
+			throw new OrderManagerException400("Page number must start with 1");
+		}
+		if (paginationBody.getSize().intValue() <= 0) {
+			throw new OrderManagerException400("Limit should be a positive integer higher than 0");
+		}	
 	}
 	
 	public static PageResponse getPaginationResponse(Page<?> page, Pageable pageable)

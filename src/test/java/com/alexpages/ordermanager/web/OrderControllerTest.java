@@ -139,6 +139,16 @@ class OrderControllerTest {
 	            .content("{}"))
 	            .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
 	}
+	
+	@Test
+	void testDeleteOrder_400() throws Exception 
+	{
+	    mockMvc.perform(delete("/orders/{id}","{\"id\": null}")
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .headers(header())
+	            .content("{}"))
+	            .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+	}
 
 	@Test
 	void testGetOrderDetail_200() throws Exception 

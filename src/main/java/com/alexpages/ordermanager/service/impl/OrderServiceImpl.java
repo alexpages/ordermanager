@@ -20,6 +20,7 @@ import com.alexpages.ordermanager.api.domain.OrderPatchInput;
 import com.alexpages.ordermanager.api.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.api.domain.OrderPostRequest;
 import com.alexpages.ordermanager.api.domain.OrderPostResponse;
+import com.alexpages.ordermanager.api.domain.PaginationBody;
 import com.alexpages.ordermanager.api.domain.Status;
 import com.alexpages.ordermanager.entity.OrderEntity;
 import com.alexpages.ordermanager.error.OrderManagerException400;
@@ -114,7 +115,7 @@ public class OrderServiceImpl implements OrderService {
 			throw new OrderManagerException500("OrderServiceImpl > listOrders > Order list could not get retrieved, Exception: [" + e.getMessage() + "]");
 		}
 	}
-	
+		
 	@Transactional
 	@Override
 	public OrderPatchResponse takeOrder(@NonNull Long orderId, @NonNull OrderPatchInput orderPatchInput) {
@@ -147,7 +148,7 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Transactional
 	@Override
-	public void deleteOrderById(@NonNull Long orderId) {
+	public void deleteOrderById(Long orderId) {
 	    if (!orderRepository.existsById(orderId)) {
 	        throw new OrderManagerException404("Order with id: [" + orderId + "] was not found");
 	    }
