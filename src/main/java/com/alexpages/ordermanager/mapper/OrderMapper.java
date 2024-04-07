@@ -9,8 +9,10 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import com.alexpages.ordermanager.api.domain.OrderAudit;
 import com.alexpages.ordermanager.api.domain.OrderDetails;
 import com.alexpages.ordermanager.api.domain.Status;
+import com.alexpages.ordermanager.entity.OrderAuditEntity;
 import com.alexpages.ordermanager.entity.OrderEntity;
 
 import jakarta.validation.Valid;
@@ -27,6 +29,9 @@ public interface OrderMapper {
 	@Mapping(target = "status", source = "status", qualifiedByName = "stringToStatus")
 	OrderDetails toOrderDetails(OrderEntity content);
 
+	@Mapping(target = "actionDate", source = "actionDate", qualifiedByName = "localDateTimeToLocalDate")
+	List<OrderAudit> toOrderAuditList(List<OrderAuditEntity> content);
+	
 	@Named("localDateTimeToLocalDate")
 	default LocalDate localDateTimeToLocalDate(LocalDateTime localDatetime)
 	{

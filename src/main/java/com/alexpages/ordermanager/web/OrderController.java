@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alexpages.ordermanager.api.OrdersApi;
 import com.alexpages.ordermanager.api.domain.GetOrderAuditRequest;
-import com.alexpages.ordermanager.api.domain.OrderDetailResponse;
 import com.alexpages.ordermanager.api.domain.OrderDetails;
 import com.alexpages.ordermanager.api.domain.OrderInputData;
 import com.alexpages.ordermanager.api.domain.OrderOutputAudit;
@@ -15,9 +14,6 @@ import com.alexpages.ordermanager.api.domain.OrderPatchInput;
 import com.alexpages.ordermanager.api.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.api.domain.OrderPostRequest;
 import com.alexpages.ordermanager.api.domain.OrderPostResponse;
-import com.alexpages.ordermanager.api.domain.PaginationBody;
-import com.alexpages.ordermanager.entity.OrderEntity;
-import com.alexpages.ordermanager.error.OrderManagerException400;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
 import com.alexpages.ordermanager.utils.ListUtils;
 
@@ -53,6 +49,17 @@ public class OrderController implements OrdersApi {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
+	
+	@Override
+	public ResponseEntity<OrderOutputAudit> getOrderAudit(@Valid GetOrderAuditRequest getOrderAuditRequest) 
+	{
+		OrderOutputAudit response = orderServiceImpl.getAuditList(getOrderAuditRequest);
+		if (ListUtils.isBlank(response.getOrders())){
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		} else {
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+	}
 
 	@Override
 	public ResponseEntity<Void> deleterOrderById(Long orderId)
@@ -61,7 +68,6 @@ public class OrderController implements OrdersApi {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 	
-
 	@Override
 	public ResponseEntity<OrderDetails> getOrderById(Long orderId) 
 	{
@@ -73,15 +79,4 @@ public class OrderController implements OrdersApi {
 		}
 	}
 
-	@Override
-	public ResponseEntity<OrderOutputAudit> getOrderAudit(@Valid GetOrderAuditRequest getOrderAuditRequest) 
-	{
-		OrderOutputAudit response = orderServiceImpl.getAuditList(getOrderAuditRequest);
-		if (ListUtils.isBlank(response.getOrders())){
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		} else {
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		}
-	}
-	
 }

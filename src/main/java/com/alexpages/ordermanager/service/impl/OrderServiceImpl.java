@@ -3,15 +3,16 @@ package com.alexpages.ordermanager.service.impl;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import org.mapstruct.ap.shaded.freemarker.template.utility.DateUtil;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alexpages.ordermanager.api.domain.AuditAction;
 import com.alexpages.ordermanager.api.domain.GetOrderAuditRequest;
 import com.alexpages.ordermanager.api.domain.OrderDetails;
+import com.alexpages.ordermanager.api.domain.OrderInputAudit;
 import com.alexpages.ordermanager.api.domain.OrderInputData;
 import com.alexpages.ordermanager.api.domain.OrderInputDataInputSearch;
 import com.alexpages.ordermanager.api.domain.OrderOutputAudit;
@@ -20,14 +21,15 @@ import com.alexpages.ordermanager.api.domain.OrderPatchInput;
 import com.alexpages.ordermanager.api.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.api.domain.OrderPostRequest;
 import com.alexpages.ordermanager.api.domain.OrderPostResponse;
-import com.alexpages.ordermanager.api.domain.PaginationBody;
 import com.alexpages.ordermanager.api.domain.Status;
+import com.alexpages.ordermanager.entity.OrderAuditEntity;
 import com.alexpages.ordermanager.entity.OrderEntity;
 import com.alexpages.ordermanager.error.OrderManagerException400;
 import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.error.OrderManagerException409;
 import com.alexpages.ordermanager.error.OrderManagerException500;
 import com.alexpages.ordermanager.mapper.OrderMapper;
+import com.alexpages.ordermanager.repository.OrderAuditRepository;
 import com.alexpages.ordermanager.repository.OrderRepository;
 import com.alexpages.ordermanager.service.OrderService;
 import com.alexpages.ordermanager.utils.DateUtils;
@@ -44,6 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderServiceImpl implements OrderService {
 
 	private final OrderRepository orderRepository;
+	private final OrderAuditRepository orderAuditRepository;
 	private final GoogleMapsServiceImpl googleMapsServiceImpl;
 	private final OrderMapper orderMapper;
 
@@ -67,11 +70,13 @@ public class OrderServiceImpl implements OrderService {
 					.creationDate(LocalDateTime.now())
 					.status("UNASSIGNED")
 					.build());
+			addOrderAuditEntity(savedEntity, AuditAction.CREATE.getValue());
 			
 			OrderPostResponse response = new OrderPostResponse();
 			response.setDistance(savedEntity.getDistance());
 			response.setOrderId(savedEntity.getId());
 			response.setStatus(Status.fromValue(savedEntity.getStatus()));
+			
 			return response;
 			
 		} catch (Exception e) {
@@ -120,26 +125,28 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public OrderPatchResponse takeOrder(@NonNull Long orderId, @NonNull OrderPatchInput orderPatchInput) {
 		try {
-			if (!Status.TAKEN.getValue().equals(orderPatchInput.getStatus().getValue())) {
-				log.error("Order status not valid: {}", orderPatchInput.getStatus());
-				throw new OrderManagerException400(	"The provided order status is not valid: [" + orderPatchInput.getStatus() + "]");
-			}
 			Optional<OrderEntity> orderEntityOptional = orderRepository.findById(orderId);
+			
 			if (!orderEntityOptional.isPresent()) {
 				log.error("OrderServiceImpl > takeOrder > Order with ID: [" + orderId + "] was not found");
 				throw new OrderManagerException404("Order with ID: [" + orderId + "] was not found");
+			
+			} else {
+				
+				OrderEntity orderEntity = orderEntityOptional.get();
+				if (orderEntity.getStatus().equals(orderPatchInput.getStatus().getValue())) {
+					throw new OrderManagerException409("Order with ID: [" + orderId + "] already has the status: [" + orderPatchInput.getStatus() + "]");
+				
+				} else {
+					orderEntity.setStatus(orderPatchInput.getStatus().getValue());
+					OrderEntity savedEntity = orderRepository.save(orderEntity);
+					addOrderAuditEntity(savedEntity, AuditAction.UPDATE.getValue());			
+					OrderPatchResponse response = new OrderPatchResponse();
+					response.setStatus("SUCCESS");
+					return response;
+				}		
 			}
-			OrderEntity orderEntity = orderEntityOptional.get();
-			if (Status.TAKEN.getValue().equals((orderEntity.getStatus()))) {
-				log.error("Order with ID: [" + orderId + "] was already taken");
-				throw new OrderManagerException409("Order with ID: [" + orderId + "] was already taken");
-			}
-			orderEntity.setStatus(Status.TAKEN.getValue());
-			orderRepository.save(orderEntity);
-			OrderPatchResponse response = new OrderPatchResponse();
-			response.setStatus(Status.SUCCESS.getValue());
-			return response;
-
+		
 		} catch (OptimisticLockingFailureException e) {
 			log.error("OrderServiceImpl > takeOrder > Order with ID: [" + orderId + "] was locked by another user");
 			throw new OrderManagerException409("Order with ID: [" + orderId + "] was locked by another user");
@@ -149,16 +156,60 @@ public class OrderServiceImpl implements OrderService {
 	@Transactional
 	@Override
 	public void deleteOrderById(Long orderId) {
-	    if (!orderRepository.existsById(orderId)) {
-	        throw new OrderManagerException404("Order with id: [" + orderId + "] was not found");
-	    }
-	    orderRepository.deleteById(orderId);
+		try {
+		    if (!orderRepository.existsById(orderId)) {
+		        throw new OrderManagerException404("Order with id: [" + orderId + "] was not found");
+		    }
+		    Optional<OrderEntity> deletedEntity = orderRepository.findById(orderId);
+			addOrderAuditEntity(deletedEntity.get(), AuditAction.DELETE.getValue());	
+		    orderRepository.deleteById(orderId);
+		
+		} catch(Exception e) {
+			log.error("OrderServiceImpl > deleteOrderById > It could not delete the order with id: [" + orderId + "]");
+			throw new OrderManagerException500("OrderServiceImpl > deleteOrderById > It could not delete the order with id: [" + orderId + "]" + "Exception: [" + e.getMessage() + "]");
+		}
 	}
 	
 	@Override
-	public OrderOutputAudit getAuditList(@Valid GetOrderAuditRequest getOrderAuditRequest) {
-		// TODO Auto-generated method stub
-		return null;
+	public OrderOutputAudit getAuditList(GetOrderAuditRequest getOrderAuditRequest) {
+		try {
+			Pageable pageable = PageableUtils.getPageable(getOrderAuditRequest.getPaginationBody());
+			
+			OrderInputAudit orderInputAudit;
+			String action = null;
+			
+			if(getOrderAuditRequest.getOrderInputAudit() != null) {
+				orderInputAudit = getOrderAuditRequest.getOrderInputAudit();
+				if (orderInputAudit.getAction() != null) {
+					action = orderInputAudit.getAction().getValue();
+				}
+			} else {
+				orderInputAudit = new OrderInputAudit();	// Object with nulls
+			}
+			log.info("OrderServiceImpl > listOrders > Orders: {}", orderInputAudit.toString());
+			Page<OrderAuditEntity> pageOrderAuditEntity = orderAuditRepository.filterByParams(
+					orderInputAudit.getOrderId(),
+					action,
+					DateUtils.toLocalDateTime(orderInputAudit.getStartDate()),
+					DateUtils.toLocalDateTime(orderInputAudit.getEndDate()),
+					pageable);
+			
+			if (pageOrderAuditEntity != null) {
+			    log.info("OrderServiceImpl > listOrders > Orders: {}", pageOrderAuditEntity.getContent());
+				log.info("OrderServiceImpl > listOrders > Orders: {}", pageOrderAuditEntity.getContent());
+				OrderOutputAudit response = new OrderOutputAudit();
+				response.setOrders(orderMapper.toOrderAuditList(pageOrderAuditEntity.getContent()));
+				response.setPageResponse(PageableUtils.getPaginationResponse(pageOrderAuditEntity, pageOrderAuditEntity.getPageable()));
+				return response;
+			
+			} else {
+			    log.error("OrderServiceImpl > listOrders > pageOrderEntity is null");
+			    return null;
+			}
+		} catch (Exception e) {
+			log.error("OrderServiceImpl > listOrders > It could not get the list of orders: [" + e.getMessage() + "]");
+			throw new OrderManagerException500("OrderServiceImpl > listOrders > Order list could not get retrieved, Exception: [" + e.getMessage() + "]");
+		}
 	}
 	
 	@Override
@@ -169,6 +220,26 @@ public class OrderServiceImpl implements OrderService {
 			return orderMapper.toOrderDetails(oOrderEntity.get());
 		}
 		return null;
+	}
+	
+	private OrderAuditEntity addOrderAuditEntity(OrderEntity orderEntity, String action) {
+		try {
+			OrderAuditEntity orderAuditEntity = createOrderAuditEntity(orderEntity, action);
+			return orderAuditRepository.save(orderAuditEntity);
+		} catch (Exception e) {
+			log.error("OrderServiceImpl > addOrderAuditEntity > It could not save the order audit: [" + e.getMessage() + "]");
+			throw new OrderManagerException500("OrderServiceImpl > addOrderAuditEntity > It could not save the order audit, Exception: [" + e.getMessage() + "]");
+		}
+	}
+	
+	private OrderAuditEntity createOrderAuditEntity(OrderEntity orderEntity, String action) 
+	{
+		//TODO add old and new order in blob format?
+		return OrderAuditEntity.builder()
+				.orderId(orderEntity.getId())
+				.actionDate(LocalDateTime.now())
+				.action(action)
+				.build();
 	}
 
 	private void validatePlaceOrderRequest(OrderPostRequest orderPostRequest) {

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
@@ -28,25 +27,27 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.OptimisticLockingFailureException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.alexpages.ordermanager.api.domain.Coordinates;
+import com.alexpages.ordermanager.api.domain.GetOrderAuditRequest;
 import com.alexpages.ordermanager.api.domain.OrderDetails;
 import com.alexpages.ordermanager.api.domain.OrderInputData;
 import com.alexpages.ordermanager.api.domain.OrderPatchInput;
 import com.alexpages.ordermanager.api.domain.OrderPostRequest;
 import com.alexpages.ordermanager.api.domain.PaginationBody;
 import com.alexpages.ordermanager.api.domain.Status;
+import com.alexpages.ordermanager.entity.OrderAuditEntity;
 import com.alexpages.ordermanager.entity.OrderEntity;
-import com.alexpages.ordermanager.error.OrderManagerException400;
 import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.error.OrderManagerException409;
 import com.alexpages.ordermanager.error.OrderManagerException500;
 import com.alexpages.ordermanager.mapper.OrderMapper;
+import com.alexpages.ordermanager.repository.OrderAuditRepository;
 import com.alexpages.ordermanager.repository.OrderRepository;
+
 
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceTest {
@@ -56,6 +57,8 @@ public class OrderServiceTest {
 
 	@Mock
 	private OrderRepository orderRepository;
+	@Mock
+	private OrderAuditRepository orderAuditRepository;
 	@Mock
 	private GoogleMapsServiceImpl googleMapsServiceImpl;
 	@Mock
@@ -88,7 +91,31 @@ public class OrderServiceTest {
 	@Test
     void testPlaceOrderError_Regex() throws Exception 
     {
-      	assertThrows(OrderManagerException500.class, () -> orderServiceImpl.postOrder(generateWrongOrderPostRequest()));
+		OrderPostRequest request1 = new OrderPostRequest();
+	    request1.setCoordinates(createCoordinates(
+	    		Arrays.asList("22.319", "114.169"),
+	    		Arrays.asList("-1212.2948341", "114.2329")));
+	    
+		OrderPostRequest request2 = new OrderPostRequest();
+	    request2.setCoordinates(createCoordinates(
+	    		Arrays.asList("22.319", "114.169"),
+	    		Arrays.asList("22.319", "-11114.2329")));
+	    
+		OrderPostRequest request3 = new OrderPostRequest();
+	    request3.setCoordinates(createCoordinates(
+	    		Arrays.asList("-1122.319", "114.169"),
+	    		Arrays.asList("22.319", "114.169")));
+	    
+		OrderPostRequest request4 = new OrderPostRequest();
+	    request4.setCoordinates(createCoordinates(
+	    		Arrays.asList("22.319", "-1114.169"),
+	    		Arrays.asList("22.319", "114.169")));
+
+      	assertThrows(OrderManagerException500.class, () -> orderServiceImpl.postOrder(request1));
+      	assertThrows(OrderManagerException500.class, () -> orderServiceImpl.postOrder(request2));
+      	assertThrows(OrderManagerException500.class, () -> orderServiceImpl.postOrder(request3));
+      	assertThrows(OrderManagerException500.class, () -> orderServiceImpl.postOrder(request4));
+      	
     }
 
 	@Test
@@ -99,13 +126,15 @@ public class OrderServiceTest {
 	@Test
 	void testDeleteOrderSuccess() throws Exception {
 		when(orderRepository.existsById(any())).thenReturn(true);
+		when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
 	    doNothing().when(orderRepository).deleteById(any());
+	    when(orderAuditRepository.save(any())).thenReturn(easyRandom.nextObject(OrderAuditEntity.class));
 	    assertDoesNotThrow(() -> orderServiceImpl.deleteOrderById(1L));
 	}
 	@Test
 	void testDeleteOrderError() throws Exception {
 		when(orderRepository.existsById(any())).thenReturn(false);
-	    assertThrows(OrderManagerException404.class, () -> orderServiceImpl.deleteOrderById(1L));
+	    assertThrows(OrderManagerException500.class, () -> orderServiceImpl.deleteOrderById(1L));
 	}
 
 	@Test
@@ -123,6 +152,23 @@ public class OrderServiceTest {
     {
 	    when(orderRepository.filterByParams(any(), any(), any(), any(), any())).thenThrow(new RuntimeException("some error"));
 		assertThrows(OrderManagerException500.class, () -> orderServiceImpl.getOrderList(generateValidOrderInputData()));
+    }
+	
+	@Test
+	void testGetOrderAuditListSuccess() 
+	{
+	    List<OrderAuditEntity> lOrderAuditEntities = new ArrayList<>();
+	    lOrderAuditEntities.add(generateValidOrderAuditEntity());
+	    Pageable pageable = PageRequest.of(1, 10);
+	    when(orderAuditRepository.filterByParams(any(), any(), any(), any(), any()))
+	    				.thenReturn(new PageImpl<>(lOrderAuditEntities, pageable, lOrderAuditEntities.size()));
+	    assertNotNull(orderServiceImpl.getAuditList(generateValidGetOrderAuditRequest()));
+	}
+	
+	@Test
+    void testGetOrderAuditListError()
+    {
+		assertThrows(OrderManagerException500.class, () -> orderServiceImpl.getAuditList(null));
     }
 	
 	@Test
@@ -149,16 +195,12 @@ public class OrderServiceTest {
 	}
 	
 	@Test
-	void testTakeOrderError_WrongStatus() 
+	void testTakeOrderError_sameStatus() 
 	{
-		assertThrows(OrderManagerException400.class, () -> orderServiceImpl.takeOrder(1L, generateWrongTakeOrderByIdRequest()));
-	}
-	
-	@Test
-	void testTakeOrderError_OrderTaken() 
-	{
-		when(orderRepository.findById(any())).thenReturn(Optional.of(generateTakenOrderEntity()));
-		assertThrows(OrderManagerException409.class, () -> orderServiceImpl.takeOrder(1L, generateValidOrderPatchInput()));
+		when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
+		OrderPatchInput orderPatchInput = new OrderPatchInput();
+		orderPatchInput.setStatus(Status.UNASSIGNED);
+		assertThrows(OrderManagerException409.class, () -> orderServiceImpl.takeOrder(1L, orderPatchInput));
 	}
 	
 	@Test
@@ -192,6 +234,9 @@ public class OrderServiceTest {
 	    assertNull(orderServiceImpl.getOrderDetail(1L));
 	}
 	
+	
+	// Private functions to aid testing
+	
 	private OrderInputData generateValidOrderInputData() {
 		OrderInputData orderInputData = new OrderInputData();
 		orderInputData.setInputSearch(null);
@@ -208,29 +253,19 @@ public class OrderServiceTest {
 		return input;
 	}
 	
-	private OrderPatchInput generateWrongTakeOrderByIdRequest() {
-		OrderPatchInput input = new OrderPatchInput();
-		input.setStatus(Status.SUCCESS);
-		return input;
-	}
-
-	private OrderPostRequest generateWrongOrderPostRequest() {
+	private OrderPostRequest generateValidOrderPostRequest() {
 	    OrderPostRequest request = new OrderPostRequest();
-	    Coordinates coordinates = new Coordinates();
-	    coordinates.setOrigin(Arrays.asList("22.319", "114.169"));
-	    coordinates.setDestination(Arrays.asList("-1212.2948341", "114.2329"));
-	    request.setCoordinates(coordinates);
+	    request.setCoordinates(createCoordinates(
+	    		Arrays.asList("22.319", "114.169"),
+	    		Arrays.asList("22.2948341", "114.2329")));
 	    return request;
 	}
 	
-	private OrderPostRequest generateValidOrderPostRequest() {
-	    OrderPostRequest request = new OrderPostRequest();
+	private Coordinates createCoordinates(List<String> origin, List<String> destination) {
 	    Coordinates coordinates = new Coordinates();
-	    coordinates.setOrigin(Arrays.asList("22.319", "114.169"));
-	    coordinates.setDestination(Arrays.asList("22.2948341", "114.2329"));
-
-	    request.setCoordinates(coordinates);
-	    return request;
+	    coordinates.setOrigin(origin);
+	    coordinates.setDestination(destination);
+	    return coordinates;
 	}
 
 	private OrderEntity generateValidOrderEntity() {
@@ -243,7 +278,21 @@ public class OrderServiceTest {
 				.build();
 	}
 	
-	private OrderEntity generateTakenOrderEntity() {
-		return OrderEntity.builder().distance(1).status(Status.TAKEN.getValue()).build();
+	
+	private GetOrderAuditRequest generateValidGetOrderAuditRequest() {
+		GetOrderAuditRequest request = new GetOrderAuditRequest();
+		request.setPaginationBody(null);
+		request.setOrderInputAudit(null);
+		return request;
 	}
+	
+	private OrderAuditEntity generateValidOrderAuditEntity() {
+		return OrderAuditEntity.builder()
+				.action("CREATE")
+				.actionDate(LocalDateTime.now())
+				.id(1L)
+				.orderId(1L)
+				.build();
+	}
+
 }
