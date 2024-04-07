@@ -48,7 +48,6 @@ import com.alexpages.ordermanager.mapper.OrderMapper;
 import com.alexpages.ordermanager.repository.OrderAuditRepository;
 import com.alexpages.ordermanager.repository.OrderRepository;
 
-
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceTest {
 
@@ -74,7 +73,7 @@ public class OrderServiceTest {
 	}
 
 	@Test
-	void testPlaceOrderSuccess() throws Exception 
+	void testPlaceOrder_success() throws Exception 
     {
     	when(googleMapsServiceImpl.getDistanceFromDistanceMatrix(any())).thenReturn(1);
     	when(orderRepository.save(any(OrderEntity.class))).thenReturn(generateValidOrderEntity());
@@ -82,14 +81,14 @@ public class OrderServiceTest {
     }
 
 	@Test
-    void testPlaceOrderError() throws Exception 
+    void testPlaceOrder_error() throws Exception 
     {
     	when(googleMapsServiceImpl.getDistanceFromDistanceMatrix(any())).thenThrow(new RuntimeException("some error"));
     	assertThrows(OrderManagerException500.class, () -> orderServiceImpl.postOrder(generateValidOrderPostRequest()));
     }
 	
 	@Test
-    void testPlaceOrderError_Regex() throws Exception 
+    void testPlaceOrder_error_regex() throws Exception 
     {
 		OrderPostRequest request1 = new OrderPostRequest();
 	    request1.setCoordinates(createCoordinates(
@@ -119,12 +118,12 @@ public class OrderServiceTest {
     }
 
 	@Test
-	void testPlaceOrderError_Null() {
+	void testPlaceOrder_error_null() {
 		assertThrows(NullPointerException.class, () -> orderServiceImpl.postOrder(null));
 	}
 	
 	@Test
-	void testDeleteOrderSuccess() throws Exception {
+	void testDeleteOrder_success() throws Exception {
 		when(orderRepository.existsById(any())).thenReturn(true);
 		when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
 	    doNothing().when(orderRepository).deleteById(any());
@@ -132,13 +131,13 @@ public class OrderServiceTest {
 	    assertDoesNotThrow(() -> orderServiceImpl.deleteOrderById(1L));
 	}
 	@Test
-	void testDeleteOrderError() throws Exception {
+	void testDeleteOrder_error() throws Exception {
 		when(orderRepository.existsById(any())).thenReturn(false);
 	    assertThrows(OrderManagerException500.class, () -> orderServiceImpl.deleteOrderById(1L));
 	}
 
 	@Test
-	void testGetOrderListSuccess() 
+	void testGetOrderList_success() 
 	{
 	    List<OrderEntity> lOrderEntities = new ArrayList<>();
 	    lOrderEntities.add(generateValidOrderEntity());
@@ -148,14 +147,14 @@ public class OrderServiceTest {
 	}
 
 	@Test
-    void testGetOrderListError()
+    void testGetOrderList_error()
     {
 	    when(orderRepository.filterByParams(any(), any(), any(), any(), any())).thenThrow(new RuntimeException("some error"));
 		assertThrows(OrderManagerException500.class, () -> orderServiceImpl.getOrderList(generateValidOrderInputData()));
     }
 	
 	@Test
-	void testGetOrderAuditListSuccess() 
+	void testGetOrderAuditList_success() 
 	{
 	    List<OrderAuditEntity> lOrderAuditEntities = new ArrayList<>();
 	    lOrderAuditEntities.add(generateValidOrderAuditEntity());
@@ -166,13 +165,13 @@ public class OrderServiceTest {
 	}
 	
 	@Test
-    void testGetOrderAuditListError()
+    void testGetOrderAuditList_error()
     {
 		assertThrows(OrderManagerException500.class, () -> orderServiceImpl.getAuditList(null));
     }
 	
 	@Test
-	void testTakeOrderSuccess() 
+	void testTakeOrder_success() 
 	{
 		when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
 		when(orderRepository.save(any())).thenReturn(easyRandom.nextObject(OrderEntity.class));
@@ -180,7 +179,7 @@ public class OrderServiceTest {
 	}
 	
 	@Test
-	void testTakeOrderError_ConcurrencyError() 
+	void testTakeOrder_error_ConcurrencyError() 
 	{
 		when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
 		when(orderRepository.save(any())).thenThrow(new OptimisticLockingFailureException("some error"));
@@ -188,14 +187,14 @@ public class OrderServiceTest {
 	}
 	
 	@Test
-	void testTakeOrderError_OrderNotFound() 
+	void testTakeOrder_error_notFound() 
 	{
 		when(orderRepository.findById(any())).thenReturn(Optional.empty());
 		assertThrows(OrderManagerException404.class, () -> orderServiceImpl.takeOrder(1L, generateValidOrderPatchInput()));
 	}
 	
 	@Test
-	void testTakeOrderError_sameStatus() 
+	void testTakeOrder_error_sameStatus() 
 	{
 		when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
 		OrderPatchInput orderPatchInput = new OrderPatchInput();
@@ -204,7 +203,7 @@ public class OrderServiceTest {
 	}
 	
 	@Test
-	void testTakeOrderError_Null() 
+	void testTakeOrder_error_null() 
 	{
 		assertThrows(NullPointerException.class, () -> orderServiceImpl.takeOrder(null, generateValidOrderPatchInput()));
 		assertThrows(NullPointerException.class, () -> orderServiceImpl.takeOrder(1L, null));

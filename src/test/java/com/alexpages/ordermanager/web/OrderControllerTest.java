@@ -27,12 +27,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
+import com.alexpages.ordermanager.api.domain.OrderAudit;
 import com.alexpages.ordermanager.api.domain.OrderDetails;
 import com.alexpages.ordermanager.api.domain.OrderOutputAudit;
 import com.alexpages.ordermanager.api.domain.OrderOutputData;
 import com.alexpages.ordermanager.api.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.api.domain.OrderPostResponse;
-import com.alexpages.ordermanager.entity.OrderEntity;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
 
 @SpringBootTest
@@ -111,13 +111,12 @@ class OrderControllerTest {
 	
 	@Test
 	void testGetOrderAuditSuccess_200() throws Exception {
-		OrderOutputAudit orderOutputAudit = new OrderOutputAudit();
-		when(orderServiceImpl.getAuditList(any())).thenReturn(new OrderOutputAudit());
+		when(orderServiceImpl.getAuditList(any())).thenReturn(generateValidOrderOutputAudit());
         mockMvc.perform(post("/orders/request/audit")
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(header())
                 .content(generateValidOrderInputData()))
-                .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
+                .andExpect(status().is(HttpStatus.OK.value()));
     }
 	
 	@Test
@@ -208,11 +207,17 @@ class OrderControllerTest {
     private OrderOutputData generateValidOrderOutputData() {
         ArrayList<OrderDetails> lOrderDetails = new ArrayList<>();
         lOrderDetails.add(easyRandom.nextObject(OrderDetails.class));
-        
         OrderOutputData response = new OrderOutputData();
         response.setOrders(lOrderDetails);
         return response;
     }
     
-
+    private OrderOutputAudit generateValidOrderOutputAudit() {
+        ArrayList<OrderAudit> lOrderAudit = new ArrayList<>();
+        lOrderAudit.add(easyRandom.nextObject(OrderAudit.class));
+        OrderOutputAudit response = new OrderOutputAudit();
+        response.setOrders(lOrderAudit);
+        return response;
+    }
+    
 }
