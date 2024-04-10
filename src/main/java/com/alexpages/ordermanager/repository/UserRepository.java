@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 import com.alexpages.ordermanager.entity.OrderEntity;
 import com.alexpages.ordermanager.entity.UserEntity;
 
+import java.util.Optional;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
@@ -12,5 +14,7 @@ import org.springframework.data.repository.query.QueryByExampleExecutor;
 @Repository
 public interface UserRepository 
 extends CrudRepository<UserEntity, Long>, QueryByExampleExecutor<OrderEntity>,	PagingAndSortingRepository<UserEntity, Long> {
+
+	Optional<UserEntity> findByUsername(String username);
 
 }

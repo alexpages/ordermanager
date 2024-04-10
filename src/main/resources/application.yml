@@ -5,10 +5,18 @@ spring:
       path: /console/ # http://localhost:8080/console
   profiles:
     active: standalone # when running docker, it overrides the profile using the spring profile "docker" defined in .env
-
-#logging:
-#  level:
-#    org.springframework: DEBUG
+  main:
+    allow-circular-references: true 
+    
+logging:
+  level:
+    root: INFO
+    org.springframework: TRACE
+    org:
+      hibernate:
+        SQL: INFO
+        type:
+          descriptor: INFO
 
 thirdparties:
   google:

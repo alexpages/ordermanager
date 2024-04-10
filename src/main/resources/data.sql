@@ -17,6 +17,6 @@ VALUES
 
 -- Inserting into users table
 INSERT INTO users 
-    (ID, NAME, PASSWORD, ROLE) 
+    (ID, USERNAME, PASSWORD, ROLE) 
 VALUES 
     (1, 'name', 'encryptedPass', 'ADMIN');

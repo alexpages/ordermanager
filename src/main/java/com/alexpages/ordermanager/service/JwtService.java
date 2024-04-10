@@ -1,5 +1,6 @@
-package com.alexpages.ordermanager.security;
+package com.alexpages.ordermanager.service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,29 +17,34 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Component
-public class JwtUtils {
+public class JwtService {
 
-	private static final String KEY = "5367566B5970337336763979";
+	//TODO migrate to env and provide prod key
+	private static final String KEY = "javax.crypto.spec.SecretKeySpec@5881a61";
+	public String generateToken(String userName) 
+	{ 
+	   Map<String, Object> claims = new HashMap<>(); 
+        return createToken(claims, userName); 
+    } 
 
-	public String createToken(String username) {
-		Map<String, Object> claims = new HashMap<>();
-		return createToken(claims, username);
-	}
-
-    public String extractUsername(String token) { 
+    public String extractUsername(String token) 
+    { 
         return extractClaim(token, Claims::getSubject); 
     } 
     
-    public Date extractExpiration(String token) { 
+    public Date extractExpiration(String token) 
+    { 
         return extractClaim(token, Claims::getExpiration); 
     } 
   
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) { 
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) 
+    { 
         final Claims claims = extractAllClaims(token); 
         return claimsResolver.apply(claims); 
     } 
     
-    public Boolean validateToken(String token, UserDetails userDetails) { 
+    public Boolean validateToken(String token, UserDetails userDetails) 
+    { 
         final String username = extractUsername(token); 
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token)); 
     } 
@@ -50,26 +56,34 @@ public class JwtUtils {
 				.setSubject(username)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
-				.signWith(getSignKey(), SignatureAlgorithm.HS256)
+				.signWith(getSigningKey(), SignatureAlgorithm.HS256)
 				.compact();
 	}
 	
-    private Key getSignKey() { 
-        byte[] keyBytes= Decoders.BASE64.decode(KEY); 
-        return Keys.hmacShaKeyFor(keyBytes); 
-    } 
+    private Key getSigningKey() {
+        byte[] keyBytes = this.KEY.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
     
-    private Claims extractAllClaims(String token) { 
+    private Claims extractAllClaims(String token) 
+    { 
         return Jwts 
                 .parserBuilder() 
-                .setSigningKey(getSignKey()) 
+                .setSigningKey(getSigningKey()) 
                 .build() 
                 .parseClaimsJws(token) 
                 .getBody(); 
     }
     
-    private Boolean isTokenExpired(String token) { 
+    private Boolean isTokenExpired(String token) 
+    { 
         return extractExpiration(token).before(new Date()); 
     } 
-  
+    
+//    //TODO remove
+//    public static void main(String[] args) {
+//        Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+//        System.out.println("Generated Key (For development only, remove before production): " + key);
+//    }
 }
+  

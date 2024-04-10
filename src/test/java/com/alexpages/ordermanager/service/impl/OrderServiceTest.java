@@ -44,7 +44,7 @@ import com.alexpages.ordermanager.entity.OrderEntity;
 import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.error.OrderManagerException409;
 import com.alexpages.ordermanager.error.OrderManagerException500;
-import com.alexpages.ordermanager.mapper.OrderMapper;
+import com.alexpages.ordermanager.mapper.OrderManagerMapper;
 import com.alexpages.ordermanager.repository.OrderAuditRepository;
 import com.alexpages.ordermanager.repository.OrderRepository;
 
@@ -61,7 +61,7 @@ public class OrderServiceTest {
 	@Mock
 	private GoogleMapsServiceImpl googleMapsServiceImpl;
 	@Mock
-	private OrderMapper orderMapper;
+	private OrderManagerMapper orderMapper;
 
 	private EasyRandom easyRandom;
 

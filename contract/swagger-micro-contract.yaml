@@ -72,7 +72,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
   
-  /orders/request/audit:
+  /orders/audit/request:
     post:
       tags:
         - orders
@@ -266,15 +266,13 @@ paths:
         '500':
           $ref: '#/components/responses/500'
           
-  /users/{userId}/authenticate:
+  /users/authenticate:
     post:
       tags:
         - users
-      summary: Allows you to authenticate a user
-      description: This method allows you to retrieve a **JWT** for the user.
+      summary: Allows you to authenticate a user and receive JWT
+      description: This method allows you to retrieve a **JWT** for the user after it has ben authenticated.
       operationId: authenticateUser
-      parameters:
-        - $ref: '#/components/parameters/UserId'
       requestBody:
         content:
           application/json:
@@ -464,7 +462,7 @@ components:
       description: User that will post or take orders
       type: object
       properties:
-        name:
+        username:
           description: Name of the user
           type: string
           example: Alex

@@ -28,7 +28,7 @@ import com.alexpages.ordermanager.error.OrderManagerException400;
 import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.error.OrderManagerException409;
 import com.alexpages.ordermanager.error.OrderManagerException500;
-import com.alexpages.ordermanager.mapper.OrderMapper;
+import com.alexpages.ordermanager.mapper.OrderManagerMapper;
 import com.alexpages.ordermanager.repository.OrderAuditRepository;
 import com.alexpages.ordermanager.repository.OrderRepository;
 import com.alexpages.ordermanager.service.OrderService;
@@ -48,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
 	private final OrderRepository orderRepository;
 	private final OrderAuditRepository orderAuditRepository;
 	private final GoogleMapsServiceImpl googleMapsServiceImpl;
-	private final OrderMapper orderMapper;
+	private final OrderManagerMapper orderMapper;
 
 	private static final String LATITUDE_PATTERN = "^(\\+|-)?(?:90(?:(?:\\.0{1,7})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,7})?))$";
 	private static final String LONGITUDE_PATTERN = "^(\\+|-)?(?:180(?:(?:\\.0{1,7})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,7})?))$";

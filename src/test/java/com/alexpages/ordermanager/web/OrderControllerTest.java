@@ -102,7 +102,7 @@ class OrderControllerTest {
 	@Test
 	void testGetOrderAuditSuccess_204() throws Exception {
 		when(orderServiceImpl.getAuditList(any())).thenReturn(new OrderOutputAudit());
-        mockMvc.perform(post("/orders/request/audit")
+        mockMvc.perform(post("/orders/audit/request")
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(header())
                 .content(generateValidOrderInputData()))
@@ -112,7 +112,7 @@ class OrderControllerTest {
 	@Test
 	void testGetOrderAuditSuccess_200() throws Exception {
 		when(orderServiceImpl.getAuditList(any())).thenReturn(generateValidOrderOutputAudit());
-        mockMvc.perform(post("/orders/request/audit")
+        mockMvc.perform(post("/orders/audit/request")
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(header())
                 .content(generateValidOrderInputData()))

@@ -31,9 +31,9 @@ implements Serializable
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
     
-    @Column(name = "NAME")
+    @Column(name = "USERNAME")
 	@NotNull
-    private String name;
+    private String username;
     
     @Column(name = "PASSWORD")
 	@NotNull

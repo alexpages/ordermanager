@@ -20,12 +20,3 @@ spring:
   sql:
     init:
       data-locations: classpath:data.sql
-
-logging:
-  level:
-    root: INFO
-    org:
-      hibernate:
-        SQL: INFO
-        type:
-          descriptor: INFO

@@ -11,14 +11,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.alexpages.ordermanager.entity.UserEntity;
 
-public class UserInfoDetails implements UserDetails { 
+public class UserInfoDetails implements UserDetails 
+{ 
 	  
-    private String name; 
+	private static final long serialVersionUID = 1L;
+	private String name; 
     private String password; 
     private List<GrantedAuthority> authorities; 
   
     public UserInfoDetails(UserEntity userEntity) { 
-        name = userEntity.getName(); 
+        name = userEntity.getUsername(); 
         password = userEntity.getPassword(); 
         authorities = Arrays.stream(userEntity.getRole().split(",")) 
                 .map(SimpleGrantedAuthority::new) 
@@ -26,37 +28,44 @@ public class UserInfoDetails implements UserDetails {
     } 
   
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() { 
+    public Collection<? extends GrantedAuthority> getAuthorities() 
+    { 
         return authorities; 
     } 
   
     @Override
-    public String getPassword() { 
+    public String getPassword() 
+    { 
         return password; 
     } 
   
     @Override
-    public String getUsername() { 
+    public String getUsername() 
+    { 
         return name; 
     } 
   
     @Override
-    public boolean isAccountNonExpired() { 
+    public boolean isAccountNonExpired() 
+    { 
         return true; 
     } 
   
     @Override
-    public boolean isAccountNonLocked() { 
+    public boolean isAccountNonLocked() 
+    { 
         return true; 
     } 
   
     @Override
-    public boolean isCredentialsNonExpired() { 
+    public boolean isCredentialsNonExpired() 
+    { 
         return true; 
     } 
   
     @Override
-    public boolean isEnabled() { 
+    public boolean isEnabled() 
+    { 
         return true; 
     } 
 }

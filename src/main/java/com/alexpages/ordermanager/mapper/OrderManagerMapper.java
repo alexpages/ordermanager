@@ -12,16 +12,21 @@ import org.mapstruct.factory.Mappers;
 import com.alexpages.ordermanager.api.domain.OrderAudit;
 import com.alexpages.ordermanager.api.domain.OrderDetails;
 import com.alexpages.ordermanager.api.domain.Status;
+import com.alexpages.ordermanager.api.domain.User;
+import com.alexpages.ordermanager.api.domain.User.RoleEnum;
 import com.alexpages.ordermanager.entity.OrderAuditEntity;
 import com.alexpages.ordermanager.entity.OrderEntity;
+import com.alexpages.ordermanager.entity.UserEntity;
 
 import jakarta.validation.Valid;
 
 @Mapper(componentModel = "spring")
-public interface OrderMapper {
+public interface OrderManagerMapper {
 
-	OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
+	OrderManagerMapper INSTANCE = Mappers.getMapper(OrderManagerMapper.class);
 
+	//Order related
+	
 	@Mapping(target = "creationDate", source = "creationDate", qualifiedByName = "localDateTimeToLocalDate")
 	List<@Valid OrderDetails> toOrderList(List<OrderEntity> content);
 	
@@ -43,4 +48,16 @@ public interface OrderMapper {
 	{
 		return Status.fromValue(status); // no need to check for null
 	}
+	
+	// User related
+	
+	@Mapping(target = "role", source = "role", qualifiedByName = "roleEnumToString")
+	UserEntity toUserEntity(User user);
+
+	@Named("roleEnumToString")
+	default String roleEnumToString(RoleEnum role)
+	{
+		return role.getValue(); // no need to check for null
+	}
+
 }
