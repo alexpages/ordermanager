@@ -9,10 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 
-import org.springframework.validation.annotation.Validated;
-
-import com.alexpages.ordermanager.api.domain.User;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +19,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor 
 @AllArgsConstructor 
-@Validated
 @Entity 
 @Table(name = "users")
 public class UserEntity 
