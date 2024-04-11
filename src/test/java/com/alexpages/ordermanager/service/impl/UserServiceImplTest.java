@@ -42,10 +42,10 @@ public class UserServiceImplTest {
 	void testAddUsser_success() 
 	{
 		User user = new User();
-		user.setPassword("passowrd");
+		user.setPassword("1234567");
 		user.setRole(RoleEnum.ADMIN);
 		user.setUsername("username");
-		when(encoder.encode(any())).thenReturn("encodedPassword");
+		when(encoder.encode(any())).thenReturn("1234567");
 		when(mapper.toUserEntity(any())).thenReturn(generateUserEntity());
 		when(repository.save(any())).thenReturn(generateUserEntity());
 		assertNotNull(service.addUser(user));
@@ -61,20 +61,20 @@ public class UserServiceImplTest {
 	void testLoadUserByUsername_success() 
 	{
 		when(repository.findByUsername(any())).thenReturn(Optional.of(generateUserEntity() ));
-		assertNotNull(service.loadUserByUsername("userName"));
+		assertNotNull(service.loadUserByUsername("username"));
 	}
 	
 	@Test
 	void testLoadUserByUsername_error() 
 	{
 	    when(repository.findByUsername(any())).thenReturn(Optional.empty());
-	    assertThrows(UsernameNotFoundException.class, () -> service.loadUserByUsername("userName"));
+	    assertThrows(UsernameNotFoundException.class, () -> service.loadUserByUsername("username"));
 	}
 	
 	private UserEntity generateUserEntity() 
 	{
 		return UserEntity.builder()
-				.password("passoword")
+				.password("1234567")
 				.id(1L)
 				.role(RoleEnum.ADMIN.getValue())
 				.username("username")
@@ -84,7 +84,7 @@ public class UserServiceImplTest {
 	private User generateUser()
 	{
 		User user = new User();
-		user.setPassword("passowrd");
+		user.setPassword("1234567");
 		user.setRole(RoleEnum.ADMIN);
 		user.setUsername("username");
 		return user;
