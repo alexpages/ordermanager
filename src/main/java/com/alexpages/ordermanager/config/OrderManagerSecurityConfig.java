@@ -1,6 +1,7 @@
 package com.alexpages.ordermanager.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import com.alexpages.ordermanager.security.JwtAuthFilter;
 import com.alexpages.ordermanager.service.impl.UserServiceImpl;
@@ -36,25 +39,24 @@ public class OrderManagerSecurityConfig {
     } 
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) 
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) 
 	throws Exception 
     {
-        return http
-        		.csrf().disable()
-                .authorizeHttpRequests()
-                    .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/users/authenticate").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/console").permitAll()
-                    .anyRequest().authenticated()
-                .and()
-                .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+        http.csrf(csrf -> csrf.disable());
+        http.headers(headers -> headers.frameOptions().disable());
+        http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        
+    	http.authorizeHttpRequests()
+            .requestMatchers(HttpMethod.POST, "/users").permitAll()
+            .requestMatchers(HttpMethod.POST, "/users/authenticate").permitAll()
+            .requestMatchers(new AntPathRequestMatcher("/console/**")).permitAll()
+            .anyRequest().authenticated();
 
+        http.authenticationProvider(authenticationProvider()).addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
+  
+        return http.build();
+    }
+    
     @Bean
     public PasswordEncoder passwordEncoder() 
     { 
