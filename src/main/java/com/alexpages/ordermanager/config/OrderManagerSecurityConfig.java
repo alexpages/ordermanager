@@ -19,7 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.alexpages.ordermanager.security.JwtAuthFilter;
-import com.alexpages.ordermanager.service.UserService;
+import com.alexpages.ordermanager.service.impl.UserServiceImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -32,7 +32,7 @@ public class OrderManagerSecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() 
     { 
-        return new UserService(); 
+        return new UserServiceImpl(); 
     } 
 
     @Bean
@@ -44,7 +44,8 @@ public class OrderManagerSecurityConfig {
                 .authorizeHttpRequests()
                     .requestMatchers(HttpMethod.POST, "/users").permitAll()
                     .requestMatchers(HttpMethod.POST, "/users/authenticate").permitAll()
-                    .anyRequest().authenticated() 
+                    .requestMatchers(HttpMethod.GET, "/console").permitAll()
+                    .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

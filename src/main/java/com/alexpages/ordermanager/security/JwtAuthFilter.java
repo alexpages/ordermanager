@@ -10,8 +10,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.alexpages.ordermanager.service.JwtService;
-import com.alexpages.ordermanager.service.UserService;
+import com.alexpages.ordermanager.service.impl.JwtServiceImpl;
+import com.alexpages.ordermanager.service.impl.UserServiceImpl;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,9 +22,9 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthFilter extends OncePerRequestFilter
 {
 	@Autowired
-    private JwtService jwtUtils; 
+    private JwtServiceImpl jwtUtils; 
 	@Autowired
-    private UserService userDetailsService;
+    private UserServiceImpl userDetailsService;
 	
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException { 

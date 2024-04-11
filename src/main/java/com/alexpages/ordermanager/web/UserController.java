@@ -19,8 +19,8 @@ import com.alexpages.ordermanager.api.domain.UserInputAudit1;
 import com.alexpages.ordermanager.api.domain.UserInputData;
 import com.alexpages.ordermanager.api.domain.UserOuputData;
 import com.alexpages.ordermanager.api.domain.UserOutputAudit;
-import com.alexpages.ordermanager.service.JwtService;
-import com.alexpages.ordermanager.service.UserService;
+import com.alexpages.ordermanager.service.impl.JwtServiceImpl;
+import com.alexpages.ordermanager.service.impl.UserServiceImpl;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +30,8 @@ import lombok.RequiredArgsConstructor;
 public class UserController implements UsersApi
 {
 
-    private final UserService userService; 
-    private final JwtService jwtService; 
+    private final UserServiceImpl userService; 
+    private final JwtServiceImpl jwtService; 
     private final AuthenticationManager authenticationManager; 
 
 	@Override
