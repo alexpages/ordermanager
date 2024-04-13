@@ -11,9 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -23,7 +20,6 @@ import com.alexpages.ordermanager.entity.UserEntity;
 import com.alexpages.ordermanager.error.OrderManagerException500;
 import com.alexpages.ordermanager.mapper.OrderManagerMapper;
 import com.alexpages.ordermanager.repository.UserRepository;
-import com.alexpages.ordermanager.security.UserInfoDetails;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplTest {
@@ -89,5 +85,4 @@ public class UserServiceImplTest {
 		user.setUsername("username");
 		return user;
 	}
-	
 }
