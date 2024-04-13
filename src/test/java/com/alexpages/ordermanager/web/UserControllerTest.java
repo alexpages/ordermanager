@@ -5,6 +5,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,6 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.alexpages.ordermanager.api.domain.User;
 import com.alexpages.ordermanager.service.impl.JwtServiceImpl;
 import com.alexpages.ordermanager.service.impl.UserServiceImpl;
 
@@ -105,6 +107,29 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}"))
         .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
+    }	
+    
+    
+    @Test
+    void testGetUserById_success() 
+	throws Exception 
+    {
+    	when(userService.getUserById(any())).thenReturn(new User());
+        mockMvc.perform(get("/users/{userId}", 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+        .andExpect(status().is(HttpStatus.OK.value()));
+    }	
+    
+    @Test
+    void testGetUserById_error() 
+	throws Exception 
+    {
+    	when(userService.getUserById(any())).thenReturn(null);
+        mockMvc.perform(get("/users/{userId}", 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+        .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }	
 	
 	private String generateValidAuthenticateRequest() 

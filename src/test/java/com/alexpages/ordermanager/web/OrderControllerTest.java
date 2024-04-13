@@ -10,8 +10,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.jeasy.random.EasyRandom;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -172,20 +174,18 @@ class OrderControllerTest {
 	            .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
 	}
 
-	//Private functions
-
 	private String generateValidPlaceOrderRequestContent() 
 	throws JSONException 
 	{
 	    JSONObject coordinates = new JSONObject()
-	            .put("origin", new String[]{"22.319", "114.169"})
-	            .put("destination", new String[]{"22.2948341", "114.2329"});
+	            .put("origin", new JSONArray().put("41.412061").put("2.016507"))
+	            .put("destination", new JSONArray().put("41.381115").put("2.119482"));
 	    JSONObject requestBody = new JSONObject()
 	            .put("coordinates", coordinates)
-	            .put("description", "Pick up for Carlos");
+	            .put("description", "Pickup for Carlos");
 	    return requestBody.toString();
 	}
-
+	
 	private String generateValidTakeOrderRequestContent() 
 	throws JSONException {
 	    JSONObject requestBody = new JSONObject().put("status", "TAKEN");

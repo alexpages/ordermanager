@@ -48,6 +48,8 @@ public class OrderManagerSecurityConfig {
         
     	http.authorizeHttpRequests()
             .requestMatchers(HttpMethod.POST, "/users").permitAll()
+            .requestMatchers(HttpMethod.GET, "/users/{userId}").permitAll()
+            .requestMatchers(HttpMethod.GET, "/orders/{orderId}").permitAll()
             .requestMatchers(HttpMethod.POST, "/users/authenticate").permitAll()
             .requestMatchers(new AntPathRequestMatcher("/console/**")).permitAll()
             .anyRequest().authenticated();

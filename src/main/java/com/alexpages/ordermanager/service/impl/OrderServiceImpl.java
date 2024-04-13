@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.alexpages.ordermanager.api.domain.AuditAction;
+import com.alexpages.ordermanager.api.domain.Action;
 import com.alexpages.ordermanager.api.domain.GetOrderAuditRequest;
 import com.alexpages.ordermanager.api.domain.OrderDetails;
 import com.alexpages.ordermanager.api.domain.OrderInputAudit;
@@ -35,7 +35,6 @@ import com.alexpages.ordermanager.service.OrderService;
 import com.alexpages.ordermanager.utils.DateUtils;
 import com.alexpages.ordermanager.utils.PageableUtils;
 
-import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +69,7 @@ public class OrderServiceImpl implements OrderService {
 					.creationDate(LocalDateTime.now())
 					.status("UNASSIGNED")
 					.build());
-			addOrderAuditEntity(savedEntity, AuditAction.CREATE.getValue());
+			addOrderAuditEntity(savedEntity, Action.CREATE.getValue());
 			
 			OrderPostResponse response = new OrderPostResponse();
 			response.setDistance(savedEntity.getDistance());
@@ -140,7 +139,7 @@ public class OrderServiceImpl implements OrderService {
 				} else {
 					orderEntity.setStatus(orderPatchInput.getStatus().getValue());
 					OrderEntity savedEntity = orderRepository.save(orderEntity);
-					addOrderAuditEntity(savedEntity, AuditAction.UPDATE.getValue());			
+					addOrderAuditEntity(savedEntity, Action.UPDATE.getValue());			
 					OrderPatchResponse response = new OrderPatchResponse();
 					response.setStatus("SUCCESS");
 					return response;
@@ -162,7 +161,7 @@ public class OrderServiceImpl implements OrderService {
 				log.error("OrderServiceImpl > deleteOrderById > Order was not found for id: [" + orderId + "]");
 		        throw new OrderManagerException404("Order with id: [" + orderId + "] was not found");
 		    } else {
-				addOrderAuditEntity(deletedEntity.get(), AuditAction.DELETE.getValue());	
+				addOrderAuditEntity(deletedEntity.get(), Action.DELETE.getValue());	
 			    orderRepository.deleteById(orderId);	
 		    }
 		} catch(Exception e) {

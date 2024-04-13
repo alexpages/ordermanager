@@ -12,12 +12,10 @@ import com.alexpages.ordermanager.api.domain.AddUser201Response;
 import com.alexpages.ordermanager.api.domain.AuthenticateRequest;
 import com.alexpages.ordermanager.api.domain.AuthenticateResponse;
 import com.alexpages.ordermanager.api.domain.User;
-import com.alexpages.ordermanager.api.domain.UserDetailResponse;
 import com.alexpages.ordermanager.api.domain.UserInputAudit1;
 import com.alexpages.ordermanager.api.domain.UserInputData;
 import com.alexpages.ordermanager.api.domain.UserOuputData;
 import com.alexpages.ordermanager.api.domain.UserOutputAudit;
-import com.alexpages.ordermanager.error.OrderManagerException403;
 import com.alexpages.ordermanager.service.impl.JwtServiceImpl;
 import com.alexpages.ordermanager.service.impl.UserServiceImpl;
 
@@ -50,8 +48,8 @@ public class UserController implements UsersApi
 			AuthenticateResponse response = new AuthenticateResponse();
 			response.setJwt(jwtService.generateToken(authenticateRequest.getUsername()));
 	        return new ResponseEntity<>(response, HttpStatus.OK); 
-	    } else { 
-	    	throw new OrderManagerException403("Please provide a valid AuthenticateRequest");
+	    } else {
+	    	return new ResponseEntity<>(HttpStatus.UNAUTHORIZED); 
 	    } 
 	}
 	
@@ -60,9 +58,18 @@ public class UserController implements UsersApi
 		userService.deleteUserById(userId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
-
 	
-//	throw new OrderManagerException403("A Bearer token is needed or user is not authorized, please indicate the Bearer token on Authentication header");
+	@Override
+	public ResponseEntity<User> getUserById(Long userId) 
+	{
+		User user = userService.getUserById(userId);
+		if (user != null) {
+			return new ResponseEntity<>(user, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
 
 	@Override
 	public ResponseEntity<UserOutputAudit> getUserAudit(@Valid UserInputAudit1 userInputAudit1) {
@@ -70,11 +77,6 @@ public class UserController implements UsersApi
 		return null;
 	}
 
-	@Override
-	public ResponseEntity<UserDetailResponse> getUserById(Long userId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public ResponseEntity<UserOuputData> getUserData(@Valid UserInputData userInputData) {

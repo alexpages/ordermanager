@@ -7,6 +7,8 @@ public interface UserService
 	 
     public String addUser(User user);
 
-	public void deleteUserById(Long userId); 
+	public void deleteUserById(Long userId);
+
+	public User getUserById(Long userId); 
 
 }

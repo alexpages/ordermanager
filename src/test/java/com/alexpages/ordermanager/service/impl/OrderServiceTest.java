@@ -124,7 +124,6 @@ public class OrderServiceTest {
 	
 	@Test
 	void testDeleteOrder_success() throws Exception {
-		when(orderRepository.existsById(any())).thenReturn(true);
 		when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
 	    doNothing().when(orderRepository).deleteById(any());
 	    when(orderAuditRepository.save(any())).thenReturn(easyRandom.nextObject(OrderAuditEntity.class));
@@ -132,7 +131,6 @@ public class OrderServiceTest {
 	}
 	@Test
 	void testDeleteOrder_error() throws Exception {
-		when(orderRepository.existsById(any())).thenReturn(false);
 	    assertThrows(OrderManagerException500.class, () -> orderServiceImpl.deleteOrderById(1L));
 	}
 

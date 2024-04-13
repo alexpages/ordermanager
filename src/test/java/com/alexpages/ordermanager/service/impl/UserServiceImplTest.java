@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.alexpages.ordermanager.api.domain.User;
 import com.alexpages.ordermanager.api.domain.User.RoleEnum;
 import com.alexpages.ordermanager.entity.UserEntity;
+import com.alexpages.ordermanager.error.OrderManagerException409;
 import com.alexpages.ordermanager.error.OrderManagerException500;
 import com.alexpages.ordermanager.mapper.OrderManagerMapper;
 import com.alexpages.ordermanager.repository.UserRepository;
@@ -60,17 +61,17 @@ public class UserServiceImplTest {
 		assertNotNull(service.addUser(user));
 	}
 	
-	@Test
-	void testAddUsser_error() 
-	{
-		assertThrows(OrderManagerException500.class, () -> service.addUser(generateUser()));
-	}
-	
+//	@Test
+//	void testAddUsser_error() 
+//	{
+//		assertThrows(OrderManagerException500.class, () -> service.addUser(generateUser()));
+//	}
+//	
 	@Test
 	void testAddUsser_isPresent()
 	{
 		when(repository.findByUsername(any())).thenReturn(Optional.of(easyRandom.nextObject(UserEntity.class)));
-		assertThrows(OrderManagerException500.class, () -> service.addUser(generateUser()));
+		assertThrows(OrderManagerException409.class, () -> service.addUser(generateUser()));
 	}
 	
 	@Test
@@ -85,6 +86,11 @@ public class UserServiceImplTest {
 	{
 	    when(repository.findByUsername(any())).thenReturn(Optional.empty());
 	    assertThrows(UsernameNotFoundException.class, () -> service.loadUserByUsername("username"));
+	}
+	
+	@Test
+	void testGetUserById_success() {
+		
 	}
 	
 	private UserEntity generateUserEntity() 

@@ -3,6 +3,7 @@ package com.alexpages.ordermanager.mapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -51,6 +52,9 @@ public interface OrderManagerMapper {
 	
 	// User related
 	
+	@Mapping(target = "role", source = "role", qualifiedByName = "stringToRoleEnum")
+	User toUser(UserEntity userEntity);
+	
 	@Mapping(target = "role", source = "role", qualifiedByName = "roleEnumToString")
 	UserEntity toUserEntity(User user);
 
@@ -59,5 +63,13 @@ public interface OrderManagerMapper {
 	{
 		return role.getValue(); // no need to check for null
 	}
+	
+	@Named("stringToRoleEnum")
+	default RoleEnum stringToRoleEnum(String role)
+	{
+		return RoleEnum.fromValue(role); // no need to check for null
+	}
+
+
 
 }
