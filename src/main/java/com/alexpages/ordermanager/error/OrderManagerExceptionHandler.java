@@ -6,6 +6,8 @@ import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,6 +18,16 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class OrderManagerExceptionHandler extends ResponseEntityExceptionHandler {
 
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<Object> handleExceptions(AccessDeniedException e, WebRequest webRequest)
+	{
+		OrderManagerException exception = new OrderManagerException(e.getMessage());
+        exception.setStatus(HttpStatus.UNAUTHORIZED);
+        exception.setTimestamp(LocalDateTime.now());
+        exception.setThrowable(e.getCause());
+		return new ResponseEntity<>(exception, HttpStatus.UNAUTHORIZED);
+	}
+	
 	@ExceptionHandler(OrderManagerException404.class)
 	public ResponseEntity<Object> handleExceptions(OrderManagerException404 e, WebRequest webRequest)
 	{
@@ -81,5 +93,14 @@ public class OrderManagerExceptionHandler extends ResponseEntityExceptionHandler
         exception.setTimestamp(LocalDateTime.now());
         exception.setThrowable(e.getCause());
 		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+	}
+	
+	protected ResponseEntity<Object> handleBadAuthorization(BadCredentialsException e, HttpHeaders headers, HttpStatus status, WebRequest request){
+		
+		OrderManagerException exception = new OrderManagerException("Authentication failed");
+		exception.setStatus(HttpStatus.UNAUTHORIZED);
+		exception.setTimestamp(LocalDateTime.now());
+		exception.setThrowable(e.getCause());
+		return new ResponseEntity<>(exception, HttpStatus.UNAUTHORIZED);
 	}
 }

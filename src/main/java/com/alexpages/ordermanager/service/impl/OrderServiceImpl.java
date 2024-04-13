@@ -157,13 +157,14 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public void deleteOrderById(Long orderId) {
 		try {
-		    if (!orderRepository.existsById(orderId)) {
+			Optional<OrderEntity> deletedEntity = orderRepository.findById(orderId);
+		    if (!deletedEntity.isPresent()) {
+				log.error("OrderServiceImpl > deleteOrderById > Order was not found for id: [" + orderId + "]");
 		        throw new OrderManagerException404("Order with id: [" + orderId + "] was not found");
+		    } else {
+				addOrderAuditEntity(deletedEntity.get(), AuditAction.DELETE.getValue());	
+			    orderRepository.deleteById(orderId);	
 		    }
-		    Optional<OrderEntity> deletedEntity = orderRepository.findById(orderId);
-			addOrderAuditEntity(deletedEntity.get(), AuditAction.DELETE.getValue());	
-		    orderRepository.deleteById(orderId);
-		
 		} catch(Exception e) {
 			log.error("OrderServiceImpl > deleteOrderById > It could not delete the order with id: [" + orderId + "]");
 			throw new OrderManagerException500("OrderServiceImpl > deleteOrderById > It could not delete the order with id: [" + orderId + "]" + "Exception: [" + e.getMessage() + "]");

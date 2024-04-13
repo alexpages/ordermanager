@@ -10,9 +10,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import org.jeasy.random.EasyRandom;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,8 +26,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
-
 import com.alexpages.ordermanager.api.domain.OrderAudit;
 import com.alexpages.ordermanager.api.domain.OrderDetails;
 import com.alexpages.ordermanager.api.domain.OrderOutputAudit;
@@ -34,6 +33,8 @@ import com.alexpages.ordermanager.api.domain.OrderOutputData;
 import com.alexpages.ordermanager.api.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.api.domain.OrderPostResponse;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
+
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -172,38 +173,41 @@ class OrderControllerTest {
 	}
 
 	//Private functions
-	
-	private String generateValidPlaceOrderRequestContent() {
-	    return "{\n" +
-	            "  \"coordinates\": {\n" +  // Change to object instead of array
-	            "    \"origin\": [\"22.319\", \"114.169\"],\n" +
-	            "    \"destination\": [\"22.2948341\", \"114.2329\"]\n" +
-	            "  },\n" +
-	            "  \"description\": \"Pick up for Carlos\"\n" +
-	            "}";
+
+	private String generateValidPlaceOrderRequestContent() 
+	throws JSONException 
+	{
+	    JSONObject coordinates = new JSONObject()
+	            .put("origin", new String[]{"22.319", "114.169"})
+	            .put("destination", new String[]{"22.2948341", "114.2329"});
+	    JSONObject requestBody = new JSONObject()
+	            .put("coordinates", coordinates)
+	            .put("description", "Pick up for Carlos");
+	    return requestBody.toString();
 	}
 
+	private String generateValidTakeOrderRequestContent() 
+	throws JSONException {
+	    JSONObject requestBody = new JSONObject().put("status", "TAKEN");
+	    return requestBody.toString();
+	}
 
-    private String generateValidTakeOrderRequestContent() {
-        return "{\n" +
-                "  \"status\": \"TAKEN\"\n" +
-                "}";
-    }
-    
-    private String generateValidOrderInputData() {
-        return "{\n" +
-                "  \"inputSearch\": {\n" +
-                "    \"orderId\": 123456,\n" +
-                "    \"status\": \"TAKEN\",\n" +
-                "    \"creationDate\": \"2024-04-02\"\n" +
-                "  },\n" +
-                "  \"paginationBody\": {\n" +
-                "    \"page\": 1,\n" +
-                "    \"size\": 10\n" +
-                "  }\n" +
-                "}";
-    }
-    
+	private String generateValidOrderInputData() 
+	throws JSONException 
+	{
+	    JSONObject inputSearch = new JSONObject()
+	            .put("orderId", 123456)
+	            .put("status", "TAKEN")
+	            .put("creationDate", "2024-04-02");
+	    JSONObject paginationBody = new JSONObject()
+	            .put("page", 1)
+	            .put("size", 10);
+	    JSONObject requestBody = new JSONObject()
+	            .put("inputSearch", inputSearch)
+	            .put("paginationBody", paginationBody);
+	    return requestBody.toString();
+	}
+
     private OrderOutputData generateValidOrderOutputData() {
         ArrayList<OrderDetails> lOrderDetails = new ArrayList<>();
         lOrderDetails.add(easyRandom.nextObject(OrderDetails.class));

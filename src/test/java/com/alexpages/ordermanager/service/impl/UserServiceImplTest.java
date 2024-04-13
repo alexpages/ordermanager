@@ -4,8 +4,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
+import org.jeasy.random.EasyRandom;
+import org.jeasy.random.EasyRandomParameters;
+import org.jeasy.random.api.Randomizer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +37,14 @@ public class UserServiceImplTest {
     private PasswordEncoder encoder; 
 	@Mock
     private OrderManagerMapper mapper;
-	
+
+	private EasyRandom easyRandom;
+
+	@BeforeEach
+	void setUp() 
+	{
+		easyRandom = new EasyRandom();
+	}
 
 	@Test
 	void testAddUsser_success() 
@@ -41,6 +53,7 @@ public class UserServiceImplTest {
 		user.setPassword("1234567");
 		user.setRole(RoleEnum.ADMIN);
 		user.setUsername("username");
+		when(repository.findByUsername(any())).thenReturn(Optional.empty());
 		when(encoder.encode(any())).thenReturn("1234567");
 		when(mapper.toUserEntity(any())).thenReturn(generateUserEntity());
 		when(repository.save(any())).thenReturn(generateUserEntity());
@@ -50,6 +63,13 @@ public class UserServiceImplTest {
 	@Test
 	void testAddUsser_error() 
 	{
+		assertThrows(OrderManagerException500.class, () -> service.addUser(generateUser()));
+	}
+	
+	@Test
+	void testAddUsser_isPresent()
+	{
+		when(repository.findByUsername(any())).thenReturn(Optional.of(easyRandom.nextObject(UserEntity.class)));
 		assertThrows(OrderManagerException500.class, () -> service.addUser(generateUser()));
 	}
 	
