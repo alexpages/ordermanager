@@ -244,7 +244,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserDetailResponse'
+                $ref: '#/components/schemas/User'
         '404':
           $ref: '#/components/responses/404'
         '500':
@@ -455,9 +455,6 @@ components:
             $ref: '#/components/schemas/User'
         pageResponse:
           $ref: '#/components/schemas/PageResponse'
-    UserDetailResponse:
-      allOf:
-        - $ref: '#/components/schemas/User' 
     User:
       description: User that will post or take orders
       type: object
