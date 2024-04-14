@@ -2,15 +2,11 @@ package com.alexpages.ordermanager.error;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.jeasy.random.EasyRandom;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 
-class OrderManagerExceptionHandlerTest {
+public class OrderManagerExceptionHandlerTest {
 
     private OrderManagerExceptionHandler exceptionHandler = new OrderManagerExceptionHandler();
     

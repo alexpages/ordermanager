@@ -16,9 +16,9 @@ import org.springframework.data.repository.query.QueryByExampleExecutor;
 
 @Repository
 public interface OrderRepository 
-extends PagingAndSortingRepository<OrderEntity, Long>,
-		CrudRepository<OrderEntity, Long>,
-		QueryByExampleExecutor<OrderEntity> {
+extends CrudRepository<OrderEntity, Long>,
+		QueryByExampleExecutor<OrderEntity>,
+		PagingAndSortingRepository<OrderEntity, Long> {
 
     @Query(value = "SELECT s FROM OrderEntity s WHERE (:orderId IS NULL OR s.id = :orderId)" 
             + " AND (:status IS NULL OR UPPER(s.status) LIKE UPPER(CONCAT('%', :status, '%')))"
@@ -31,6 +31,4 @@ extends PagingAndSortingRepository<OrderEntity, Long>,
             @Param("startCreationDate") LocalDateTime startCreationDate,    
             @Param("endCreationDate") LocalDateTime endCreationDate,
             Pageable pageable);
-
-
 }

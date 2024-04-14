@@ -7,6 +7,7 @@ import lombok.NonNull;
 public interface GoogleMapsService 
 {
 	
-	public int getDistanceFromDistanceMatrix(@NonNull OrderPostRequest orderPostRequest) throws Exception;
+	public int getDistanceFromDistanceMatrix(@NonNull OrderPostRequest orderPostRequest) 
+	throws Exception;
 	
 }

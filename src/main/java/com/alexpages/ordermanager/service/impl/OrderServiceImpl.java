@@ -85,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
 			throw new OrderManagerException500("OrderServiceImpl > placeOrder > There was an issue placing the order: [" + e.getMessage() + "]");
 		}
 	}
-
+	@Transactional(readOnly = true)
 	@Override
 	public OrderOutputData getOrders(OrderInputData orderInputData) {
 		final String LOG_PREFIX = "OrderServiceImpl > getOrders > ";
@@ -125,11 +125,11 @@ public class OrderServiceImpl implements OrderService {
 	@Transactional
 	@Override
 	public OrderPatchResponse takeOrder(@NonNull Long orderId, @NonNull OrderPatchInput orderPatchInput) {
+			final String LOG_PREFIX = "OrderServiceImpl > takeOrder > ";
 		try {
 			Optional<OrderEntity> orderEntityOptional = orderRepository.findById(orderId);
-			
 			if (!orderEntityOptional.isPresent()) {
-				log.error("OrderServiceImpl > takeOrder > Order with ID: [" + orderId + "] was not found");
+				log.error(LOG_PREFIX + "Order with ID: [" + orderId + "] was not found");
 				throw new OrderManagerException404("Order with ID: [" + orderId + "] was not found");
 			
 			} else {
@@ -149,7 +149,7 @@ public class OrderServiceImpl implements OrderService {
 			}
 		
 		} catch (OptimisticLockingFailureException e) {
-			log.error("OrderServiceImpl > takeOrder > Order with ID: [" + orderId + "] was locked by another user");
+			log.error(LOG_PREFIX + "Order with ID: [" + orderId + "] was locked by another user");
 			throw new OrderManagerException409("Order with ID: [" + orderId + "] was locked by another user");
 		}
 	}
@@ -172,11 +172,12 @@ public class OrderServiceImpl implements OrderService {
 		}
 	}
 	
+	@Transactional(readOnly = true)
 	@Override
 	public OrderOutputAudit getAuditList(GetOrderAuditRequest getOrderAuditRequest) {
+		final String LOG_PREFIX = "OrderServiceImpl > listOrders > ";
 		try {
 			Pageable pageable = PageableUtils.getPageable(getOrderAuditRequest.getPaginationBody());
-			
 			OrderInputAudit orderInputAudit;
 			String action = null;
 			
@@ -188,7 +189,7 @@ public class OrderServiceImpl implements OrderService {
 			} else {
 				orderInputAudit = new OrderInputAudit();	// Object with nulls
 			}
-			log.info("OrderServiceImpl > listOrders > Orders: {}", orderInputAudit.toString());
+			log.info(LOG_PREFIX  + "Orders: {}", orderInputAudit.toString());
 			Page<OrderAuditEntity> pageOrderAuditEntity = orderAuditRepository.filterByParams(
 					orderInputAudit.getOrderId(),
 					action,
@@ -197,23 +198,23 @@ public class OrderServiceImpl implements OrderService {
 					pageable);
 			
 			if (pageOrderAuditEntity != null) {
-			    log.info("OrderServiceImpl > listOrders > Orders: {}", pageOrderAuditEntity.getContent());
-				log.info("OrderServiceImpl > listOrders > Orders: {}", pageOrderAuditEntity.getContent());
+			    log.info(LOG_PREFIX  + "Orders: {}", pageOrderAuditEntity.getContent());
 				OrderOutputAudit response = new OrderOutputAudit();
 				response.setOrders(orderMapper.toOrderAuditList(pageOrderAuditEntity.getContent()));
 				response.setPageResponse(PageableUtils.getPaginationResponse(pageOrderAuditEntity, pageOrderAuditEntity.getPageable()));
 				return response;
 			
 			} else {
-			    log.error("OrderServiceImpl > listOrders > pageOrderEntity is null");
+			    log.error(LOG_PREFIX  + "pageOrderEntity is null");
 			    return null;
 			}
 		} catch (Exception e) {
-			log.error("OrderServiceImpl > listOrders > It could not get the list of orders: [" + e.getMessage() + "]");
-			throw new OrderManagerException500("OrderServiceImpl > listOrders > Order list could not get retrieved, Exception: [" + e.getMessage() + "]");
+			log.error(LOG_PREFIX  + "It could not get the list of orders: [" + e.getMessage() + "]");
+			throw new OrderManagerException500(LOG_PREFIX  + "Order list could not get retrieved, Exception: [" + e.getMessage() + "]");
 		}
 	}
 	
+	@Transactional(readOnly = true)
 	@Override
 	public OrderDetails getOrderDetail(Long orderId) 
 	{

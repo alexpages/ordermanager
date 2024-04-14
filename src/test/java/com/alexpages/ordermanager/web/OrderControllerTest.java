@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.jeasy.random.EasyRandom;
 import org.json.JSONArray;
@@ -40,7 +39,7 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
-class OrderControllerTest {
+public class OrderControllerTest {
 	
 	@MockBean
 	private OrderServiceImpl orderServiceImpl;

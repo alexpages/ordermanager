@@ -27,6 +27,7 @@ import com.alexpages.ordermanager.utils.PageableUtils;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -39,6 +40,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	@Autowired
     private OrderManagerMapper mapper;
   
+	@Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String username) 
 	throws UsernameNotFoundException 
@@ -49,6 +51,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found " + username)); 
     } 
     
+    @Transactional
     @Override
     public String addUser(User user) 
     {
@@ -63,6 +66,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     	}    	
     }
 
+    @Transactional
     @Override
 	public void deleteUserById(Long userId) 
     {
@@ -74,7 +78,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		    repository.deleteById(userId);
 	    }		
 	}
-
+    
+	@Transactional(readOnly = true)
     @Override
 	public User getUserById(Long userId) 
     {
@@ -87,6 +92,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	    }		
 	}
 
+	@Transactional(readOnly = true)
+	@Override
 	public UserOuputData getUsers(@Valid UserInputData userInputData) 
 	{
 		final String LOG_PREFIX = "UserServiceImpl > getUsers > ";

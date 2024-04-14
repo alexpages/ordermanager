@@ -46,7 +46,7 @@ public class PageableUtils
 			paginationResponse.setNumber(pageNumer);
 			paginationResponse.setSize(page.getSize());
 			paginationResponse.setTotalPages(page.getTotalPages());
-			paginationResponse.setTotalElements((long) page.getTotalElements());
+			paginationResponse.setTotalElements(page.getTotalElements());
 		}
 		return paginationResponse;
 	}

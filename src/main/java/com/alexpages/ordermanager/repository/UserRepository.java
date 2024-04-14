@@ -16,7 +16,9 @@ import com.alexpages.ordermanager.entity.UserEntity;
 
 @Repository
 public interface UserRepository 
-extends CrudRepository<UserEntity, Long>, QueryByExampleExecutor<OrderEntity>,	PagingAndSortingRepository<UserEntity, Long> {
+extends CrudRepository<UserEntity, Long>, 
+		QueryByExampleExecutor<OrderEntity>,	
+		PagingAndSortingRepository<UserEntity, Long> {
 
 	Optional<UserEntity> findByUsername(String username);
 	
@@ -29,5 +31,4 @@ extends CrudRepository<UserEntity, Long>, QueryByExampleExecutor<OrderEntity>,	P
             @Param("username") 	String username,
             @Param("role") 	String role,
             Pageable pageable);
-
 }
