@@ -368,7 +368,7 @@ components:
     UserInputAudit:
       type: object
       properties:
-        name:
+        username:
           type: string
           description: name of the user
           example: Alex
@@ -388,15 +388,6 @@ components:
           example: '2023-12-01'
         action:
           $ref: '#/components/schemas/Action'
-    UserOutputAudit:
-      type: object
-      properties:
-        users:
-          type: array
-          items:
-            $ref: '#/components/schemas/User'
-        pageResponse:
-          $ref: '#/components/schemas/PageResponse'
     UserInputData:
       type: object
       description: Search criteria to obtain users information
@@ -404,12 +395,13 @@ components:
         inputSearch:
           type: object
           properties:
-            name:
+            username:
               type: string
               description: name of the user
               example: Alex
             userId:
               type: integer
+              format: int64
               description: user identifier
               example: 1
             role:
@@ -441,6 +433,9 @@ components:
           description: Name of the user
           type: string
           example: Alex
+        id:
+          type: integer
+          format: int64
         password:
           description: Password of the account
           type: string
@@ -449,28 +444,6 @@ components:
           enum:
             - USER
             - ADMIN
-    Order:
-      type: object
-      description: Information specific order
-      properties:
-        coordinates:
-          $ref: '#/components/schemas/Coordinates'
-        description:
-          type: string
-          example: "Pickup for Carlos"
-          description: description of the order
-        creationDate:
-          type: string
-          format: date
-          description: create date of the order
-          example: '2017-07-21T17:32:28Z'
-        lastModified:
-          type: string
-          format: date
-          description: create date of the order
-          example: '2017-08-21T17:32:28Z'
-        status:
-            $ref: '#/components/schemas/Status'
     OrderInputAudit:
       type: object
       properties:
@@ -625,9 +598,6 @@ components:
           type: string
           example: 'SUCCESS'
           description: result of the patch action
-    OrderDetailResponse:
-      allOf:
-        - $ref: '#/components/schemas/Order'
     PaginationBody:
       description: Pagination fields for request body
       type: object

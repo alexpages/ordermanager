@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.alexpages.ordermanager.api.domain.User;
+import com.alexpages.ordermanager.api.domain.UserOuputData;
 import com.alexpages.ordermanager.service.impl.JwtServiceImpl;
 import com.alexpages.ordermanager.service.impl.UserServiceImpl;
 
@@ -131,7 +132,36 @@ public class UserControllerTest {
                 .content("{}"))
         .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }	
+    
+    @Test
+    void testGetUsers_200()
+	throws Exception 
+    {
+    	when(userService.getUsers(any())).thenReturn(generateUserOutputData());
+        mockMvc.perform(post("/users/request")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+        .andExpect(status().is(HttpStatus.OK.value()));
+    }
+    
+    @Test
+    void testGetUsers_204()
+	throws Exception 
+    {
+    	when(userService.getUsers(any())).thenReturn(new UserOuputData());
+        mockMvc.perform(post("/users/request")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+        .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
+    }	
 	
+    private UserOuputData generateUserOutputData() 
+    {
+    	UserOuputData output = new UserOuputData();
+    	output.addUsersItem(easyRandom.nextObject(User.class));
+    	return output;
+    }
+    
 	private String generateValidAuthenticateRequest() 
 	throws JSONException 
 	{

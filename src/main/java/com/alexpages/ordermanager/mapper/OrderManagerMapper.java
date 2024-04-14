@@ -70,6 +70,8 @@ public interface OrderManagerMapper {
 		return RoleEnum.fromValue(role); // no need to check for null
 	}
 
+	List<User> toUserList(List<UserEntity> content);
+
 
 
 }

@@ -16,6 +16,7 @@ import com.alexpages.ordermanager.api.domain.UserInputData;
 import com.alexpages.ordermanager.api.domain.UserOuputData;
 import com.alexpages.ordermanager.service.impl.JwtServiceImpl;
 import com.alexpages.ordermanager.service.impl.UserServiceImpl;
+import com.alexpages.ordermanager.utils.ListUtils;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -69,8 +70,12 @@ public class UserController implements UsersApi {
 
 	@Override
 	public ResponseEntity<UserOuputData> getUsers(@Valid UserInputData userInputData) {
-		// TODO Auto-generated method stub
-		return null;
+		UserOuputData response = userService.getUsers(userInputData);
+		if (ListUtils.isBlank(response.getUsers())){
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		} else {
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
 	}
 
 }

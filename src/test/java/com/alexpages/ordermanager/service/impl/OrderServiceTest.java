@@ -136,6 +136,7 @@ public class OrderServiceTest {
 	    mockSecurityContext();
 	    assertDoesNotThrow(() -> orderServiceImpl.deleteOrderById(1L));
 	}
+	
 	@Test
 	void testDeleteOrder_error() throws Exception {
 	    assertThrows(OrderManagerException500.class, () -> orderServiceImpl.deleteOrderById(1L));
@@ -184,16 +185,6 @@ public class OrderServiceTest {
 	    assertNotNull(orderServiceImpl.takeOrder(1L, generateValidOrderPatchInput()));
 	}
 	
-	private void mockSecurityContext() 
-	{
-		Authentication authentication = mock(Authentication.class);
-		SecurityContext securityContext = mock(SecurityContext.class);
-		SecurityContextHolder.setContext(securityContext);
-		when(securityContext.getAuthentication()).thenReturn(authentication);
-	    when(authentication.getName()).thenReturn("username");
-	}
-
-	
 	@Test
 	void testTakeOrder_error_ConcurrencyError() 
 	{
@@ -233,6 +224,13 @@ public class OrderServiceTest {
 		assertNotNull(orderServiceImpl.getOrderDetail(1L));
 	}
 	
+	@Test
+	void testGetOrderDetails_null() {
+	    when(orderRepository.findById(any())).thenReturn(Optional.empty());
+	    assertNull(orderServiceImpl.getOrderDetail(1L));
+	}
+	
+	// Private functions to aid testing
 	private OrderDetails generateValidOrderDetails() {
 		OrderDetails orderDetails = new OrderDetails();
 		orderDetails.setCreationDate(LocalDate.now());
@@ -242,16 +240,6 @@ public class OrderServiceTest {
 		orderDetails.setVersion(1L);
 		return orderDetails;
 	}
-
-	@Test
-	void testGetOrderDetails_null() {
-	    when(orderRepository.findById(any())).thenReturn(Optional.empty());
-	    assertNull(orderServiceImpl.getOrderDetail(1L));
-	}
-	
-	
-	// Private functions to aid testing
-	
 	private OrderInputData generateValidOrderInputData() {
 		OrderInputData orderInputData = new OrderInputData();
 		orderInputData.setInputSearch(null);
@@ -274,6 +262,15 @@ public class OrderServiceTest {
 	    		Arrays.asList("22.319", "114.169"),
 	    		Arrays.asList("22.2948341", "114.2329")));
 	    return request;
+	}
+
+	private void mockSecurityContext() 
+	{
+		Authentication authentication = mock(Authentication.class);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		SecurityContextHolder.setContext(securityContext);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
+	    when(authentication.getName()).thenReturn("username");
 	}
 	
 	private Coordinates createCoordinates(List<String> origin, List<String> destination) {
