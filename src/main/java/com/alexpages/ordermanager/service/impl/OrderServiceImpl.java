@@ -3,9 +3,11 @@ package com.alexpages.ordermanager.service.impl;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
 	private final OrderAuditRepository orderAuditRepository;
 	private final GoogleMapsServiceImpl googleMapsServiceImpl;
 	private final OrderManagerMapper orderMapper;
-
+	
 	private static final String LATITUDE_PATTERN = "^(\\+|-)?(?:90(?:(?:\\.0{1,7})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,7})?))$";
 	private static final String LONGITUDE_PATTERN = "^(\\+|-)?(?:180(?:(?:\\.0{1,7})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,7})?))$";
 
@@ -234,11 +236,11 @@ public class OrderServiceImpl implements OrderService {
 	
 	private OrderAuditEntity createOrderAuditEntity(OrderEntity orderEntity, String action) 
 	{
-		//TODO add old and new order in blob format?
 		return OrderAuditEntity.builder()
 				.orderId(orderEntity.getId())
-				.actionDate(LocalDateTime.now())
 				.action(action)
+				.username(SecurityContextHolder.getContext().getAuthentication().getName())
+				.actionDate(LocalDateTime.now())
 				.build();
 	}
 

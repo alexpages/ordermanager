@@ -24,8 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-public class UserController implements UsersApi
-{
+public class UserController implements UsersApi {
 
     private final UserServiceImpl userService; 
     private final JwtServiceImpl jwtService; 
@@ -69,7 +68,6 @@ public class UserController implements UsersApi
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
-
 
 	@Override
 	public ResponseEntity<UserOutputAudit> getUserAudit(@Valid UserInputAudit1 userInputAudit1) {

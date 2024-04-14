@@ -207,7 +207,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
   
-  /users/request/audit:
+  /users/audit/request:
     post:
       tags:
         - users

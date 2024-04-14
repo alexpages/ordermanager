@@ -20,8 +20,8 @@ import com.alexpages.ordermanager.utils.ListUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 public class OrderController implements OrdersApi {
 
 	private final OrderServiceImpl orderServiceImpl;

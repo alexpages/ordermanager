@@ -39,9 +39,14 @@ implements Serializable
     @Column(name = "ACTION")
 	@NotNull
     private String action;
+      
+    @Column(name = "USERNAME")
+	@NotNull
+    private String username;
     
     @Column(name = "ACTION_DATE")
 	@NotNull
     private LocalDateTime actionDate;
+
 
 }

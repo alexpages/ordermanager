@@ -1,10 +1,12 @@
 package com.alexpages.ordermanager.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -21,8 +23,6 @@ import org.jeasy.random.api.Randomizer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,6 +30,10 @@ import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.alexpages.ordermanager.api.domain.Coordinates;
 import com.alexpages.ordermanager.api.domain.GetOrderAuditRequest;
@@ -62,6 +66,8 @@ public class OrderServiceTest {
 	private GoogleMapsServiceImpl googleMapsServiceImpl;
 	@Mock
 	private OrderManagerMapper orderMapper;
+	@Mock
+    private AuthenticationManager authenticationManager; 
 
 	private EasyRandom easyRandom;
 
@@ -77,6 +83,7 @@ public class OrderServiceTest {
     {
     	when(googleMapsServiceImpl.getDistanceFromDistanceMatrix(any())).thenReturn(1);
     	when(orderRepository.save(any(OrderEntity.class))).thenReturn(generateValidOrderEntity());
+    	mockSecurityContext();
     	assertNotNull(orderServiceImpl.postOrder(generateValidOrderPostRequest()));
     }
 
@@ -126,7 +133,7 @@ public class OrderServiceTest {
 	void testDeleteOrder_success() throws Exception {
 		when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
 	    doNothing().when(orderRepository).deleteById(any());
-	    when(orderAuditRepository.save(any())).thenReturn(easyRandom.nextObject(OrderAuditEntity.class));
+	    mockSecurityContext();
 	    assertDoesNotThrow(() -> orderServiceImpl.deleteOrderById(1L));
 	}
 	@Test
@@ -171,10 +178,21 @@ public class OrderServiceTest {
 	@Test
 	void testTakeOrder_success() 
 	{
-		when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
-		when(orderRepository.save(any())).thenReturn(easyRandom.nextObject(OrderEntity.class));
-		assertNotNull(orderServiceImpl.takeOrder(1L, generateValidOrderPatchInput()));
+	    when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
+	    when(orderRepository.save(any())).thenReturn(easyRandom.nextObject(OrderEntity.class));
+	    mockSecurityContext();
+	    assertNotNull(orderServiceImpl.takeOrder(1L, generateValidOrderPatchInput()));
 	}
+	
+	private void mockSecurityContext() 
+	{
+		Authentication authentication = mock(Authentication.class);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		SecurityContextHolder.setContext(securityContext);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
+	    when(authentication.getName()).thenReturn("username");
+	}
+
 	
 	@Test
 	void testTakeOrder_error_ConcurrencyError() 
