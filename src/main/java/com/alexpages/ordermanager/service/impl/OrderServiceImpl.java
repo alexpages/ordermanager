@@ -34,6 +34,7 @@ import com.alexpages.ordermanager.repository.OrderAuditRepository;
 import com.alexpages.ordermanager.repository.OrderRepository;
 import com.alexpages.ordermanager.service.OrderService;
 import com.alexpages.ordermanager.utils.DateUtils;
+import com.alexpages.ordermanager.utils.ListUtils;
 import com.alexpages.ordermanager.utils.PageableUtils;
 
 import lombok.NonNull;
@@ -86,7 +87,8 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public OrderOutputData getOrderList(OrderInputData orderInputData) {
+	public OrderOutputData getOrders(OrderInputData orderInputData) {
+		final String LOG_PREFIX = "OrderServiceImpl > getOrders > ";
 		try {
 			Pageable pageable = PageableUtils.getPageable(orderInputData.getPaginationBody());
 			OrderInputDataInputSearch inputSearch;
@@ -96,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
 			} else {
 				inputSearch = new OrderInputDataInputSearch();	// Object with nulls
 			}
-			log.info("OrderServiceImpl > listOrders > Orders: {}", orderInputData.toString());
+			log.info(LOG_PREFIX + "orderInputData: {}", orderInputData.toString());
 			Page<OrderEntity> pageOrderEntity = orderRepository.filterByParams(
 					inputSearch.getOrderId(),
 					getStatus(inputSearch.getStatus()),
@@ -104,20 +106,19 @@ public class OrderServiceImpl implements OrderService {
 					DateUtils.toLocalDateTime(inputSearch.getEndCreationDate()),
 					pageable);
 			
-			if (pageOrderEntity != null) {
-			    log.info("OrderServiceImpl > listOrders > Orders: {}", pageOrderEntity.getContent());
-				log.info("OrderServiceImpl > listOrders > Orders: {}", pageOrderEntity.getContent());
+			if (!ListUtils.isBlank(pageOrderEntity.getContent())) {
+			    log.info(LOG_PREFIX + "Orders: {}", pageOrderEntity.getContent());
 				OrderOutputData response = new OrderOutputData();
 				response.setOrders(orderMapper.toOrderList(pageOrderEntity.getContent()));
 				response.setPageResponse(PageableUtils.getPaginationResponse(pageOrderEntity, pageOrderEntity.getPageable()));
 				return response;
 			} else {
-			    log.error("OrderServiceImpl > listOrders > pageOrderEntity is null");
+			    log.error(LOG_PREFIX + "pageOrderEntity is null");
 			    return null;
 			}
 		} catch (Exception e) {
-			log.error("OrderServiceImpl > listOrders > It could not get the list of orders: [" + e.getMessage() + "]");
-			throw new OrderManagerException500("OrderServiceImpl > listOrders > Order list could not get retrieved, Exception: [" + e.getMessage() + "]");
+			log.error(LOG_PREFIX + "It could not get the list of orders: [" + e.getMessage() + "]");
+			throw new OrderManagerException500(LOG_PREFIX + "Order list could not get retrieved, Exception: [" + e.getMessage() + "]");
 		}
 	}
 		

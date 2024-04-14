@@ -1,7 +1,7 @@
 package com.alexpages.ordermanager.service.impl;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.h2.mvstore.Page;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.api.Randomizer;
@@ -35,10 +36,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.alexpages.ordermanager.api.domain.Action;
 import com.alexpages.ordermanager.api.domain.Coordinates;
 import com.alexpages.ordermanager.api.domain.GetOrderAuditRequest;
 import com.alexpages.ordermanager.api.domain.OrderDetails;
+import com.alexpages.ordermanager.api.domain.OrderInputAudit;
 import com.alexpages.ordermanager.api.domain.OrderInputData;
+import com.alexpages.ordermanager.api.domain.OrderInputDataInputSearch;
 import com.alexpages.ordermanager.api.domain.OrderPatchInput;
 import com.alexpages.ordermanager.api.domain.OrderPostRequest;
 import com.alexpages.ordermanager.api.domain.PaginationBody;
@@ -143,20 +147,39 @@ public class OrderServiceTest {
 	}
 
 	@Test
-	void testGetOrderList_success() 
+	void testGetOrders_nullparams_success() 
 	{
 	    List<OrderEntity> lOrderEntities = new ArrayList<>();
 	    lOrderEntities.add(generateValidOrderEntity());
 	    Pageable pageable = PageRequest.of(1, 10);
-	    when(orderRepository.filterByParams(any(), any(), any(), any(), any())).thenReturn(new PageImpl<>(lOrderEntities, pageable, lOrderEntities.size()));
-	    assertNotNull(orderServiceImpl.getOrderList(generateValidOrderInputData()));
+	    when(orderRepository.filterByParams(any(), any(), any(), any(), any()))
+	            .thenReturn(new PageImpl<>(lOrderEntities, pageable, lOrderEntities.size()));
+	    assertNotNull(orderServiceImpl.getOrders(new OrderInputData()));
+	}
+	
+	@Test
+	void testGetOrders_success() {
+	    List<OrderEntity> lOrderEntities = new ArrayList<>();
+	    lOrderEntities.add(generateValidOrderEntity());
+	    Pageable pageable = PageRequest.of(1, 10);
+	    when(orderRepository.filterByParams(any(), any(), any(), any(), any()))
+	            .thenReturn(new PageImpl<>(lOrderEntities, pageable, lOrderEntities.size()));
+	    assertNotNull(orderServiceImpl.getOrders(generateValidOrderInputData()));
+	}
+	
+	@Test
+	void testGetOrders_success_empty() 
+	{
+	    Pageable pageable = PageRequest.of(1, 10);
+	    when(orderRepository.filterByParams(any(), any(), any(), any(), any())).thenReturn(new PageImpl<>(new ArrayList<>(), pageable, 0));
+	    assertNull(orderServiceImpl.getOrders(generateValidOrderInputData()));
 	}
 
 	@Test
-    void testGetOrderList_error()
+    void testGetOrders_error()
     {
 	    when(orderRepository.filterByParams(any(), any(), any(), any(), any())).thenThrow(new RuntimeException("some error"));
-		assertThrows(OrderManagerException500.class, () -> orderServiceImpl.getOrderList(generateValidOrderInputData()));
+		assertThrows(OrderManagerException500.class, () -> orderServiceImpl.getOrders(generateValidOrderInputData()));
     }
 	
 	@Test
@@ -171,10 +194,29 @@ public class OrderServiceTest {
 	}
 	
 	@Test
+	void testGetOrderAuditList_nullparams_success() 
+	{
+	    List<OrderAuditEntity> lOrderAuditEntities = new ArrayList<>();
+	    lOrderAuditEntities.add(generateValidOrderAuditEntity());
+	    Pageable pageable = PageRequest.of(1, 10);
+	    when(orderAuditRepository.filterByParams(any(), any(), any(), any(), any()))
+	    				.thenReturn(new PageImpl<>(lOrderAuditEntities, pageable, lOrderAuditEntities.size()));
+	    assertNotNull(orderServiceImpl.getAuditList(new GetOrderAuditRequest()));
+	}
+	
+	
+	@Test
     void testGetOrderAuditList_error()
     {
 		assertThrows(OrderManagerException500.class, () -> orderServiceImpl.getAuditList(null));
     }
+	
+	@Test
+	void testGetOrderAuditList_success_empty() 
+	{
+	    assertNull(orderServiceImpl.getAuditList(generateValidGetOrderAuditRequest()));
+	}
+
 	
 	@Test
 	void testTakeOrder_success() 
@@ -242,7 +284,9 @@ public class OrderServiceTest {
 	}
 	private OrderInputData generateValidOrderInputData() {
 		OrderInputData orderInputData = new OrderInputData();
-		orderInputData.setInputSearch(null);
+		OrderInputDataInputSearch inputSearch = new OrderInputDataInputSearch();
+		inputSearch.setOrderId(1L);
+		orderInputData.setInputSearch(inputSearch);
 		PaginationBody pagination = new PaginationBody();
 		pagination.setPage(new BigDecimal(2));
 		pagination.setSize(new BigDecimal(10));
@@ -290,11 +334,13 @@ public class OrderServiceTest {
 				.build();
 	}
 	
-	
 	private GetOrderAuditRequest generateValidGetOrderAuditRequest() {
 		GetOrderAuditRequest request = new GetOrderAuditRequest();
 		request.setPaginationBody(null);
 		request.setOrderInputAudit(null);
+		OrderInputAudit orderInputAudit = new OrderInputAudit();
+		orderInputAudit.setAction(Action.CREATE);
+		request.setOrderInputAudit(orderInputAudit);
 		return request;
 	}
 	
@@ -306,5 +352,4 @@ public class OrderServiceTest {
 				.orderId(1L)
 				.build();
 	}
-
 }

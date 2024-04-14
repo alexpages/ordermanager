@@ -1,6 +1,11 @@
 package com.alexpages.ordermanager.utils;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -19,7 +24,7 @@ import org.springframework.data.domain.Pageable;
 import com.alexpages.ordermanager.api.domain.PageResponse;
 import com.alexpages.ordermanager.api.domain.PaginationBody;
 import com.alexpages.ordermanager.error.OrderManagerException400;
-
+ 
 @ExtendWith(MockitoExtension.class)
 public class PageableUtilsTest
 {
@@ -31,12 +36,14 @@ public class PageableUtilsTest
 		 newPageable.setAccessible(true);
 		 assertThrows(InvocationTargetException.class, () -> newPageable.newInstance());
 	}
+	
 	@Test
 	void test_getPageable_null() 
 	{
 		Pageable pageable = PageableUtils.getPageable(null);
 		assertTrue(pageable.isUnpaged());
 	}
+	
 	@Test
 	void test_getPageable_notNull() 
 	{
@@ -47,22 +54,6 @@ public class PageableUtilsTest
 		
 		Pageable pageable = PageableUtils.getPageable(paginationBody);
 		assertPagination(pageable, 2, 5);
-	}
-	
-	@Test
-	void test_validatePaginationData_case1() {
-		PaginationBody paginationBody = new PaginationBody();
-		paginationBody.setPage(new BigDecimal(0));
-		paginationBody.setSize(new BigDecimal(1));
-		assertThrows(OrderManagerException400.class, () -> PageableUtils.validatePaginationData(paginationBody));
-	}
-	
-	@Test
-	void test_validatePaginationData_case2() {
-		PaginationBody paginationBody = new PaginationBody();
-		paginationBody.setPage(new BigDecimal(2));
-		paginationBody.setSize(new BigDecimal(0));
-		assertThrows(OrderManagerException400.class, () -> PageableUtils.validatePaginationData(paginationBody));
 	}
 	
 	@Test 
@@ -79,6 +70,25 @@ public class PageableUtilsTest
 			() -> assertEquals(31, paginationResponse.getTotalElements())
 		);
 	}
+	
+	@Test
+	void test_validatePaginationData_case1() 
+	{
+		PaginationBody paginationBody = new PaginationBody();
+		paginationBody.setPage(new BigDecimal(0));
+		paginationBody.setSize(new BigDecimal(1));
+		assertThrows(OrderManagerException400.class, () -> PageableUtils.validatePaginationData(paginationBody));
+	}
+	
+	@Test
+	void test_validatePaginationData_case2() 
+	{
+		PaginationBody paginationBody = new PaginationBody();
+		paginationBody.setPage(new BigDecimal(2));
+		paginationBody.setSize(new BigDecimal(0));
+		assertThrows(OrderManagerException400.class, () -> PageableUtils.validatePaginationData(paginationBody));
+	}
+	
 	@Test 
 	void test_getPaginationResponse_unpaged() 
 	{

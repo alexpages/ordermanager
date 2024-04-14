@@ -18,7 +18,7 @@ public interface OrderService
 
 	public OrderPostResponse postOrder(@NonNull OrderPostRequest orderPostRequest);
 
-	public OrderOutputData getOrderList(OrderInputData orderInputData);
+	public OrderOutputData getOrders(OrderInputData orderInputData);
 
 	public void deleteOrderById(@NonNull Long orderId);
 
