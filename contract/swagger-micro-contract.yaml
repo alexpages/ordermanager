@@ -53,7 +53,7 @@ paths:
       tags:
         - orders
       summary: Allows you to request a list of orders
-      operationId: postOrdersRequest
+      operationId: getOrders
       description: >-
         Service that allows you to recover all the information related to a
         order (employee, customer, items, etc.). The result will be paginated
@@ -189,7 +189,7 @@ paths:
       tags:
         - users
       summary: Allows you to request a list of users
-      operationId: getUserData
+      operationId: getUsers
       description: >-
         Service that allows you to recover all the information related to users according to search criteria. The result will be paginated.
         from BD
@@ -207,28 +207,6 @@ paths:
         '500':
           $ref: '#/components/responses/500'
   
-  /users/audit/request:
-    post:
-      tags:
-        - users
-      summary: Allows you to audit users
-      operationId: getUserAudit
-      description: >-
-        Service that allows you to recover all the information related to users audit according to search criteria. The result will be paginated.
-      requestBody:
-        $ref: '#/components/requestBodies/UserInputAudit'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserOutputAudit'
-        '204':
-          description: No Content
-        '500':
-          $ref: '#/components/responses/500'
-            
   /users/{userId}:
     get:
       tags:

@@ -12,10 +12,8 @@ import com.alexpages.ordermanager.api.domain.AddUser201Response;
 import com.alexpages.ordermanager.api.domain.AuthenticateRequest;
 import com.alexpages.ordermanager.api.domain.AuthenticateResponse;
 import com.alexpages.ordermanager.api.domain.User;
-import com.alexpages.ordermanager.api.domain.UserInputAudit1;
 import com.alexpages.ordermanager.api.domain.UserInputData;
 import com.alexpages.ordermanager.api.domain.UserOuputData;
-import com.alexpages.ordermanager.api.domain.UserOutputAudit;
 import com.alexpages.ordermanager.service.impl.JwtServiceImpl;
 import com.alexpages.ordermanager.service.impl.UserServiceImpl;
 
@@ -70,14 +68,7 @@ public class UserController implements UsersApi {
 	}
 
 	@Override
-	public ResponseEntity<UserOutputAudit> getUserAudit(@Valid UserInputAudit1 userInputAudit1) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public ResponseEntity<UserOuputData> getUserData(@Valid UserInputData userInputData) {
+	public ResponseEntity<UserOuputData> getUsers(@Valid UserInputData userInputData) {
 		// TODO Auto-generated method stub
 		return null;
 	}

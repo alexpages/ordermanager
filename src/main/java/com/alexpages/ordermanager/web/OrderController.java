@@ -39,7 +39,7 @@ public class OrderController implements OrdersApi {
 	}
 	
 	@Override
-	public ResponseEntity<OrderOutputData> postOrdersRequest(OrderInputData orderInputData) 
+	public ResponseEntity<OrderOutputData> getOrders(OrderInputData orderInputData) 
 	{
 		OrderOutputData response = orderServiceImpl.getOrderList(orderInputData);
 		if (ListUtils.isBlank(response.getOrders())){
