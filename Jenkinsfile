@@ -6,7 +6,7 @@ pipeline {
         stage('Maven Build') { 
             steps {
             	echo '[INFO] - Build stage initialized....'
-            	sh 'mvn --version'
+            	sh 'mvn -version'
             	sh 'java -version'
                 sh 'mvn clean package -DskipTests' 
                 echo '[INFO] - Build stage finalized successfully!'
