@@ -6,16 +6,16 @@ pipeline {
         stage('Maven Build') { 
             steps {
             	echo '[INFO] - Build stage initialized....'
-            	sh 'mvn -version'
-            	sh 'java -version'
-                sh 'mvn clean package -DskipTests' 
+            	bat 'mvn -version'
+            	bat 'java -version'
+                bat 'mvn clean package -DskipTests' 
                 echo '[INFO] - Build stage finalized successfully!'
             }
         }
         stage('Test') { 
             steps {
                 echo '[INFO] - Test stage initialized....'
-                sh 'mvn test' 
+                bat 'mvn test' 
             	echo '[INFO] - Test stage finalized successfully!'
             }                
         }
