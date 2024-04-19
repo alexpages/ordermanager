@@ -6,7 +6,7 @@ target/
 .env
 src/main/resources/application.yml
 src/main/java/com.alexpages.ordermanager.api/
-
+ 
 
 ### STS ###
 .apt_generated
