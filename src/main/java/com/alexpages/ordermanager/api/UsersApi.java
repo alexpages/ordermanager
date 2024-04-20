@@ -31,10 +31,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 import java.util.Optional;
-import jakarta.annotation.Generated;
+import javax.annotation.Generated;
 
 @Validated
 public interface UsersApi {

@@ -18,7 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import com.alexpages.ordermanager.security.JwtAuthFilter;
@@ -42,10 +41,13 @@ public class OrderManagerSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) 
             throws Exception 
     {
-        http.csrf().disable();
-        http.headers().frameOptions().disable();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests()
+        http.csrf(
+        		csrf -> csrf.disable());
+        http.headers(
+        		headers -> headers.frameOptions().disable());
+        http.sessionManagement(
+        		management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.authorizeHttpRequests()
             .antMatchers(HttpMethod.POST, "/users").permitAll()
             .antMatchers(HttpMethod.POST, "/users/request").permitAll()
             .antMatchers(HttpMethod.POST, "/users/authenticate").permitAll()
