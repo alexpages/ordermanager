@@ -3,6 +3,7 @@ pipeline {
     environment {
         REGISTRY = 'alexintelc/ordermanager'
         REGISTRY_CREDENTIAL = 'dockerhub'
+        AWS_CREDENTIAL = '456bd977-adfc-47f9-9ccb-0430011f0767'
     }
     stages {
         stage('100-Checkout(SCM)') {
@@ -44,7 +45,30 @@ pipeline {
                     bat 'docker login -u %DOCKERHUB_USERNAME% -p %DOCKERHUB_PASSWORD%'
                     bat 'docker push %REGISTRY%:latest'
                 }
-                echo '[INFO] > 301-Publish Docker Image > Docker Image has been published'
+                echo '[INFO] > 301-Publish Docker Image > Docker Image has been published!!'
+            }
+        }
+        
+        stage('302-Clean up Docker Image') {
+            steps {
+                echo "[INFO] > 302-Clean up Docker Image > Cleaning up Docker image after it has been pushed to Dockerhub..."
+                bat "docker rmi %REGISTRY%:latest"
+                echo "[INFO] > 302-Clean up Docker Image > Docker image has been cleaned up!!"
+            }
+        }
+        
+		stage('400-Deploy to Cloud') {
+            steps {
+                echo "[INFO] > 400-Deploy to Cloud > Deploying Docker image to AWS EC2 instance..."
+                withCredentials([aws(credentialsId: AWS_CREDENTIAL, accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    bat 'docker pull mysql:latest'
+                    bat "docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} -e MYSQL_DATABASE=${MYSQL_DATABASE} mysql:latest"
+                    bat 'docker pull %REGISTRY%:latest'
+                    bat 'docker stop ordermanager || true'
+                    bat 'docker rm ordermanager || true'
+                    bat "docker run -d -p 8080:8080 --name ordermanager --link mysql-db:mysql %REGISTRY%:latest"
+                    echo "[INFO] > 400-Deploy to Cloud > Docker image deployed successfully to AWS EC2 instance!"
+                }
             }
         }
     }
