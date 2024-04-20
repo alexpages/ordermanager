@@ -39,10 +39,8 @@ pipeline {
 		stage('301-Publish Docker Image') {
 		    steps {
 		        echo "[INFO] > 301-Publish Docker Image > Publishing Docker image..." 
-		        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR', passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW')]) {
-		            bat 'echo %DOCKERHUB_CREDENTIALS_PSW% | docker login --username %DOCKERHUB_CREDENTIALS_USR% --password-stdin'
-		            bat "docker push ordermanager"
-		        }
+	            bat 'echo %DOCKERHUB_CREDENTIALS_PSW% | docker login --username %DOCKERHUB_CREDENTIALS_USR% --password-stdin'
+	            bat "docker push ordermanager"
 		        echo "[INFO] > 301-Publish Docker Image > Docker Image has been published" 
 		    }
 		}
