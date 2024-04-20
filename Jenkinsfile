@@ -36,10 +36,12 @@ pipeline {
             }
         }
         
-        stage('301-Login Dockerhub') {
+		stage('301-Login Dockerhub') {
 		    steps {
-		        echo "[INFO] > 301-Login Dockerhub > Logging in in Dockerhub..." 
-	            bat 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login --username $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+		        echo "[INFO] > 301-Login Dockerhub > Logging in to Dockerhub..." 
+		        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR', passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW')]) {
+		            bat 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login --username $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+		        }
 		        echo "[INFO] > 301-Login Dockerhub > Login completed!!" 
 		    }
 		}
