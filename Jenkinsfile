@@ -40,7 +40,7 @@ pipeline {
         stage('301-Publish Docker Image') {
 		    steps {
 		        echo "[INFO] > 300-Publish Docker Image > Publishing Docker image..." 
-		        bat "docker push your-image-name"
+		        bat "docker push ordermanager"
 		        echo "[INFO] > 301-Publish Docker Image > Docker Image has been published" 
 		    }
 		}
