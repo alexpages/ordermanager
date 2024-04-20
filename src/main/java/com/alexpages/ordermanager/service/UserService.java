@@ -4,7 +4,7 @@ import com.alexpages.ordermanager.api.domain.User;
 import com.alexpages.ordermanager.api.domain.UserInputData;
 import com.alexpages.ordermanager.api.domain.UserOuputData;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 public interface UserService 
 {

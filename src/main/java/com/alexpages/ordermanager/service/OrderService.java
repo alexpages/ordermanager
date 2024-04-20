@@ -10,7 +10,7 @@ import com.alexpages.ordermanager.api.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.api.domain.OrderPostRequest;
 import com.alexpages.ordermanager.api.domain.OrderPostResponse;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.NonNull;
 
 public interface OrderService 

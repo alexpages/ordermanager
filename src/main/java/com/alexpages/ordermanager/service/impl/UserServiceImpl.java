@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alexpages.ordermanager.api.domain.User;
 import com.alexpages.ordermanager.api.domain.UserInputData;
@@ -25,9 +26,8 @@ import com.alexpages.ordermanager.security.UserInfoDetails;
 import com.alexpages.ordermanager.service.UserService;
 import com.alexpages.ordermanager.utils.PageableUtils;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service

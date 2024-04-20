@@ -40,26 +40,26 @@ public class OrderManagerSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) 
-	throws Exception 
+            throws Exception 
     {
-        http.csrf(csrf -> csrf.disable());
-        http.headers(headers -> headers.frameOptions().disable());
-        http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));   
-    	http.authorizeHttpRequests()
-            .requestMatchers(HttpMethod.POST, "/users").permitAll()
-            .requestMatchers(HttpMethod.POST, "/users/request").permitAll()
-            .requestMatchers(HttpMethod.POST, "/users/authenticate").permitAll()
-            .requestMatchers(HttpMethod.GET, "/users/{userId}").permitAll()
-            .requestMatchers(HttpMethod.GET, "/orders/{orderId}").permitAll()
-            .requestMatchers(HttpMethod.POST, "/orders/request").permitAll()
-            .requestMatchers(HttpMethod.POST, "/orders/audit/request").permitAll()
-            .requestMatchers(new AntPathRequestMatcher("/console/**")).permitAll()
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.authorizeRequests()
+            .antMatchers(HttpMethod.POST, "/users").permitAll()
+            .antMatchers(HttpMethod.POST, "/users/request").permitAll()
+            .antMatchers(HttpMethod.POST, "/users/authenticate").permitAll()
+            .antMatchers(HttpMethod.GET, "/users/{userId}").permitAll()
+            .antMatchers(HttpMethod.GET, "/orders/{orderId}").permitAll()
+            .antMatchers(HttpMethod.POST, "/orders/request").permitAll()
+            .antMatchers(HttpMethod.POST, "/orders/audit/request").permitAll()
+            .antMatchers("/console/**").permitAll()
             .anyRequest().authenticated();
         http.authenticationProvider(authenticationProvider()).addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
-  
+
         return http.build();
     }
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() 
     { 

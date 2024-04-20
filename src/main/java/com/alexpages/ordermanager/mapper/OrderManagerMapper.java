@@ -18,7 +18,7 @@ import com.alexpages.ordermanager.entity.OrderAuditEntity;
 import com.alexpages.ordermanager.entity.OrderEntity;
 import com.alexpages.ordermanager.entity.UserEntity;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 @Mapper(componentModel = "spring")
 public interface OrderManagerMapper {

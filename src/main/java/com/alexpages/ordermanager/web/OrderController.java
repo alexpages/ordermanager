@@ -17,7 +17,7 @@ import com.alexpages.ordermanager.api.domain.OrderPostResponse;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
 import com.alexpages.ordermanager.utils.ListUtils;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
