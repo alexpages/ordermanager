@@ -4,7 +4,8 @@ spring:
       enabled: true
       path: /console/ # http://localhost:8080/console
   profiles:
-    active: standalone # when running docker, it overrides the profile using the spring profile "docker" defined in .env
+    active: docker 
+#    active: standalone
   main:
     allow-circular-references: true 
     

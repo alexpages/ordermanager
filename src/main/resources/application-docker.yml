@@ -1,11 +1,11 @@
 spring:
   config:
-     activate:
-        on-profile: docker
+    activate:
+      on-profile: docker
   datasource:
-    url: jdbc:mysql://mysql-container:3306/orders_db 
-    username: sa
-    password: sa
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
     database: mysql
     show-sql: true

@@ -61,12 +61,10 @@ pipeline {
             steps {
                 echo "[INFO] > 400-Deploy to Cloud > Deploying Docker image to AWS EC2 instance..."
                 withCredentials([aws(credentialsId: AWS_CREDENTIAL, accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    bat 'docker pull mysql:latest'
-                    bat "docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} -e MYSQL_DATABASE=${MYSQL_DATABASE} mysql:latest"
-                    bat 'docker pull %REGISTRY%:latest'
-                    bat 'docker stop ordermanager || true'
-                    bat 'docker rm ordermanager || true'
-                    bat "docker run -d -p 8080:8080 --name ordermanager --link mysql-db:mysql %REGISTRY%:latest"
+                    bat 'docker pull alexintelc/ordermanager:latest'
+                    
+                 	bat 'docker-compose up -d'
+                    
                     echo "[INFO] > 400-Deploy to Cloud > Docker image deployed successfully to AWS EC2 instance!"
                 }
             }

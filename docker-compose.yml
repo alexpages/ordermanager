@@ -5,11 +5,12 @@ services:
       container_name: ordermanager
       depends_on:
          - mysql
-      build:
-         context: .
-         dockerfile: Dockerfile
+      image: alexintelc/ordermanager:latest
+#      build:                     #use this instead of image if you want to run MySQL + SpringBoot app locally on docker
+#         context: .
+#         dockerfile: Dockerfile 
       ports:
-         - "8080:8080"
+         - "8081:8081"
       restart: on-failure
       networks:
          - internal-net
