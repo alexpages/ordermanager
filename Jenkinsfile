@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+     DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+    }
     stages {
         stage('100-Checkout(SCM)') { 
             steps {
@@ -26,6 +29,7 @@ pipeline {
         }
         
         stage('300-Build Docker Image') {
+        
             steps {
             	echo "[INFO] > 300-Build Docker Image > Building Docker image..." 
                 bat 'docker build -t ordermanager .'
@@ -36,12 +40,8 @@ pipeline {
         stage('301-Publish Docker Image') {
 		    steps {
 		        echo "[INFO] > 300-Publish Docker Image > Publishing Docker image..." 
-		        withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_HUB_LOGIN_USR', passwordVariable: 'DOCKER_HUB_LOGIN_PSW')]) {
-		            bat "docker login --username \$DOCKER_HUB_LOGIN_USR --password \$DOCKER_HUB_LOGIN_PSW"
-		        }
-		        echo "[INFO] > 301-Publish Docker Image > Login completed" 
 		        bat "docker push your-image-name"
-		        echo "[INFO] > 301-Publish Docker Image > Docker Image has been pushed" 
+		        echo "[INFO] > 301-Publish Docker Image > Docker Image has been published" 
 		    }
 		}
     }
