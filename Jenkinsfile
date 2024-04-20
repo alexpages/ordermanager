@@ -36,15 +36,15 @@ pipeline {
             }
         }
         
-        stage('301-Publish Docker Image') {
-            steps {
-                echo "[INFO] > 301-Publish Docker Image > Publishing Docker image..." 
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                    bat 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
-                    bat "docker push ordermanager"
-                }
-                echo "[INFO] > 301-Publish Docker Image > Docker Image has been published" 
-            }
-        }
+		stage('301-Publish Docker Image') {
+		    steps {
+		        echo "[INFO] > 301-Publish Docker Image > Publishing Docker image..." 
+		        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+		            bat 'echo %DOCKERHUB_PASSWORD% | docker login --username %DOCKERHUB_USERNAME% --password-stdin'
+		            bat "docker push ordermanager"
+		        }
+		        echo "[INFO] > 301-Publish Docker Image > Docker Image has been published" 
+		    }
+		}
     }
 }
