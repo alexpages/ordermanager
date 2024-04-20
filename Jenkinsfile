@@ -25,7 +25,7 @@ pipeline {
         stage('201-Test') {
             steps {
                 echo '[INFO] > 201-Test > Running tests...'
-                bat 'mvn clean test'
+ 				bat 'mvn clean test -Dspring.profiles.active=standalone'
                 echo '[INFO] > 201-Test > Test phase completed!!'
             }
         }

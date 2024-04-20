@@ -3,8 +3,8 @@ spring:
     console:
       enabled: true
       path: /console/ # http://localhost:8080/console
-  profiles:
-    active: docker 
+#  profiles:
+#    active: docker 
 #    active: standalone
   main:
     allow-circular-references: true 
@@ -21,4 +21,4 @@ logging:
 
 thirdparties:
   google:
-    key: YOUR_API_KEY
+    key: "${GOOGLE_API_KEY:-YOUR_API_KEY}"
