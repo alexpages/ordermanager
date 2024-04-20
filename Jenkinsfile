@@ -29,9 +29,10 @@ pipeline {
         }
         
         stage('300-Build Docker Image') {
+        
             steps {
                 echo "[INFO] > 300-Build Docker Image > Building Docker image..." 
-                bat 'docker build -t ordermanager .'
+                bat 'docker build -t ordermanager:latest .'
                 echo "[INFO] > 300-Build Docker Image > Docker image build completed!!" 
             }
         }
@@ -39,9 +40,7 @@ pipeline {
 		stage('301-Login Dockerhub') {
 		    steps {
 		        echo "[INFO] > 301-Login Dockerhub > Logging in to Dockerhub..." 
-		        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR', passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW')]) {
-		            bat 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login --username $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-		        }
+	            bat "echo $DOCKERHUB_CREDENTIALS_PSW | docker login --username $DOCKERHUB_CREDENTIALS_USR --password-stdin"
 		        echo "[INFO] > 301-Login Dockerhub > Login completed!!" 
 		    }
 		}
@@ -49,7 +48,7 @@ pipeline {
 		stage('302-Publish Docker Image') {
 		    steps {
 		        echo "[INFO] > 302-Publish Docker Image > Publishing Docker image..." 
-	            bat "docker push ordermanager"
+	            bat "docker push alexintelc/ordermanager:latest"
 		        echo "[INFO] > 302-Publish Docker Image > Docker Image has been published" 
 		    }
 		}
