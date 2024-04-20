@@ -36,13 +36,26 @@ pipeline {
             }
         }
         
-		stage('301-Publish Docker Image') {
+        stage('301-Login Dockerhub') {
 		    steps {
-		        echo "[INFO] > 301-Publish Docker Image > Publishing Docker image..." 
-	            bat 'echo %DOCKERHUB_CREDENTIALS_PSW% | docker login --username %DOCKERHUB_CREDENTIALS_USR% --password-stdin'
-	            bat "docker push ordermanager"
-		        echo "[INFO] > 301-Publish Docker Image > Docker Image has been published" 
+		        echo "[INFO] > 301-Login Dockerhub > Logging in in Dockerhub..." 
+	            bat 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login --username $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+		        echo "[INFO] > 301-Login Dockerhub > Login completed!!" 
 		    }
 		}
+        
+		stage('302-Publish Docker Image') {
+		    steps {
+		        echo "[INFO] > 302-Publish Docker Image > Publishing Docker image..." 
+	            bat "docker push ordermanager"
+		        echo "[INFO] > 302-Publish Docker Image > Docker Image has been published" 
+		    }
+		}
+    }
+    
+    post {
+    	always {
+    		bat 'docker logout'
+    	}
     }
 }
