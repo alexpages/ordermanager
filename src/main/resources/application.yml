@@ -21,4 +21,4 @@ logging:
 
 thirdparties:
   google:
-    key: "${GOOGLE_API_KEY:-YOUR_API_KEY}"
+    key: "${GOOGLE_API_KEY:YOUR_API_KEY}"
