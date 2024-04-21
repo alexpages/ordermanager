@@ -4,6 +4,7 @@ pipeline {
         REGISTRY = 'alexintelc/ordermanager'
         REGISTRY_CREDENTIAL = 'dockerhub'
         AWS_CREDENTIAL = '456bd977-adfc-47f9-9ccb-0430011f0767'
+        AWS_SSH_CREDENTIAL = 'b5ee31d1-5fb8-4907-93b2-51f38fa7ebc1'
         EC2_IP = '34.245.3.122'
     }
     stages {
