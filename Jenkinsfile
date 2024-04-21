@@ -4,6 +4,7 @@ pipeline {
         REGISTRY = 'alexintelc/ordermanager'
         REGISTRY_CREDENTIAL = 'dockerhub'
         AWS_CREDENTIAL = '456bd977-adfc-47f9-9ccb-0430011f0767'
+        EC2_IP = '34.245.3.122'
     }
     stages {
         stage('100-Checkout(SCM)') {
@@ -58,17 +59,19 @@ pipeline {
         }
         
 		stage('400-Deploy to Cloud') {
-            steps {
-                echo "[INFO] > 400-Deploy to Cloud > Deploying Docker image to AWS EC2 instance..."
-                withCredentials([aws(credentialsId: AWS_CREDENTIAL, accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    bat 'docker pull alexintelc/ordermanager:latest'
-                    
-                 	bat 'docker-compose up -d'
-                    
-                    echo "[INFO] > 400-Deploy to Cloud > Docker image deployed successfully to AWS EC2 instance!"
-                }
-            }
-        }
+		    steps {
+		        echo "[INFO] > 400-Deploy to Cloud > Deploying Docker image to AWS EC2 instance..."
+		        withCredentials([sshUserPrivateKey(credentialsId: 'AWS_SSH_CREDENTIAL', keyFileVariable: 'SSH_PRIVATE_KEY', passphraseVariable: '', usernameVariable: 'SSH_USER')]) {
+		            script {
+		                def remoteCommand = '''
+		                    ssh -i "%SSH_PRIVATE_KEY%" %SSH_USER%@%EC2_IP% 'docker pull alexintelc/ordermanager:latest && docker-compose up -d'
+		                '''
+		                sh remoteCommand
+		            }
+		        }
+		        echo "[INFO] > 400-Deploy to Cloud > Docker image deployed successfully to AWS EC2 instance!"
+		    }
+		}
     }
 
     post {
