@@ -26,13 +26,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.alexpages.ordermanager.api.domain.PaginationBody;
+import com.alexpages.ordermanager.api.domain.Role;
 import com.alexpages.ordermanager.api.domain.User;
-import com.alexpages.ordermanager.api.domain.User.RoleEnum;
 import com.alexpages.ordermanager.api.domain.UserInputData;
 import com.alexpages.ordermanager.api.domain.UserInputDataInputSearch;
 import com.alexpages.ordermanager.entity.UserEntity;
 import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.error.OrderManagerException409;
+import com.alexpages.ordermanager.error.OrderManagerException500;
 import com.alexpages.ordermanager.mapper.OrderManagerMapper;
 import com.alexpages.ordermanager.repository.UserRepository;
 
@@ -61,7 +62,7 @@ public class UserServiceImplTest {
 	{
 		User user = new User();
 		user.setPassword("1234567");
-		user.setRole(RoleEnum.ADMIN);
+		user.setRole(Role.ADMIN);
 		user.setUsername("username");
 		when(repository.findByUsername(any())).thenReturn(Optional.empty());
 		when(encoder.encode(any())).thenReturn("1234567");
@@ -99,6 +100,35 @@ public class UserServiceImplTest {
 	    Pageable pageable = PageRequest.of(1, 10);
 	    when(repository.filterByParams(any(), any(), any(), any())).thenReturn(new PageImpl<>(lUserEntities, pageable, lUserEntities.size()));
 	    assertNotNull(service.getUsers(generateValidUserInputData()));
+	}
+	
+	@Test
+	void testGetUsers_nullinput() 
+	{
+	    List<UserEntity> lUserEntities = new ArrayList<>();
+	    lUserEntities.add(generateUserEntity());
+	    Pageable pageable = PageRequest.of(1, 10);
+	    when(repository.filterByParams(any(), any(), any(), any())).thenReturn(new PageImpl<>(lUserEntities, pageable, lUserEntities.size()));
+	    assertNotNull(service.getUsers(new UserInputData()));
+	}
+	
+	@Test
+	void testGetUsers_withRole() 
+	{
+	    when(repository.filterByParams(any(), any(), any(), any())).thenThrow(new RuntimeException("some error"));
+	    
+	    UserInputData input = new UserInputData();
+	    UserInputDataInputSearch inputSearch = new UserInputDataInputSearch();
+	    inputSearch.setRole(Role.ADMIN);
+	    input.setInputSearch(inputSearch);
+	    assertThrows(OrderManagerException500.class, () -> service.getUsers(input));
+	}
+	
+	@Test
+	void testGetUsers_error() 
+	{
+	    when(repository.filterByParams(any(), any(), any(), any())).thenThrow(new RuntimeException("some error"));
+	    assertThrows(OrderManagerException500.class, () -> service.getUsers(generateValidUserInputData()));
 	}
 	
 	@Test
@@ -146,7 +176,7 @@ public class UserServiceImplTest {
 		return UserEntity.builder()
 				.password("1234567")
 				.id(1L)
-				.role(RoleEnum.ADMIN.getValue())
+				.role(Role.ADMIN.getValue())
 				.username("username")
 				.build();
 	}
@@ -155,7 +185,7 @@ public class UserServiceImplTest {
 	{
 		User user = new User();
 		user.setPassword("1234567");
-		user.setRole(RoleEnum.ADMIN);
+		user.setRole(Role.ADMIN);
 		user.setUsername("username");
 		return user;
 	}

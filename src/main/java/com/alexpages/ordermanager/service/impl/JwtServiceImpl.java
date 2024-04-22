@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -20,13 +21,14 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtServiceImpl implements JwtService{
 
-	//TODO migrate to env and provide prod key
-	private static final String KEY = "javax.crypto.spec.SecretKeySpec@5881a61";
+	@Value("${thirdparties.jwt.key}")
+	private String key;
 	
 	@Override
 	public String generateToken(String username) 
 	{
 		Map<String, Object> claims = new HashMap<>(); 
+		System.out.println("[INFOOOOOOOOOOOOO]" + key);
         return createToken(claims, username); 
     } 
 
@@ -68,7 +70,7 @@ public class JwtServiceImpl implements JwtService{
 	}
 	
     private Key getSigningKey() {
-        byte[] keyBytes = KEY.getBytes(StandardCharsets.UTF_8);
+        byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
     

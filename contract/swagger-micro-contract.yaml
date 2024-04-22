@@ -11,7 +11,7 @@ info:
   termsOfService: 'http://swagger.io/terms/'
   contact:
     name: Alex Pages Andreu
-    email: TBD@gmail.com
+    email: apagesan@uoc.edu
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
@@ -377,10 +377,7 @@ components:
           description: user identifier
           example: 1
         role:
-          type: string
-          enum:
-            - USER
-            - ADMIN
+          $ref: '#/components/schemas/Role'  
         actionDate:
           type: string
           format: date
@@ -405,10 +402,7 @@ components:
               description: user identifier
               example: 1
             role:
-              type: string
-              enum:
-                - USER
-                - ADMIN
+              $ref: '#/components/schemas/Role'  
             creationDate:
               type: string
               format: date
@@ -441,9 +435,7 @@ components:
           type: string
           example: encryptedPassword
         role:
-          enum:
-            - USER
-            - ADMIN
+          $ref: '#/components/schemas/Role'  
     OrderInputAudit:
       type: object
       properties:
@@ -475,6 +467,13 @@ components:
             $ref: '#/components/schemas/OrderAudit'
         pageResponse:
           $ref: '#/components/schemas/PageResponse'
+    Role:
+      type: string
+      description: Role assigned to the user
+      enum:
+        - USER
+        - ADMIN
+      example: CREATE
     Action:
       type: string
       enum:

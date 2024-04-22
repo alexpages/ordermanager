@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -11,14 +13,12 @@ import org.mapstruct.factory.Mappers;
 
 import com.alexpages.ordermanager.api.domain.OrderAudit;
 import com.alexpages.ordermanager.api.domain.OrderDetails;
+import com.alexpages.ordermanager.api.domain.Role;
 import com.alexpages.ordermanager.api.domain.Status;
 import com.alexpages.ordermanager.api.domain.User;
-import com.alexpages.ordermanager.api.domain.User.RoleEnum;
 import com.alexpages.ordermanager.entity.OrderAuditEntity;
 import com.alexpages.ordermanager.entity.OrderEntity;
 import com.alexpages.ordermanager.entity.UserEntity;
-
-import javax.validation.Valid;
 
 @Mapper(componentModel = "spring")
 public interface OrderManagerMapper {
@@ -58,15 +58,15 @@ public interface OrderManagerMapper {
 	UserEntity toUserEntity(User user);
 
 	@Named("roleEnumToString")
-	default String roleEnumToString(RoleEnum role)
+	default String roleEnumToString(Role role)
 	{
 		return role.getValue(); // no need to check for null
 	}
 	
 	@Named("stringToRoleEnum")
-	default RoleEnum stringToRoleEnum(String role)
+	default Role stringToRoleEnum(String role)
 	{
-		return RoleEnum.fromValue(role); // no need to check for null
+		return Role.fromValue(role); // no need to check for null
 	}
 
 	List<User> toUserList(List<UserEntity> content);

@@ -116,17 +116,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 					inputSearch.getUsername(),
 					role,
 					pageable);
+
+		    log.info(LOG_PREFIX + "pageUserEntity: {}", pageUserEntity.getContent());
+		    UserOuputData response = new UserOuputData();
+			response.setUsers(mapper.toUserList(pageUserEntity.getContent()));
+			response.setPageResponse(PageableUtils.getPaginationResponse(pageUserEntity, pageUserEntity.getPageable()));
+			return response;
 			
-			if (pageUserEntity != null) {
-			    log.info(LOG_PREFIX + "pageUserEntity: {}", pageUserEntity.getContent());
-			    UserOuputData response = new UserOuputData();
-				response.setUsers(mapper.toUserList(pageUserEntity.getContent()));
-				response.setPageResponse(PageableUtils.getPaginationResponse(pageUserEntity, pageUserEntity.getPageable()));
-				return response;
-			} else {
-			    log.error(LOG_PREFIX + "pageUserEntity is null");
-			    return null;
-			}
 		} catch (Exception e) {
 			log.error(LOG_PREFIX + "It could not get the list of users: [" + e.getMessage() + "]");
 			throw new OrderManagerException500(LOG_PREFIX + "User list could not get retrieved, Exception: [" + e.getMessage() + "]");
