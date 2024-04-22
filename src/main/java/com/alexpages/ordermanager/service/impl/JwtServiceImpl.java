@@ -28,7 +28,6 @@ public class JwtServiceImpl implements JwtService{
 	public String generateToken(String username) 
 	{
 		Map<String, Object> claims = new HashMap<>(); 
-		System.out.println("[INFOOOOOOOOOOOOO]" + key);
         return createToken(claims, username); 
     } 
 
