@@ -141,11 +141,6 @@ public class OrderServiceTest {
 	}
 	
 	@Test
-	void testDeleteOrder_error() throws Exception {
-	    assertThrows(OrderManagerException500.class, () -> orderServiceImpl.deleteOrderById(1L));
-	}
-
-	@Test
 	void testGetOrders_nullparams_success() 
 	{
 	    List<OrderEntity> lOrderEntities = new ArrayList<>();

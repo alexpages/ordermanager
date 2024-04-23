@@ -2,13 +2,10 @@ package com.alexpages.ordermanager.error;
 
 import java.time.LocalDateTime;
 
-import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,16 +15,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class OrderManagerExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(AccessDeniedException.class)
-	public ResponseEntity<Object> handleExceptions(AccessDeniedException e, WebRequest webRequest)
-	{
-		OrderManagerException exception = new OrderManagerException(e.getMessage());
-        exception.setStatus(HttpStatus.UNAUTHORIZED);
-        exception.setTimestamp(LocalDateTime.now());
-        exception.setThrowable(e.getCause());
-		return new ResponseEntity<>(exception, HttpStatus.UNAUTHORIZED);
-	}
-	
 	@ExceptionHandler(OrderManagerException404.class)
 	public ResponseEntity<Object> handleExceptions(OrderManagerException404 e, WebRequest webRequest)
 	{
@@ -67,40 +54,37 @@ public class OrderManagerExceptionHandler extends ResponseEntityExceptionHandler
         exception.setThrowable(e.getCause());
 		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
 	}
-
-	public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpHeaders headers,
-															   HttpStatus status, WebRequest request){
-		OrderManagerException exception = new OrderManagerException("Validation failed for the request: [" + e.getMessage() + "]");
-        exception.setStatus(HttpStatus.BAD_REQUEST);
+	
+	@ExceptionHandler(OrderManagerException403.class)
+	public ResponseEntity<Object> handleExceptions(OrderManagerException403 e, WebRequest webRequest) 
+	{
+		OrderManagerException exception = new OrderManagerException(e.getMessage());
+        exception.setStatus(HttpStatus.FORBIDDEN);
         exception.setTimestamp(LocalDateTime.now());
         exception.setThrowable(e.getCause());
-		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(exception, HttpStatus.FORBIDDEN);
 	}
-
-	public ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException e, HttpHeaders headers,
-																	  HttpStatus status, WebRequest request){
-		OrderManagerException exception = new OrderManagerException("The specified request method is not supported: [" + e.getMessage() + "]");
+		
+	@Override
+	public ResponseEntity<Object> handleHttpMessageNotReadable(	HttpMessageNotReadableException ex, HttpHeaders headers,
+            													HttpStatus status, WebRequest request) 
+	{
+		OrderManagerException exception = new OrderManagerException(ex.getMessage());
         exception.setStatus(HttpStatus.BAD_REQUEST);
         exception.setTimestamp(LocalDateTime.now());
-        exception.setThrowable(e.getCause());
-		return new ResponseEntity<>(exception, HttpStatus.METHOD_NOT_ALLOWED);
-	}
-
-	protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException e, HttpHeaders headers,
-														HttpStatus status, WebRequest request){
-		OrderManagerException exception = new OrderManagerException("Parameter type is not valid for this request: [" + e.getMessage() + "]");
-        exception.setStatus(HttpStatus.BAD_REQUEST);
-        exception.setTimestamp(LocalDateTime.now());
-        exception.setThrowable(e.getCause());
+        exception.setThrowable(ex.getCause());
 		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
 	}
 	
-	protected ResponseEntity<Object> handleBadAuthorization(BadCredentialsException e, HttpHeaders headers, HttpStatus status, WebRequest request){
-		
-		OrderManagerException exception = new OrderManagerException("Authentication failed");
-		exception.setStatus(HttpStatus.UNAUTHORIZED);
-		exception.setTimestamp(LocalDateTime.now());
-		exception.setThrowable(e.getCause());
-		return new ResponseEntity<>(exception, HttpStatus.UNAUTHORIZED);
+	@Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(	MethodArgumentNotValidException ex, HttpHeaders headers, 
+																	HttpStatus status, WebRequest request) 
+	{
+		OrderManagerException exception = new OrderManagerException(ex.getMessage());
+        exception.setStatus(HttpStatus.BAD_REQUEST);
+        exception.setTimestamp(LocalDateTime.now());
+        exception.setThrowable(ex.getCause());
+		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
 	}
+	
 }

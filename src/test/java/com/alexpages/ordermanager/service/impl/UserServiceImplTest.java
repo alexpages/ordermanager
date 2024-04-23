@@ -31,6 +31,7 @@ import com.alexpages.ordermanager.api.domain.User;
 import com.alexpages.ordermanager.api.domain.UserInputData;
 import com.alexpages.ordermanager.api.domain.UserInputDataInputSearch;
 import com.alexpages.ordermanager.entity.UserEntity;
+import com.alexpages.ordermanager.error.OrderManagerException403;
 import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.error.OrderManagerException409;
 import com.alexpages.ordermanager.error.OrderManagerException500;
@@ -89,7 +90,7 @@ public class UserServiceImplTest {
 	void testLoadUserByUsername_error() 
 	{
 	    when(repository.findByUsername(any())).thenReturn(Optional.empty());
-	    assertThrows(UsernameNotFoundException.class, () -> service.loadUserByUsername("username"));
+	    assertThrows(OrderManagerException403.class, () -> service.loadUserByUsername("username"));
 	}	
 	
 	@Test

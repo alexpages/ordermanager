@@ -1,5 +1,7 @@
 package com.alexpages.ordermanager.web;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,11 +16,11 @@ import com.alexpages.ordermanager.api.domain.AuthenticateResponse;
 import com.alexpages.ordermanager.api.domain.User;
 import com.alexpages.ordermanager.api.domain.UserInputData;
 import com.alexpages.ordermanager.api.domain.UserOuputData;
+import com.alexpages.ordermanager.error.OrderManagerException403;
 import com.alexpages.ordermanager.service.impl.JwtServiceImpl;
 import com.alexpages.ordermanager.service.impl.UserServiceImpl;
 import com.alexpages.ordermanager.utils.ListUtils;
 
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -47,7 +49,7 @@ public class UserController implements UsersApi {
 			response.setJwt(jwtService.generateToken(authenticateRequest.getUsername()));
 	        return new ResponseEntity<>(response, HttpStatus.OK); 
 	    } else {
-	    	return new ResponseEntity<>(HttpStatus.UNAUTHORIZED); 
+	    	throw new OrderManagerException403("User could not authenticate correctly. Please review your credentials.");
 	    } 
 	}
 	

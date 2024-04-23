@@ -2,12 +2,13 @@ package com.alexpages.ordermanager.service.impl;
 
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import com.alexpages.ordermanager.api.domain.UserInputData;
 import com.alexpages.ordermanager.api.domain.UserInputDataInputSearch;
 import com.alexpages.ordermanager.api.domain.UserOuputData;
 import com.alexpages.ordermanager.entity.UserEntity;
+import com.alexpages.ordermanager.error.OrderManagerException403;
 import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.error.OrderManagerException409;
 import com.alexpages.ordermanager.error.OrderManagerException500;
@@ -26,7 +28,6 @@ import com.alexpages.ordermanager.security.UserInfoDetails;
 import com.alexpages.ordermanager.service.UserService;
 import com.alexpages.ordermanager.utils.PageableUtils;
 
-import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -43,12 +44,10 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	@Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String username) 
-	throws UsernameNotFoundException 
     { 
-  
         Optional<UserEntity> userDetail = repository.findByUsername(username); 
         return userDetail.map(UserInfoDetails::new) 
-                .orElseThrow(() -> new UsernameNotFoundException("User not found " + username)); 
+                .orElseThrow(() -> new OrderManagerException403("User with username: [" + username + "] not found")); 
     } 
     
     @Transactional

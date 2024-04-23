@@ -1,7 +1,6 @@
 package com.alexpages.ordermanager.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,10 +15,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
+import com.alexpages.ordermanager.security.CustomAuthenticationEntryPoint;
 import com.alexpages.ordermanager.security.JwtAuthFilter;
 import com.alexpages.ordermanager.service.impl.UserServiceImpl;
 
@@ -39,14 +40,12 @@ public class OrderManagerSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) 
-            throws Exception 
+    throws Exception 
     {
-        http.csrf(
-        		csrf -> csrf.disable());
-        http.headers(
-        		headers -> headers.frameOptions().disable());
-        http.sessionManagement(
-        		management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.sessionManagement(	management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.exceptionHandling(	handling -> handling.authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
+        http.csrf(		csrf -> csrf.disable());
+        http.headers(	headers -> headers.frameOptions().disable());
         http.authorizeHttpRequests()
             .antMatchers(HttpMethod.POST, "/users").permitAll()
             .antMatchers(HttpMethod.POST, "/users/request").permitAll()
@@ -57,9 +56,16 @@ public class OrderManagerSecurityConfig {
             .antMatchers(HttpMethod.POST, "/orders/audit/request").permitAll()
             .antMatchers("/console/**").permitAll()
             .anyRequest().authenticated();
+       
         http.authenticationProvider(authenticationProvider()).addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+    
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint()
+    {
+        return new CustomAuthenticationEntryPoint();
     }
 
     @Bean

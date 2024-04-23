@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.jeasy.random.EasyRandom;
 import org.json.JSONException;
@@ -25,6 +26,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.util.NestedServletException;
 
 import com.alexpages.ordermanager.api.domain.User;
 import com.alexpages.ordermanager.api.domain.UserOuputData;
@@ -90,13 +92,19 @@ public class UserControllerTest {
     void testAuthenticateUser_error() 
 	throws Exception 
     {
-        Authentication authentication = mock(Authentication.class);
-        when(authentication.isAuthenticated()).thenReturn(false);
-        when(authenticationManager.authenticate(any())).thenReturn(authentication);
-        mockMvc.perform(post("/users/authenticate")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(generateValidAuthenticateRequest()))
-        .andExpect(status().is(HttpStatus.UNAUTHORIZED.value()));
+    	try {
+            Authentication authentication = mock(Authentication.class);
+            when(authentication.isAuthenticated()).thenReturn(false);
+            when(authenticationManager.authenticate(any())).thenReturn(authentication);
+            mockMvc.perform(post("/users/authenticate")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(generateValidAuthenticateRequest()))
+            .andExpect(status().is(HttpStatus.FORBIDDEN.value()));
+    	  
+    	} catch (NestedServletException e) {
+    	        Throwable rootCause = e.getRootCause();
+    	        assertTrue(rootCause instanceof com.alexpages.ordermanager.error.OrderManagerException403);
+    	  }
     }
     
     @Test
@@ -180,5 +188,5 @@ public class UserControllerTest {
 		jsonObject.put("role", "ADMIN");
 		return jsonObject.toString();
 	}
-
+	
 }
