@@ -113,7 +113,7 @@ public class OrderServiceImpl implements OrderService {
 				response.setPageResponse(PageableUtils.getPaginationResponse(pageOrderEntity, pageOrderEntity.getPageable()));
 				return response;
 			} else {
-			    log.error(LOG_PREFIX + "pageOrderEntity is null");
+			    log.info(LOG_PREFIX + "pageOrderEntity is null");
 			    return null;
 			}
 		} catch (Exception e) {

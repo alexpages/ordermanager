@@ -93,7 +93,7 @@ public class OrderControllerTest {
 	@Test
     void testGetOrderListSuccess_204() throws Exception 
     {
-    	when(orderServiceImpl.getOrders(any())).thenReturn(new OrderOutputData()); 	
+    	when(orderServiceImpl.getOrders(any())).thenReturn(null); 	
         mockMvc.perform(post("/orders/request")
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(header())
@@ -103,7 +103,7 @@ public class OrderControllerTest {
 	
 	@Test
 	void testGetOrderAuditSuccess_204() throws Exception {
-		when(orderServiceImpl.getAuditList(any())).thenReturn(new OrderOutputAudit());
+		when(orderServiceImpl.getAuditList(any())).thenReturn(null);
         mockMvc.perform(post("/orders/audit/request")
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(header())

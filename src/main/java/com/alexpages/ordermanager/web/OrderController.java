@@ -42,7 +42,7 @@ public class OrderController implements OrdersApi {
 	public ResponseEntity<OrderOutputData> getOrders(OrderInputData orderInputData) 
 	{
 		OrderOutputData response = orderServiceImpl.getOrders(orderInputData);
-		if (ListUtils.isBlank(response.getOrders())){
+		if (response == null){
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} else {
 			return new ResponseEntity<>(response, HttpStatus.OK);
@@ -53,7 +53,7 @@ public class OrderController implements OrdersApi {
 	public ResponseEntity<OrderOutputAudit> getOrderAudit(@Valid GetOrderAuditRequest getOrderAuditRequest) 
 	{
 		OrderOutputAudit response = orderServiceImpl.getAuditList(getOrderAuditRequest);
-		if (ListUtils.isBlank(response.getOrders())){
+		if (response == null){
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} else {
 			return new ResponseEntity<>(response, HttpStatus.OK);

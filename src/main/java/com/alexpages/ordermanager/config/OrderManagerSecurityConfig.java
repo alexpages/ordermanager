@@ -42,10 +42,12 @@ public class OrderManagerSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) 
     throws Exception 
     {
+    	http.authenticationProvider(authenticationProvider()).addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
         http.sessionManagement(	management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.exceptionHandling(	handling -> handling.authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
-        http.csrf(		csrf -> csrf.disable());
-        http.headers(	headers -> headers.frameOptions().disable());
+        http.csrf			  ( csrf -> csrf.disable());
+        http.headers		  ( headers -> headers.frameOptions().disable());
+        
         http.authorizeHttpRequests()
             .antMatchers(HttpMethod.POST, "/users").permitAll()
             .antMatchers(HttpMethod.POST, "/users/request").permitAll()
@@ -56,8 +58,6 @@ public class OrderManagerSecurityConfig {
             .antMatchers(HttpMethod.POST, "/orders/audit/request").permitAll()
             .antMatchers("/console/**").permitAll()
             .anyRequest().authenticated();
-       
-        http.authenticationProvider(authenticationProvider()).addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
