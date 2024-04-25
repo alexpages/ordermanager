@@ -1,14 +1,26 @@
 spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+  main:
+    allow-circular-references: true 
   h2:
     console:
       enabled: true
       path: /console/ # http://localhost:8080/console
-#  profiles:
-#    active: docker 
-#    active: standalone
-  main:
-    allow-circular-references: true 
-    
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false     #Jackson deserializer is used also for converting exception, this is needed when de/serializer is not found
+  profiles:
+    active: standalone
+    # active: docker 
+
+server:
+  error:
+    whitelabel:
+      enabled: false
+
 logging:
   level:
     root: INFO

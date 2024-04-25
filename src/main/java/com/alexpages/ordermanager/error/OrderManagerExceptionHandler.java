@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
@@ -66,7 +67,7 @@ public class OrderManagerExceptionHandler extends ResponseEntityExceptionHandler
 	}
 		
 	@Override
-	public ResponseEntity<Object> handleHttpMessageNotReadable(	HttpMessageNotReadableException ex, HttpHeaders headers,
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(	HttpMessageNotReadableException ex, HttpHeaders headers,
             													HttpStatus status, WebRequest request) 
 	{
 		OrderManagerException exception = new OrderManagerException(ex.getMessage());
@@ -87,5 +88,15 @@ public class OrderManagerExceptionHandler extends ResponseEntityExceptionHandler
 		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
 	}
 	
+	@Override
+	protected ResponseEntity<Object> handleNoHandlerFoundException(	NoHandlerFoundException ex, HttpHeaders headers, 
+																	HttpStatus status, WebRequest request )
+	{
+		OrderManagerException exception = new OrderManagerException(ex.getMessage());
+        exception.setStatus(HttpStatus.NOT_FOUND);
+        exception.setTimestamp(LocalDateTime.now());
+        exception.setThrowable(ex.getCause());
+		return new ResponseEntity<>(exception, HttpStatus.NOT_FOUND);
+	}
 
 }

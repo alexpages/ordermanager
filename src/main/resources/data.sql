@@ -19,4 +19,4 @@ VALUES
 INSERT INTO users 
     (ID, USERNAME, PASSWORD, ROLE) 
 VALUES 
-    (1, 'sa', 'sa', 'ADMIN');
+    (1, 'xa', 'xa', 'ADMIN');

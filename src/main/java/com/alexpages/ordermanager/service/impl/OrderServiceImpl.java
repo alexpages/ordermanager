@@ -242,7 +242,7 @@ public class OrderServiceImpl implements OrderService {
 
 	private void validatePlaceOrderRequest(OrderPostRequest orderPostRequest) {
  		if (!orderPostRequest.getCoordinates().getOrigin().get(0).matches(LATITUDE_PATTERN)	|| !orderPostRequest.getCoordinates().getOrigin().get(1).matches(LONGITUDE_PATTERN)) {
-			throw new OrderManagerException400("Orgin coordinates are incorrect");
+			throw new OrderManagerException400("Origin coordinates are incorrect");
 		}
 		if (!orderPostRequest.getCoordinates().getDestination().get(0).matches(LATITUDE_PATTERN) || !orderPostRequest.getCoordinates().getDestination().get(1).matches(LONGITUDE_PATTERN)) {
 			throw new OrderManagerException400("Destination coordinates are incorrect");
