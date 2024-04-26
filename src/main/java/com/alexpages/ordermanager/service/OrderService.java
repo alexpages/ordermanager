@@ -1,5 +1,7 @@
 package com.alexpages.ordermanager.service;
 
+import javax.validation.Valid;
+
 import com.alexpages.ordermanager.api.domain.GetOrderAuditRequest;
 import com.alexpages.ordermanager.api.domain.OrderDetails;
 import com.alexpages.ordermanager.api.domain.OrderInputData;
@@ -10,7 +12,6 @@ import com.alexpages.ordermanager.api.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.api.domain.OrderPostRequest;
 import com.alexpages.ordermanager.api.domain.OrderPostResponse;
 
-import javax.validation.Valid;
 import lombok.NonNull;
 
 public interface OrderService 

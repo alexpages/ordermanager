@@ -3,9 +3,6 @@ package com.alexpages.ordermanager.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.OptimisticLocking;
-import org.springframework.validation.annotation.Validated;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.OptimisticLocking;
+import org.springframework.validation.annotation.Validated;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

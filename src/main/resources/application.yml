@@ -8,13 +8,12 @@ spring:
   h2:
     console:
       enabled: true
-      path: /console/ # http://localhost:8080/console
+      path: /console/                # http://localhost:8080/console
   jackson:
     serialization:
-      FAIL_ON_EMPTY_BEANS: false     #Jackson deserializer is used also for converting exception, this is needed when de/serializer is not found
+      FAIL_ON_EMPTY_BEANS: false     # Jackson deserializer is used also for converting exception, this is needed when de/serializer is not found
   profiles:
-    active: standalone
-    # active: docker 
+    active: "${SPRING_PROFILES_ACTIVE:standalone}"
 
 server:
   error:

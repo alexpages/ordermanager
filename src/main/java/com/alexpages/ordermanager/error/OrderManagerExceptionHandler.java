@@ -73,8 +73,8 @@ public class OrderManagerExceptionHandler extends ResponseEntityExceptionHandler
 		OrderManagerException exception = new OrderManagerException(ex.getMessage());
         exception.setStatus(HttpStatus.BAD_REQUEST);
         exception.setTimestamp(LocalDateTime.now());
-        exception.setThrowable(ex.getCause());
-		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+        exception.setThrowable(null); //ex.getMessage is enough, no need to throw entire stack trace
+        return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
 	}
 	
 	@Override
@@ -84,7 +84,6 @@ public class OrderManagerExceptionHandler extends ResponseEntityExceptionHandler
 		OrderManagerException exception = new OrderManagerException(ex.getMessage());
         exception.setStatus(HttpStatus.BAD_REQUEST);
         exception.setTimestamp(LocalDateTime.now());
-        exception.setThrowable(ex.getCause());
 		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
 	}
 	

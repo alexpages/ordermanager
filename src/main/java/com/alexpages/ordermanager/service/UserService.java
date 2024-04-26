@@ -1,10 +1,10 @@
 package com.alexpages.ordermanager.service;
 
+import javax.validation.Valid;
+
 import com.alexpages.ordermanager.api.domain.User;
 import com.alexpages.ordermanager.api.domain.UserInputData;
 import com.alexpages.ordermanager.api.domain.UserOuputData;
-
-import javax.validation.Valid;
 
 public interface UserService 
 {

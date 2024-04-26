@@ -1,5 +1,7 @@
 package com.alexpages.ordermanager.web;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,9 +17,7 @@ import com.alexpages.ordermanager.api.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.api.domain.OrderPostRequest;
 import com.alexpages.ordermanager.api.domain.OrderPostResponse;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
-import com.alexpages.ordermanager.utils.ListUtils;
 
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
