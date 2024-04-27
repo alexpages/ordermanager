@@ -50,7 +50,6 @@ public interface OrderManagerMapper {
 	}
 	
 	// User related
-	
 	@Mapping(target = "role", source = "role", qualifiedByName = "stringToRoleEnum")
 	User toUser(UserEntity userEntity);
 	

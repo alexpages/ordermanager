@@ -29,6 +29,7 @@ import com.alexpages.ordermanager.error.OrderManagerException400;
 import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.error.OrderManagerException409;
 import com.alexpages.ordermanager.error.OrderManagerException500;
+import com.alexpages.ordermanager.external.model.google.GoogleOrderData;
 import com.alexpages.ordermanager.mapper.OrderManagerMapper;
 import com.alexpages.ordermanager.repository.OrderAuditRepository;
 import com.alexpages.ordermanager.repository.OrderRepository;
@@ -57,16 +58,20 @@ public class OrderServiceImpl implements OrderService {
 	@Transactional
 	@Override
 	public OrderPostResponse postOrder(@NonNull OrderPostRequest orderPostRequest) {
+		
+		final String LOG_PREFIX = "OrderServiceImpl > placeOrder > ";
+		
 		try {
-			log.info("OrderServiceImpl > placeOrder > PlaceOrderRequest: {}", orderPostRequest);
+			log.info(LOG_PREFIX + "PlaceOrderRequest: {}", orderPostRequest);
 			validatePlaceOrderRequest(orderPostRequest);
-			log.info("OrderServiceImpl > placeOrder > PlaceOrderRequest validated correctly");
-			int distance = googleMapsServiceImpl.getDistanceFromDistanceMatrix(orderPostRequest);
-			log.info("OrderServiceImpl > placeOrder > Distance calculated: {}", distance);
+			log.info(LOG_PREFIX + "PlaceOrderRequest validated correctly");
+			GoogleOrderData googleOrderData = googleMapsServiceImpl.getGoogleOrderDataFromDistanceMatrix(orderPostRequest);
 
-			OrderEntity savedEntity = orderRepository.save(
-					OrderEntity.builder()
-					.distance(distance)
+			OrderEntity savedEntity = orderRepository.save(OrderEntity.builder()
+					.distance(googleOrderData.getDistance())
+					.origin(googleOrderData.getOriginAddress())
+					.destination(googleOrderData.getDestinationAddress())
+					.time(googleOrderData.getTime())
 					.description(orderPostRequest.getDescription())
 					.creationDate(LocalDateTime.now())
 					.status("UNASSIGNED")
@@ -74,6 +79,9 @@ public class OrderServiceImpl implements OrderService {
 			addOrderAuditEntity(savedEntity, Action.CREATE.getValue());
 			
 			OrderPostResponse response = new OrderPostResponse();
+			response.setDestination(savedEntity.getDestination());
+			response.setOrigin(savedEntity.getOrigin());
+			response.setTime(savedEntity.getTime());
 			response.setDistance(savedEntity.getDistance());
 			response.setOrderId(savedEntity.getId());
 			response.setStatus(Status.fromValue(savedEntity.getStatus()));
@@ -81,8 +89,8 @@ public class OrderServiceImpl implements OrderService {
 			return response;
 			
 		} catch (Exception e) {
-			log.error("OrderServiceImpl > placeOrder > There was an issue placing the order: {}", e);
-			throw new OrderManagerException500("OrderServiceImpl > placeOrder > There was an issue placing the order: [" + e.getMessage() + "]");
+			log.error(LOG_PREFIX + "There was an issue placing the order: {}", e);
+			throw new OrderManagerException500(LOG_PREFIX + "There was an issue placing the order: [" + e.getMessage() + "]");
 		}
 	}
 	@Transactional(readOnly = true)

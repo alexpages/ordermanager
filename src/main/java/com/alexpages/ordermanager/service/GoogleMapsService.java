@@ -1,13 +1,11 @@
 package com.alexpages.ordermanager.service;
 
 import com.alexpages.ordermanager.api.domain.OrderPostRequest;
-
-import lombok.NonNull;
+import com.alexpages.ordermanager.external.model.google.GoogleOrderData;
 
 public interface GoogleMapsService 
 {
-	
-	public int getDistanceFromDistanceMatrix(@NonNull OrderPostRequest orderPostRequest) 
-	throws Exception;
+
+	public GoogleOrderData getGoogleOrderDataFromDistanceMatrix(OrderPostRequest orderPostRequest);
 	
 }

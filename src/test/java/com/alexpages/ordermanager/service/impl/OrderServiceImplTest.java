@@ -51,12 +51,13 @@ import com.alexpages.ordermanager.entity.OrderEntity;
 import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.error.OrderManagerException409;
 import com.alexpages.ordermanager.error.OrderManagerException500;
+import com.alexpages.ordermanager.external.model.google.GoogleOrderData;
 import com.alexpages.ordermanager.mapper.OrderManagerMapper;
 import com.alexpages.ordermanager.repository.OrderAuditRepository;
 import com.alexpages.ordermanager.repository.OrderRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class OrderServiceTest {
+public class OrderServiceImplTest {
 
 	@InjectMocks
 	private OrderServiceImpl orderServiceImpl;
@@ -84,16 +85,16 @@ public class OrderServiceTest {
 	@Test
 	void testPlaceOrder_success() throws Exception 
     {
-    	when(googleMapsServiceImpl.getDistanceFromDistanceMatrix(any())).thenReturn(1);
+    	when(googleMapsServiceImpl.getGoogleOrderDataFromDistanceMatrix(any())).thenReturn(generateValidGoogleOrderData());
     	when(orderRepository.save(any(OrderEntity.class))).thenReturn(generateValidOrderEntity());
     	mockSecurityContext();
     	assertNotNull(orderServiceImpl.postOrder(generateValidOrderPostRequest()));
     }
-
+	
 	@Test
     void testPlaceOrder_error() throws Exception 
     {
-    	when(googleMapsServiceImpl.getDistanceFromDistanceMatrix(any())).thenThrow(new RuntimeException("some error"));
+    	when(googleMapsServiceImpl.getGoogleOrderDataFromDistanceMatrix(any())).thenThrow(new RuntimeException("some error"));
     	assertThrows(OrderManagerException500.class, () -> orderServiceImpl.postOrder(generateValidOrderPostRequest()));
     }
 	
@@ -344,6 +345,15 @@ public class OrderServiceTest {
 				.actionDate(LocalDateTime.now())
 				.id(1L)
 				.orderId(1L)
+				.build();
+	}
+	
+	private GoogleOrderData generateValidGoogleOrderData() 
+	{
+		return GoogleOrderData.builder()
+				.destinationAddress("address 1")
+				.originAddress("address 2")
+				.time("1 min")
 				.build();
 	}
 }

@@ -7,12 +7,14 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alexpages.ordermanager.api.domain.Role;
 import com.alexpages.ordermanager.api.domain.User;
 import com.alexpages.ordermanager.api.domain.UserInputData;
 import com.alexpages.ordermanager.api.domain.UserInputDataInputSearch;
@@ -67,17 +69,25 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Transactional
     @Override
-	public void deleteUserById(Long userId) 
+    public void deleteUserById(Long userId) 
     {
-	    Optional<UserEntity> deletedEntity = repository.findById(userId);
-	    if (!deletedEntity.isPresent()) 
-	    {
-	        throw new OrderManagerException404("User with id: [" + userId + "] was not found");		    	
-	    } else {
-		    repository.deleteById(userId);
-	    }		
-	}
-    
+        final String LOG_PREFIX = "UserServiceImpl > deleteUserById > ";
+        Optional<UserEntity> deletedEntity = repository.findById(userId);
+        
+        if (!deletedEntity.isPresent()) {
+            throw new OrderManagerException404(LOG_PREFIX + "User with id: [" + userId + "] was not found");
+        
+        } else {
+            Optional<UserEntity> user = repository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+            String role = user.get().getRole();
+            if (Role.ADMIN.getValue().equals(role)) {
+                repository.deleteById(userId);
+            } else {
+                throw new OrderManagerException403(LOG_PREFIX + "The user is not authorized to perform this action, only ADMIN role can delete users. Current role is: [" + role + "]");
+            }
+        }
+    }
+
 	@Transactional(readOnly = true)
     @Override
 	public User getUserById(Long userId) 

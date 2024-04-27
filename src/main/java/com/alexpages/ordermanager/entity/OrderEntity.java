@@ -20,7 +20,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data @Builder @NoArgsConstructor @AllArgsConstructor 
+@Data 
+@Builder 
+@NoArgsConstructor 
+@AllArgsConstructor 
 @Validated @OptimisticLocking
 @Entity 
 @Table(name = "orders")
@@ -37,6 +40,17 @@ implements Serializable
     @Column(name = "DESCRIPTION")
 	@NotNull
     private String description;
+    
+    @Column(name = "ORIGIN_ADDRESS")
+	@NotNull
+    private String origin;
+    
+    @Column(name = "DESTINATION_ADDRESS")
+	@NotNull
+    private String destination;
+    
+    @Column(name = "TIME")
+    private String time;
     
     @Column(name = "DISTANCE")
 	@NotNull

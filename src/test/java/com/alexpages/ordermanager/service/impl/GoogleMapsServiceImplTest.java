@@ -19,7 +19,7 @@ import com.alexpages.ordermanager.error.OrderManagerException500;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
-public class GoogleMapsServiceTest {
+public class GoogleMapsServiceImplTest {
 
     private GoogleMapsServiceImpl googleMapsServiceImpl;
     
@@ -32,26 +32,26 @@ public class GoogleMapsServiceTest {
     }
 
 	@Test
-    void testGetDistanceFromDistanceMatrixSuccess() 
+    void testGetDistanceFromDistanceMatrix_uccess() 
 	throws Exception 
 	{
 		if (!"YOUR_API_KEY".equals(key)) { //TODO Precondition to avoid failing test: Introduce a valid key on application.yml
 	        ReflectionTestUtils.setField(googleMapsServiceImpl, "key", key);
-			assertNotNull(googleMapsServiceImpl.getDistanceFromDistanceMatrix(generateValidOrderPostRequest()));
+			assertNotNull(googleMapsServiceImpl.getGoogleOrderDataFromDistanceMatrix(generateValidOrderPostRequest()));
 		}
     }
 	
 	@Test
-    void testGetDistanceFromDistanceMatrixError() 
+    void testGetDistanceFromDistanceMatrix_error() 
 	throws Exception 
 	{
 		if (!"YOUR_API_KEY".equals(key)) { //TODO Precondition to avoid failing test: Introduce a valid key on application.yml
 	        ReflectionTestUtils.setField(googleMapsServiceImpl, "key", key);
-            assertThrows(OrderManagerException500.class, () -> googleMapsServiceImpl.getDistanceFromDistanceMatrix(generateWrongOrderPostRequest()));     
+            assertThrows(OrderManagerException500.class, () -> googleMapsServiceImpl.getGoogleOrderDataFromDistanceMatrix(generateWrongOrderPostRequest()));     
 
 		}
     }
-	
+		
 	private OrderPostRequest generateValidOrderPostRequest() {
 	    OrderPostRequest request = new OrderPostRequest();
 	    Coordinates coordinates = new Coordinates();

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.alexpages.ordermanager.api.domain.OrderPostRequest;
 import com.alexpages.ordermanager.error.OrderManagerException500;
+import com.alexpages.ordermanager.external.model.google.GoogleOrderData;
 import com.alexpages.ordermanager.service.GoogleMapsService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,38 +28,86 @@ public class GoogleMapsServiceImpl implements GoogleMapsService
 {
 	@Value("${thirdparties.google.key}")
 	private String key;
-
+	
 	@Override
-	public int getDistanceFromDistanceMatrix(@NonNull OrderPostRequest orderPostRequest) throws Exception 
+	public GoogleOrderData getGoogleOrderDataFromDistanceMatrix(@NonNull OrderPostRequest orderPostRequest) 
 	{
-	    log.info("GoogleMapsServiceImpl > getDistanceFromDistanceMatrix > PlaceOrderRequest: {}", orderPostRequest);
-    	DistanceMatrixRow[] rows = getDistanceMatrixRow(orderPostRequest);
-        if (rows.length > 0 && rows[0].elements.length > 0 && rows[0].elements[0].distance != null) {
-            long distanceInMeters = Math.toIntExact(rows[0].elements[0].distance.inMeters);
-            log.info("Distance Matrix result: {} meters", distanceInMeters);
-            return Math.toIntExact(distanceInMeters);
-        } else {
-            log.error("GoogleMapsServiceImpl > getDistanceFromDistanceMatrix > Invalid set of coordinates. Empty or invalid Distance Matrix result");
-			throw new OrderManagerException500("GoogleMapsServiceImpl > getDistanceFromDistanceMatrix > Invalid set of coordinates. Empty or invalid Distance Matrix result");
+		final String LOG_PREFIX = "GoogleMapsServiceImpl > getGoogleOrderDataFromDistanceMatrix > ";   	
+		try {
+			
+			DistanceMatrix distanceMatrix = getDistanceMatrix(orderPostRequest);
+			
+			return GoogleOrderData.builder()
+					.distance(getDistanceFromDistanceMatrix(distanceMatrix))
+					.destinationAddress(distanceMatrix.originAddresses[0])
+					.originAddress(distanceMatrix.destinationAddresses[0])
+					.time(getTimeFromDistanceMatrix(distanceMatrix))
+					.build();		
+			
+		} catch (Exception e) {
+			throw new OrderManagerException500(LOG_PREFIX + "There was an error with GoogleMaps API: [" + e.getMessage() + "]");
+		}	
+	}
+	
+	private DistanceMatrix getDistanceMatrix(OrderPostRequest orderPostRequest) 
+	throws ApiException, InterruptedException, IOException
+	{
+		final String LOG_PREFIX = "GoogleMapsServiceImpl > getDistanceMatrixRow > ";
+        try {
+    		GeoApiContext context = new GeoApiContext.Builder().apiKey(key).build();   
+            DistanceMatrix distanceMatrix = DistanceMatrixApi.newRequest(context)
+                    .origins(String.join(",", orderPostRequest.getCoordinates().getOrigin()))
+                    .destinations(String.join(",", orderPostRequest.getCoordinates().getDestination()))
+                    .await();
+            
+            log.info(LOG_PREFIX + "DistanceMatrix: " + printObject(distanceMatrix));    
+            return distanceMatrix;
+        	
+        } catch (Exception e) {
+        	log.error(LOG_PREFIX + "DistanceMatrix could not get retrieved: [" + e.getMessage()+ "]");
+        	throw e; 
         }
 	}
 	
-	private DistanceMatrixRow[] getDistanceMatrixRow(@NonNull OrderPostRequest orderPostRequest) 
-	throws ApiException, InterruptedException, IOException
+	private boolean validateDistanceMatrixRow(DistanceMatrixRow[] rows) 
 	{
-        GeoApiContext context = new GeoApiContext.Builder().apiKey(key).build();   
+		return (rows.length > 0 && rows[0].elements.length > 0 && rows[0].elements[0].distance != null && rows[0].elements[0].duration != null);
+	}
+	
+	private String getTimeFromDistanceMatrix(DistanceMatrix distanceMatrix) 
+	throws Exception 
+	{
+		final String LOG_PREFIX = "GoogleMapsServiceImpl > getTimeFromDistanceMatrix > ";   	
+		DistanceMatrixRow[] rows = distanceMatrix.rows;
+		
+		if (validateDistanceMatrixRow(rows)) {
+            String timeHumanReadable = rows[0].elements[0].duration.humanReadable;
+            log.info(LOG_PREFIX + "Time in human readable format: {}", timeHumanReadable);
+            return timeHumanReadable;
         
-        DistanceMatrix distanceMatrix = DistanceMatrixApi.newRequest(context)
-                .origins(String.join(",", orderPostRequest.getCoordinates().getOrigin()))
-                .destinations(String.join(",", orderPostRequest.getCoordinates().getDestination()))
-                .await();
-        
-        log.info("GoogleMapsServiceImpl > getDistanceMatrixRow > DistanceMatrix: " + printObject(distanceMatrix));       
-        DistanceMatrixRow[] rows = distanceMatrix.rows;
-        log.info("GoogleMapsServiceImpl > getDistanceMatrixRow > DistanceMatrixRow: " + printObject(rows));
-        return rows;	
+        } else {
+            log.error(LOG_PREFIX + "Invalid set of coordinates. Empty or invalid Distance Matrix result");
+			throw new OrderManagerException500(LOG_PREFIX + "Invalid set of coordinates. Empty or invalid Distance Matrix result");
+        }
 	}
 
+	private int getDistanceFromDistanceMatrix(DistanceMatrix distanceMatrix) 
+	throws Exception 
+	{
+		final String LOG_PREFIX = "GoogleMapsServiceImpl > getDistanceFromDistanceMatrix > ";   	
+		DistanceMatrixRow[] rows = distanceMatrix.rows;
+		
+		if (validateDistanceMatrixRow(rows)) {
+            long distanceInMeters = Math.toIntExact(rows[0].elements[0].distance.inMeters);
+            log.info(LOG_PREFIX + "Distance Matrix result: {} meters", distanceInMeters);
+            return Math.toIntExact(distanceInMeters);
+        
+        } else {
+            log.error(LOG_PREFIX + "Invalid set of coordinates. Empty or invalid Distance Matrix result");
+			throw new OrderManagerException500(LOG_PREFIX + "Invalid set of coordinates. Empty or invalid Distance Matrix result");
+        }
+	}
+	
 	private String printObject(Object object) {
 		ObjectMapper jsonMapper = new ObjectMapper();
 		String json = null;
@@ -69,4 +118,5 @@ public class GoogleMapsServiceImpl implements GoogleMapsService
 		}
 		return json;
 	}
+
 }

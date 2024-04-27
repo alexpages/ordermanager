@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -22,6 +23,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.alexpages.ordermanager.api.domain.PaginationBody;
@@ -134,12 +138,27 @@ public class UserServiceImplTest {
 	@Test
 	void testDeleteUser_success() 
 	{
-		when(repository.findById(any())).thenReturn(Optional.of(new UserEntity()));
+		UserEntity user = new UserEntity();
+		user.setRole(Role.ADMIN.getValue());
+		mockSecurityContext();
+		when(repository.findByUsername(any())).thenReturn(Optional.of(user));
+		when(repository.findById(any())).thenReturn(Optional.of(user));
 	    assertDoesNotThrow(() -> service.deleteUserById(1L));
 	}
 	
 	@Test
-	void testDeleteUser_error() 
+	void testDeleteUser_error_notAuthorized() 
+	{
+		UserEntity user = new UserEntity();
+		user.setRole(Role.USER.getValue());
+		mockSecurityContext();
+		when(repository.findByUsername(any())).thenReturn(Optional.of(user));
+		when(repository.findById(any())).thenReturn(Optional.of(new UserEntity()));
+	    assertThrows(OrderManagerException403.class, () -> service.deleteUserById(1L));
+	}
+	
+	@Test
+	void testDeleteUser_error_notFound() 
 	{
 		assertThrows(OrderManagerException404.class, () -> service.deleteUserById(1L));
 	}
@@ -169,6 +188,15 @@ public class UserServiceImplTest {
 		pagination.setSize(new BigDecimal(10));
 		userInputData.setPaginationBody(pagination);
 		return userInputData;
+	}
+	
+	private void mockSecurityContext() 
+	{
+		Authentication authentication = mock(Authentication.class);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		SecurityContextHolder.setContext(securityContext);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
+	    when(authentication.getName()).thenReturn("username");
 	}
 	
 	private UserEntity generateUserEntity() 

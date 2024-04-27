@@ -44,8 +44,8 @@ paths:
                 $ref: '#/components/schemas/OrderPostResponse'
         '403':
           $ref: '#/components/responses/403'  
-        '404':
-          $ref: '#/components/responses/404'
+        '400':
+          $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
   /orders/request:
@@ -69,6 +69,8 @@ paths:
                 $ref: '#/components/schemas/OrderOutputData'
         '204':
           description: No Content
+        '400':
+          $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
   
@@ -91,6 +93,8 @@ paths:
                 $ref: '#/components/schemas/OrderOutputAudit'
         '204':
           description: No Content
+        '400':
+          $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
           
@@ -134,6 +138,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderPatchResponse'
+        '403':
+          $ref: '#/components/responses/403'
         '404':
           $ref: '#/components/responses/404'
         '500':
@@ -150,6 +156,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/204'
+        '403':
+          $ref: '#/components/responses/403'
         '404':
           $ref: '#/components/responses/404'
         '500':
@@ -204,6 +212,8 @@ paths:
                 $ref: '#/components/schemas/UserOuputData'
         '204':
           description: No Content
+        '400':
+          $ref: '#/components/responses/400'        
         '500':
           $ref: '#/components/responses/500'
   
@@ -239,6 +249,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/204'
+        '403':
+          $ref: '#/components/responses/403'
         '404':
           $ref: '#/components/responses/404'
         '500':
@@ -515,16 +527,22 @@ components:
         id:
           type: integer
           format: int64
+          example: 1
           description: Unique identifier for the order audit
         orderId:
           type: integer
           format: int64
+          example: 14
           description: Unique identifier for the order that has had any action performed
         actionDate:
           type: string
           format: date
           example: "2024-04-20"
           description: Date when the action was performed
+        username:
+          type: string
+          example: "user1"
+          description: User who performed the action
         action:
           $ref: '#/components/schemas/Action'
     OrderOutputData:
@@ -547,15 +565,27 @@ components:
           type: string
           example: "Pickup for Carlos"
           description: description of the order
+        time:
+          type: string
+          example: '17 mins'
+          description: Time in minutes and human readable format 
         distance:
-          $ref: '#/components/schemas/Distance'
+         $ref: '#/components/schemas/Distance'
         status:
           $ref: '#/components/schemas/Status'
+        origin:
+          type: string
+          example: 'Carrer Rubió i Ors, 2, 08750 Molins de Rei, Barcelona, Spain'
+          description: Origin address in human readable format
+        destination:
+          type: string
+          example: 'Av. de Joan XXIII, 1B, Les Corts, 08028 Barcelona, Spain'
+          description: Destination address in human readable format   
         creationDate:
           type: string
           format: date
           example: "2024-04-20"
-          description: Date of creation of the order  
+          description: Date of creation of the order
         version:
           type: integer
           format: int64
@@ -577,6 +607,18 @@ components:
     OrderPostResponse:
       type: object
       properties:
+        origin:
+          type: string
+          example: 'Carrer Rubió i Ors, 2, 08750 Molins de Rei, Barcelona, Spain'
+          description: Origin address in human readable format
+        destination:
+          type: string
+          example: 'Av. de Joan XXIII, 1B, Les Corts, 08028 Barcelona, Spain'
+          description: Destination address in human readable format   
+        time:
+          type: string
+          example: '17 mins'
+          description: Time in minutes and human readable format 
         distance:
          $ref: '#/components/schemas/Distance'
         status:
@@ -588,7 +630,7 @@ components:
           description: id of order creation    
     Distance:
       type: integer
-      example: 2040
+      example: 12746
       description: distance between origin and destination coordinates
     OrderPatchResponse:
       type: object
