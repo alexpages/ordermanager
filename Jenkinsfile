@@ -63,8 +63,7 @@ pipeline {
                  	bat 'docker-compose up -d'
                 	echo "[INFO] > 303-Deploy to Docker Desktop > Deploy completed!!"
                 }
-            }
-        }
+    	}
     }
 
     post {
@@ -73,3 +72,4 @@ pipeline {
         }
     }
 }
+
