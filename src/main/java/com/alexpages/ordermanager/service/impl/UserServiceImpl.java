@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 					role = inputSearch.getRole().getValue();
 				}
 			} else {
-				inputSearch = new UserInputDataInputSearch();	// Object with nulls
+				inputSearch = new UserInputDataInputSearch();
 			}
 			log.info(LOG_PREFIX + "Users: {}", userInputData.toString());
 			Page<UserEntity> pageUserEntity = repository.filterByParams(

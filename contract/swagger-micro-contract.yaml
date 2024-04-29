@@ -1,11 +1,12 @@
 openapi: 3.0.3
 info:
   description: >-
-    Service that allows you to place orders by
-    associating a customer and seller. In addition, you can also consult
-    detailed order information / Servicio que permite realizar pedidos de
-    artículos relacionados con Star wars asociando un customere y vendedor.
-    Además, también se podrá consultar la información detallada de los orders 
+    Service that allows you to place logistic orders that relates origin and
+    destination addresses. In addition, you can also consult
+    detailed order information and audit / Servicio que permite crear pedidos de
+    logística en relación a direcciones de origen y destino.
+    Además, también se podrá consultar la información detallada de las órdenes y su
+    auditoría
   version: 1.0.0
   title: ordermanager
   termsOfService: 'http://swagger.io/terms/'
@@ -485,7 +486,7 @@ components:
       enum:
         - USER
         - ADMIN
-      example: CREATE
+      example: ADMIN
     Action:
       type: string
       enum:

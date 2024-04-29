@@ -6,11 +6,11 @@ services:
       depends_on:
          - mysql
       image: alexintelc/ordermanager:latest
-#      build:                     #use this instead of image if you want to run MySQL + SpringBoot app locally on docker
+#      build:                              #use this instead of image if you want to run MySQL + SpringBoot app locally on docker
 #         context: .
 #         dockerfile: Dockerfile 
       ports:
-         - "3000:3000"
+         - "8080:8080"
       restart: on-failure
       networks:
          - internal-net
