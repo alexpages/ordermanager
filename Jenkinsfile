@@ -61,10 +61,10 @@ pipeline {
 		stage('303-Deploy to EC2') {
 		    steps {
 		        echo "[INFO] > 303-Deploy to EC2 > Deploying to EC2 instance..."
-		        sshagent(['EC2']) {
-		            bat "scp docker-compose.yml %EC2_USERNAME%@%EC2_HOST%:~/docker-compose.yml"
+		        withCredentials([sshUserPrivateKey(credentialsId: 'EC2', keyFileVariable: 'EC2_KEY', usernameVariable: 'EC2_USER')]) {
+    				bat "scp docker-compose.yml %EC2_USERNAME%@%EC2_HOST%:~/docker-compose.yml"
 		            bat "ssh %EC2_USERNAME%@%EC2_HOST% 'cd ~ && docker-compose up -d'"
-		        }
+				}
 		        echo "[INFO] > 303-Deploy to EC2 > Deployment to EC2 instance completed!!"
 		    }
 		}
@@ -76,4 +76,3 @@ pipeline {
         }
     }
 }
-
