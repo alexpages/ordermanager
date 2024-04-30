@@ -3,6 +3,8 @@ pipeline {
     environment {
         REGISTRY = 'alexintelc/ordermanager'
         REGISTRY_CREDENTIAL = 'dockerhub'
+        EC2_USERNAME = 'ec2-user'
+        EC2_HOST = 'ec2-3-249-160-233.eu-west-1.compute.amazonaws.com'        
     }
     stages {
         stage('100-Checkout(SCM)') {
@@ -56,14 +58,16 @@ pipeline {
             }
         }
         
-		stage('303-Deploy to Docker Desktop') {
-            steps {
-                echo "[INFO] > 303-Deploy to Docker Desktop > Deploying image to Docker desktop..."
-                    bat 'docker pull alexintelc/ordermanager:latest'     
-                 	bat 'docker-compose up -d'
-                	echo "[INFO] > 303-Deploy to Docker Desktop > Deploy completed!!"
-                }
-    	}
+		stage('303-Deploy to EC2') {
+		    steps {
+		        echo "[INFO] > 303-Deploy to EC2 > Deploying to EC2 instance..."
+		        sshagent(['EC2']) {
+		            bat "scp docker-compose.yml %EC2_USERNAME%@%EC2_HOST%:~/docker-compose.yml"
+		            bat "ssh %EC2_USERNAME%@%EC2_HOST% 'cd ~ && docker-compose up -d'"
+		        }
+		        echo "[INFO] > 303-Deploy to EC2 > Deployment to EC2 instance completed!!"
+		    }
+		}
     }
 
     post {
