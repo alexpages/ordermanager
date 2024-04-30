@@ -6,6 +6,7 @@ pipeline {
         EC2_USERNAME = 'ec2-user'
         EC2_HOST = 'ec2-3-249-160-233.eu-west-1.compute.amazonaws.com'   
         DOCKER_COMPOSE_YML = 'C:\\Users\\alexp\\git\\ordermanager\\docker-compose.yml'   
+        EC2_CERTIFICATE = 'ordermanager.pem'
     }
     stages {
         stage('100-Checkout(SCM)') {
@@ -63,9 +64,10 @@ pipeline {
 		    steps {
 		        echo "[INFO] > 303-Deploy to EC2 > Deploying to EC2 instance..."
 		        withCredentials([sshUserPrivateKey(credentialsId: 'EC2', keyFileVariable: 'EC2_KEY', usernameVariable: 'EC2_USER')]) {
-    				bat "scp %DOCKER_COMPOSE_YML% %EC2_USERNAME%@%EC2_HOST%:~/docker-compose.yml"
-		            bat "ssh %EC2_USERNAME%@%EC2_HOST% 'cd ~ && docker-compose up -d'"
-				}
+		            bat "scp -i %EC2_CERTIFICATE% C:\\Users\\alexp\\git\\ordermanager\\docker-compose.yml %EC2_USERNAME%@%EC2_HOST%:~/docker-compose.yml"
+		            bat "scp -i %EC2_CERTIFICATE% C:\\Users\\alexp\\git\\ordermanager\\.env %EC2_USERNAME%@%EC2_HOST%:~/.env"
+		            bat "ssh -i %EC2_CERTIFICATE% %EC2_USERNAME%@%EC2_HOST% 'cd ~ && docker-compose up -d'"
+		        }
 		        echo "[INFO] > 303-Deploy to EC2 > Deployment to EC2 instance completed!!"
 		    }
 		}
