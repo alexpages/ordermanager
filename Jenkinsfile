@@ -63,8 +63,8 @@ pipeline {
 		    steps {
 		        echo "[INFO] > 303-Deploy to EC2 > Deploying to EC2 instance..."
 		        withCredentials([sshUserPrivateKey(credentialsId: 'EC2', keyFileVariable: 'EC2_KEY', usernameVariable: 'EC2_USER')]) {
+    				bat "scp %DOCKER_COMPOSE_YML% %EC2_USERNAME%@%EC2_HOST%:~/docker-compose.yml"
 		            bat "ssh %EC2_USERNAME%@%EC2_HOST% 'cd ~ && docker-compose up -d'"
-    				bat "sudo systemctl start docker"
 				}
 		        echo "[INFO] > 303-Deploy to EC2 > Deployment to EC2 instance completed!!"
 		    }
