@@ -67,7 +67,7 @@ pipeline {
 		        withCredentials([sshUserPrivateKey(credentialsId: 'EC2', keyFileVariable: 'EC2_KEY', usernameVariable: 'EC2_USER')]) {
 					bat "scp -i C:\\Users\\alexp\\Desktop\\ordermanager\\ordermanager.pem C:\\Users\\alexp\\git\\ordermanager\\docker-compose.yml ec2-user@3.249.160.233:~/docker-compose.yml"
 					bat "scp -i C:\\Users\\alexp\\Desktop\\ordermanager\\ordermanager.pem C:\\Users\\alexp\\git\\ordermanager\\.env ec2-user@3.249.160.233:~/.env"
-		            bat "ssh -i %EC2_CERTIFICATE% %EC2_USERNAME%@%EC2_HOST% 'cd ~ && docker-compose up -d'"
+		            bat "ssh -i C:\\Users\\alexp\\Desktop\\ordermanager\\ordermanager.pem ec2-user@3.249.160.233 "cd ~/docker-compose.yml && docker-compose up -d""
 		        }
 		        echo "[INFO] > 303-Deploy to EC2 > Deployment to EC2 instance completed!!"
 		    }
