@@ -5,7 +5,7 @@ pipeline {
         REGISTRY_CREDENTIAL = 'dockerhub'
         EC2_USERNAME = 'ec2-user'
         EC2_HOST = 'ec2-3-249-160-233.eu-west-1.compute.amazonaws.com'   
-        DOCKER_COMPOSE_YML = 'C:\Users\alexp\git\ordermanager\docker-compose.yml'     
+        DOCKER_COMPOSE_YML = 'C:\\Users\\alexp\\git\\ordermanager\\docker-compose.yml'   
     }
     stages {
         stage('100-Checkout(SCM)') {
