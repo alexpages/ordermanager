@@ -26,8 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class GoogleMapsServiceImpl implements GoogleMapsService 
 {
-	@Value("${thirdparties.google.key}")
-	private String key;
+//	@Value("${thirdparties.google.key}")
+	private String key = "AIzaSyDFW_s8pzd3mG1OKTsZkLeKec0aYh5zVEw";
 	
 	@Override
 	public GoogleOrderData getGoogleOrderDataFromDistanceMatrix(@NonNull OrderPostRequest orderPostRequest) 

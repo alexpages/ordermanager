@@ -208,7 +208,7 @@ public class OrderServiceImpl implements OrderService {
 				return response;
 			
 			} else {
-			    log.error(LOG_PREFIX  + "pageOrderEntity is null");
+			    log.info(LOG_PREFIX  + "pageOrderAuditEntity is null");
 			    return null;
 			}
 		} catch (Exception e) {

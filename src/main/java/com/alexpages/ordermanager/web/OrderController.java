@@ -19,9 +19,11 @@ import com.alexpages.ordermanager.api.domain.OrderPostResponse;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class OrderController implements OrdersApi {
 
 	private final OrderServiceImpl orderServiceImpl;
@@ -42,6 +44,7 @@ public class OrderController implements OrdersApi {
 	public ResponseEntity<OrderOutputData> getOrders(OrderInputData orderInputData) 
 	{
 		OrderOutputData response = orderServiceImpl.getOrders(orderInputData);
+		log.info("OrderController > getOrders > response: {}", response);
 		if (response == null){
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} else {
@@ -53,6 +56,7 @@ public class OrderController implements OrdersApi {
 	public ResponseEntity<OrderOutputAudit> getOrderAudit(@Valid GetOrderAuditRequest getOrderAuditRequest) 
 	{
 		OrderOutputAudit response = orderServiceImpl.getAuditList(getOrderAuditRequest);
+		log.info("OrderController > getOrderAudit > response: {}", response);
 		if (response == null){
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} else {
