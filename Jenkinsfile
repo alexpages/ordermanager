@@ -45,7 +45,7 @@ pipeline {
         
         stage('6-Clean up Docker Image') {
             steps {
-                bat "docker rmi %REGISTRY:latest"
+                bat "docker rmi %REGISTRY%:latest"
             }
         }
         
