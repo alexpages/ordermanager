@@ -200,7 +200,7 @@ public class OrderServiceImpl implements OrderService {
 					DateUtils.toLocalDateTime(orderInputAudit.getEndDate()),
 					pageable);
 			
-			if (pageOrderAuditEntity != null) {
+			if (!ListUtils.isBlank(pageOrderAuditEntity.getContent())) {
 			    log.info(LOG_PREFIX  + "Orders: {}", pageOrderAuditEntity.getContent());
 				OrderOutputAudit response = new OrderOutputAudit();
 				response.setOrders(orderMapper.toOrderAuditList(pageOrderAuditEntity.getContent()));

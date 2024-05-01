@@ -209,6 +209,10 @@ public class OrderServiceImplTest {
 	@Test
 	void testGetOrderAuditList_success_empty() 
 	{
+		List<OrderAuditEntity> lOrderAuditEntities = new ArrayList<>();
+	    Pageable pageable = PageRequest.of(1, 10);
+	    when(orderAuditRepository.filterByParams(any(), any(), any(), any(), any()))
+	    				.thenReturn(new PageImpl<>(lOrderAuditEntities, pageable, lOrderAuditEntities.size()));
 	    assertNull(orderServiceImpl.getAuditList(generateValidGetOrderAuditRequest()));
 	}
 
