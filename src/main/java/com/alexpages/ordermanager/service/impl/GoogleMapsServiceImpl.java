@@ -26,12 +26,13 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class GoogleMapsServiceImpl implements GoogleMapsService 
 {
-//	@Value("${thirdparties.google.key}")
-	private String key = "AIzaSyDFW_s8pzd3mG1OKTsZkLeKec0aYh5zVEw";
+	@Value("${thirdparties.google.key}")
+	private String key;
 	
 	@Override
 	public GoogleOrderData getGoogleOrderDataFromDistanceMatrix(@NonNull OrderPostRequest orderPostRequest) 
 	{
+		log.info(key);
 		final String LOG_PREFIX = "GoogleMapsServiceImpl > getGoogleOrderDataFromDistanceMatrix > ";   	
 		try {
 			
