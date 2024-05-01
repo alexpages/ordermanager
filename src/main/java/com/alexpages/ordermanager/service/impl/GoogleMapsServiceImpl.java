@@ -45,7 +45,7 @@ public class GoogleMapsServiceImpl implements GoogleMapsService
 					.build();		
 			
 		} catch (Exception e) {
-			throw new OrderManagerException500(LOG_PREFIX + "There was an error with GoogleMaps API: [" + e.getMessage() + "]");
+			throw new OrderManagerException500(LOG_PREFIX + "There was an error with GoogleMaps API: {}", e);
 		}	
 	}
 	
@@ -64,7 +64,7 @@ public class GoogleMapsServiceImpl implements GoogleMapsService
             return distanceMatrix;
         	
         } catch (Exception e) {
-        	log.error(LOG_PREFIX + "DistanceMatrix could not get retrieved: [" + e.getMessage()+ "]");
+        	log.error(LOG_PREFIX + "DistanceMatrix could not get retrieved: {}", e);
         	throw e; 
         }
 	}
