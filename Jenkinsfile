@@ -18,27 +18,27 @@ pipeline {
 
         stage('2-Build') {
             steps {
-                bat 'mvn -B -DskipTests clean package'
+                bat "mvn -B -DskipTests clean package"
             }
         }
 
         stage('3-Test') {
             steps {
-                bat 'mvn clean test -Dspring.profiles.active=standalone'
+                bat "mvn clean test -Dspring.profiles.active=standalone"
             }
         }
 
         stage('4-Build Docker Image') {
             steps {
-                bat 'docker build -t %REGISTRY%:latest .'
+                bat "docker build -t %REGISTRY%:latest ."
             }
         }
 
         stage('5-Publish Docker Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: REGISTRY_CREDENTIAL, passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')]) {
-                    bat 'docker login -u %DOCKERHUB_USERNAME% -p %DOCKERHUB_PASSWORD%'
-                    bat 'docker push %REGISTRY%:latest'
+                    bat "docker login -u %DOCKERHUB_USERNAME% -p %DOCKERHUB_PASSWORD%"
+                    bat "docker push %REGISTRY%:latest"
                 }
             }
         }
