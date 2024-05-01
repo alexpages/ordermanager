@@ -20,15 +20,15 @@ server:
     whitelabel:
       enabled: false
 
-logging:
-  level:
-    root: INFO
-    org.springframework: INFO
-    org:
-      hibernate:
-        SQL: INFO
-        type:
-          descriptor: INFO
+#logging:
+#  level:
+#    root: INFO
+#    org.springframework: INFO
+#    org:
+#      hibernate:
+#        SQL: INFO
+#        type:
+#          descriptor: INFO
 
 thirdparties:
   google:
