@@ -126,7 +126,7 @@ public class OrderServiceImpl implements OrderService {
 			}
 		} catch (Exception e) {
 			log.error(LOG_PREFIX + "It could not get the list of orders: [" + e.getMessage() + "]");
-			throw new OrderManagerException500(LOG_PREFIX + "Order list could not get retrieved, Exception: [" + e.getMessage() + "]");
+			throw new OrderManagerException500(LOG_PREFIX + "Order list could not get retrieved, Exception: {}", e);
 		}
 	}
 		
@@ -213,7 +213,7 @@ public class OrderServiceImpl implements OrderService {
 			}
 		} catch (Exception e) {
 			log.error(LOG_PREFIX  + "It could not get the list of orders: [" + e.getMessage() + "]");
-			throw new OrderManagerException500(LOG_PREFIX  + "Order list could not get retrieved, Exception: [" + e.getMessage() + "]");
+			throw new OrderManagerException500(LOG_PREFIX  + "Order list could not get retrieved, Exception: {}", e);
 		}
 	}
 	
@@ -234,7 +234,7 @@ public class OrderServiceImpl implements OrderService {
 			return orderAuditRepository.save(orderAuditEntity);
 		} catch (Exception e) {
 			log.error("OrderServiceImpl > addOrderAuditEntity > It could not save the order audit: [" + e.getMessage() + "]");
-			throw new OrderManagerException500("OrderServiceImpl > addOrderAuditEntity > It could not save the order audit, Exception: [" + e.getMessage() + "]");
+			throw new OrderManagerException500("OrderServiceImpl > addOrderAuditEntity > It could not save the order audit, Exception: {}", e);
 		}
 	}
 	
