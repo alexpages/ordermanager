@@ -4,7 +4,7 @@ pipeline {
         REGISTRY = 'alexintelc/ordermanager'
         REGISTRY_CREDENTIAL = 'dockerhub'
         EC2_USERNAME = 'ec2-user'
-        EC2_HOST = 'ec2-3-249-160-233.eu-west-1.compute.amazonaws.com'   
+        EC2_HOST = '3.252.148.188'   
         DOCKER_COMPOSE_YML = 'C:\\Users\\alexp\\git\\ordermanager\\docker-compose.yml'   
         EC2_CERTIFICATE = 'C:\\Users\\alexp\\Desktop\\ordermanager\\ordermanager.pem'
         ENV_FILE = 'C:\\Users\\alexp\\git\\ordermanager\\.env' 
@@ -65,9 +65,9 @@ pipeline {
 		    steps {
 		        echo "[INFO] > 303-Deploy to EC2 > Deploying to EC2 instance..."
 		        withCredentials([sshUserPrivateKey(credentialsId: 'EC2', keyFileVariable: 'EC2_KEY', usernameVariable: 'EC2_USER')]) {
-					bat "scp -i C:\\Users\\alexp\\Desktop\\ordermanager\\ordermanager.pem C:\\Users\\alexp\\git\\ordermanager\\docker-compose.yml ec2-user@3.249.160.233:~/docker-compose.yml"
-					bat "scp -i C:\\Users\\alexp\\Desktop\\ordermanager\\ordermanager.pem C:\\Users\\alexp\\git\\ordermanager\\.env ec2-user@3.249.160.233:~/.env"
-					bat "ssh -i C:\\Users\\alexp\\Desktop\\ordermanager\\ordermanager.pem ec2-user@3.249.160.233 \"cd ~/ && docker-compose up -d\""
+					bat 'scp -i %EC2_CERTIFICATE% %DOCKER_COMPOSE_YML% ec2-user@%EC2_HOST%:~/docker-compose.yml'
+					bat 'scp -i %EC2_CERTIFICATE% %ENV_FILE% ec2-user@%EC2_HOST%:~/.env'
+					bat 'ssh -i %EC2_CERTIFICATE% ec2-user@%EC2_HOST% \"cd ~/ && docker-compose up -d\"'
 		        }
 		        echo "[INFO] > 303-Deploy to EC2 > Deployment to EC2 instance completed!!"
 		    }
