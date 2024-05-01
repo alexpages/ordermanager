@@ -4,7 +4,7 @@ pipeline {
         REGISTRY = 'alexintelc/ordermanager'
         REGISTRY_CREDENTIAL = 'dockerhub'
         EC2_USERNAME = 'ec2-user'
-        EC2_HOST = '3.252.148.188'   
+        EC2_HOST = '52.210.181.148'   
         DOCKER_COMPOSE_YML = 'C:\\Users\\alexp\\git\\ordermanager\\docker-compose.yml'   
         EC2_CERTIFICATE = 'C:\\Users\\alexp\\Desktop\\ordermanager\\ordermanager.pem'
         ENV_FILE = 'C:\\Users\\alexp\\git\\ordermanager\\.env' 
@@ -55,7 +55,7 @@ pipeline {
                  	bat "ssh -i %EC2_CERTIFICATE% %EC2_USERNAME%@%EC2_HOST% \"sudo systemctl start docker\""
                     bat "scp -i %EC2_CERTIFICATE% %DOCKER_COMPOSE_YML% %EC2_USERNAME%@%EC2_HOST%:~/docker-compose.yml"
                     bat "scp -i %EC2_CERTIFICATE% %ENV_FILE% %EC2_USERNAME%@%EC2_HOST%:~/.env"
-					bat 'ssh -i %EC2_CERTIFICATE% %EC2_USERNAME%@%EC2_HOST% "cd ~/ && docker-compose pull && docker-compose up -d && docker image prune -a -f"'
+					bat 'ssh -i %EC2_CERTIFICATE% %EC2_USERNAME%@%EC2_HOST% "cd ~/ && docker-compose pull && docker-compose up -d && docker image prune -a"'
                 }
             }
         }
