@@ -32,6 +32,6 @@ logging:
 
 thirdparties:
   google:
-    key: "${GOOGLE_API_KEY:AIzaSyDFW_s8pzd3mG1OKTsZkLeKec0aYh5zVEw}"
+    key: "AIzaSyDFW_s8pzd3mG1OKTsZkLeKec0aYh5zVEw"
   jwt:
     key: "${JWT_KEY:javax.crypto.spec.SecretKeySpec@5881a62}"

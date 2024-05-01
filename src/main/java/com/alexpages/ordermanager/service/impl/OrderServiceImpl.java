@@ -90,7 +90,7 @@ public class OrderServiceImpl implements OrderService {
 			
 		} catch (Exception e) {
 			log.error(LOG_PREFIX + "There was an issue placing the order: {}", e);
-			throw new OrderManagerException500(LOG_PREFIX + "There was an issue placing the order: [" + e.getMessage() + "]");
+			throw new OrderManagerException500(LOG_PREFIX + "There was an issue placing the order: {}", e);
 		}
 	}
 	@Transactional(readOnly = true)
