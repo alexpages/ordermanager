@@ -2,6 +2,7 @@ package com.alexpages.ordermanager.api.domain;
 
 import java.net.URI;
 import java.util.Objects;
+import com.alexpages.ordermanager.api.domain.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -30,42 +31,7 @@ public class User implements Serializable {
 
   private String password;
 
-  /**
-   * Gets or Sets role
-   */
-  public enum RoleEnum {
-    USER("USER"),
-    
-    ADMIN("ADMIN");
-
-    private String value;
-
-    RoleEnum(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static RoleEnum fromValue(String value) {
-      for (RoleEnum b : RoleEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
-        }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-  }
-
-  private RoleEnum role;
+  private Role role;
 
   public User username(String username) {
     this.username = username;
@@ -124,7 +90,7 @@ public class User implements Serializable {
     this.password = password;
   }
 
-  public User role(RoleEnum role) {
+  public User role(Role role) {
     this.role = role;
     return this;
   }
@@ -133,13 +99,13 @@ public class User implements Serializable {
    * Get role
    * @return role
   */
-  
+  @Valid 
   @JsonProperty("role")
-  public RoleEnum getRole() {
+  public Role getRole() {
     return role;
   }
 
-  public void setRole(RoleEnum role) {
+  public void setRole(Role role) {
     this.role = role;
   }
 

@@ -25,11 +25,74 @@ public class OrderPostResponse implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
+  private String origin;
+
+  private String destination;
+
+  private String time;
+
   private Integer distance;
 
   private Status status;
 
   private Long orderId;
+
+  public OrderPostResponse origin(String origin) {
+    this.origin = origin;
+    return this;
+  }
+
+  /**
+   * Origin address in human readable format
+   * @return origin
+  */
+  
+  @JsonProperty("origin")
+  public String getOrigin() {
+    return origin;
+  }
+
+  public void setOrigin(String origin) {
+    this.origin = origin;
+  }
+
+  public OrderPostResponse destination(String destination) {
+    this.destination = destination;
+    return this;
+  }
+
+  /**
+   * Destination address in human readable format
+   * @return destination
+  */
+  
+  @JsonProperty("destination")
+  public String getDestination() {
+    return destination;
+  }
+
+  public void setDestination(String destination) {
+    this.destination = destination;
+  }
+
+  public OrderPostResponse time(String time) {
+    this.time = time;
+    return this;
+  }
+
+  /**
+   * Time in minutes and human readable format
+   * @return time
+  */
+  
+  @JsonProperty("time")
+  public String getTime() {
+    return time;
+  }
+
+  public void setTime(String time) {
+    this.time = time;
+  }
 
   public OrderPostResponse distance(Integer distance) {
     this.distance = distance;
@@ -97,20 +160,26 @@ public class OrderPostResponse implements Serializable {
       return false;
     }
     OrderPostResponse orderPostResponse = (OrderPostResponse) o;
-    return Objects.equals(this.distance, orderPostResponse.distance) &&
+    return Objects.equals(this.origin, orderPostResponse.origin) &&
+        Objects.equals(this.destination, orderPostResponse.destination) &&
+        Objects.equals(this.time, orderPostResponse.time) &&
+        Objects.equals(this.distance, orderPostResponse.distance) &&
         Objects.equals(this.status, orderPostResponse.status) &&
         Objects.equals(this.orderId, orderPostResponse.orderId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(distance, status, orderId);
+    return Objects.hash(origin, destination, time, distance, status, orderId);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class OrderPostResponse {\n");
+    sb.append("    origin: ").append(toIndentedString(origin)).append("\n");
+    sb.append("    destination: ").append(toIndentedString(destination)).append("\n");
+    sb.append("    time: ").append(toIndentedString(time)).append("\n");
     sb.append("    distance: ").append(toIndentedString(distance)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    orderId: ").append(toIndentedString(orderId)).append("\n");

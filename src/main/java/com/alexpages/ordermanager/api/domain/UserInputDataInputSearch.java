@@ -2,6 +2,7 @@ package com.alexpages.ordermanager.api.domain;
 
 import java.net.URI;
 import java.util.Objects;
+import com.alexpages.ordermanager.api.domain.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -32,42 +33,7 @@ public class UserInputDataInputSearch implements Serializable {
 
   private Long userId;
 
-  /**
-   * Gets or Sets role
-   */
-  public enum RoleEnum {
-    USER("USER"),
-    
-    ADMIN("ADMIN");
-
-    private String value;
-
-    RoleEnum(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static RoleEnum fromValue(String value) {
-      for (RoleEnum b : RoleEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
-        }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-  }
-
-  private RoleEnum role;
+  private Role role;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate creationDate;
@@ -110,7 +76,7 @@ public class UserInputDataInputSearch implements Serializable {
     this.userId = userId;
   }
 
-  public UserInputDataInputSearch role(RoleEnum role) {
+  public UserInputDataInputSearch role(Role role) {
     this.role = role;
     return this;
   }
@@ -119,13 +85,13 @@ public class UserInputDataInputSearch implements Serializable {
    * Get role
    * @return role
   */
-  
+  @Valid 
   @JsonProperty("role")
-  public RoleEnum getRole() {
+  public Role getRole() {
     return role;
   }
 
-  public void setRole(RoleEnum role) {
+  public void setRole(Role role) {
     this.role = role;
   }
 

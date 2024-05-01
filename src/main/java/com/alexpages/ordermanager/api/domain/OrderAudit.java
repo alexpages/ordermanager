@@ -34,6 +34,8 @@ public class OrderAudit implements Serializable {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate actionDate;
 
+  private String username;
+
   private Action action;
 
   public OrderAudit id(Long id) {
@@ -93,6 +95,25 @@ public class OrderAudit implements Serializable {
     this.actionDate = actionDate;
   }
 
+  public OrderAudit username(String username) {
+    this.username = username;
+    return this;
+  }
+
+  /**
+   * User who performed the action
+   * @return username
+  */
+  
+  @JsonProperty("username")
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
   public OrderAudit action(Action action) {
     this.action = action;
     return this;
@@ -124,12 +145,13 @@ public class OrderAudit implements Serializable {
     return Objects.equals(this.id, orderAudit.id) &&
         Objects.equals(this.orderId, orderAudit.orderId) &&
         Objects.equals(this.actionDate, orderAudit.actionDate) &&
+        Objects.equals(this.username, orderAudit.username) &&
         Objects.equals(this.action, orderAudit.action);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, orderId, actionDate, action);
+    return Objects.hash(id, orderId, actionDate, username, action);
   }
 
   @Override
@@ -139,6 +161,7 @@ public class OrderAudit implements Serializable {
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    orderId: ").append(toIndentedString(orderId)).append("\n");
     sb.append("    actionDate: ").append(toIndentedString(actionDate)).append("\n");
+    sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    action: ").append(toIndentedString(action)).append("\n");
     sb.append("}");
     return sb.toString();
