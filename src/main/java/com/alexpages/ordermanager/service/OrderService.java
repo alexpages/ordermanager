@@ -14,8 +14,7 @@ import com.alexpages.ordermanager.api.domain.OrderPostResponse;
 
 import lombok.NonNull;
 
-public interface OrderService 
-{
+public interface OrderService {
 
 	public OrderPostResponse postOrder(@NonNull OrderPostRequest orderPostRequest);
 

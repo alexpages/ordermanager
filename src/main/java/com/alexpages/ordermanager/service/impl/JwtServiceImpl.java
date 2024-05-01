@@ -19,7 +19,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 @Component
-public class JwtServiceImpl implements JwtService{
+public class JwtServiceImpl implements JwtService {
 
 	@Value("${thirdparties.jwt.key}")
 	private String key;

@@ -8,11 +8,12 @@ import com.alexpages.ordermanager.api.domain.PageResponse;
 import com.alexpages.ordermanager.api.domain.PaginationBody;
 import com.alexpages.ordermanager.error.OrderManagerException400;
 
-public class PageableUtils
-{
+public class PageableUtils {
+	
 	private PageableUtils() {
 		 throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
 	}
+	
 	public static Pageable getPageable(PaginationBody paginationBody)
 	{
 		Pageable pageable = null;

@@ -22,9 +22,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor 
 @Entity 
 @Table(name = "orders_audit")
-public class OrderAuditEntity 
-implements Serializable 
-{		
+public class OrderAuditEntity implements Serializable {	
+	
 	private static final long serialVersionUID = 1L;
 	
     @Column(name = "ID")

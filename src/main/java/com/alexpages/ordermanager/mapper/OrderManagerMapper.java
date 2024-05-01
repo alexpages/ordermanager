@@ -26,7 +26,6 @@ public interface OrderManagerMapper {
 	OrderManagerMapper INSTANCE = Mappers.getMapper(OrderManagerMapper.class);
 
 	//Order related
-	
 	@Mapping(target = "creationDate", source = "creationDate", qualifiedByName = "localDateTimeToLocalDate")
 	List<@Valid OrderDetails> toOrderList(List<OrderEntity> content);
 	

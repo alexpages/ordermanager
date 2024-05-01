@@ -21,8 +21,8 @@ import com.alexpages.ordermanager.service.impl.JwtServiceImpl;
 import com.alexpages.ordermanager.service.impl.UserServiceImpl;
 
 @Component
-public class JwtAuthFilter extends OncePerRequestFilter
-{
+public class JwtAuthFilter extends OncePerRequestFilter {
+	
 	@Autowired
     private JwtServiceImpl jwtUtils; 
 	@Autowired

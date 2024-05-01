@@ -8,8 +8,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-public class DateUtils 
-{
+public class DateUtils {
+	
 	private static final ZoneId ZONE_ID = ZoneId.of("Europe/Madrid");
 	private DateUtils() {
 		 throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");

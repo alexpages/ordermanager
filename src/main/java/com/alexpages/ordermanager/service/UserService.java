@@ -6,8 +6,7 @@ import com.alexpages.ordermanager.api.domain.User;
 import com.alexpages.ordermanager.api.domain.UserInputData;
 import com.alexpages.ordermanager.api.domain.UserOuputData;
 
-public interface UserService 
-{
+public interface UserService {
 	
     public String addUser(User user);
 

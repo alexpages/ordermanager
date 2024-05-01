@@ -55,7 +55,7 @@ pipeline {
                  	bat "ssh -i %EC2_CERTIFICATE% %EC2_USERNAME%@%EC2_HOST% \"sudo systemctl start docker\""
                     bat "scp -i %EC2_CERTIFICATE% %DOCKER_COMPOSE_YML% %EC2_USERNAME%@%EC2_HOST%:~/docker-compose.yml"
                     bat "scp -i %EC2_CERTIFICATE% %ENV_FILE% %EC2_USERNAME%@%EC2_HOST%:~/.env"
-                    bat "ssh -i %EC2_CERTIFICATE% %EC2_USERNAME%@%EC2_HOST% \"cd ~/ && docker-compose up -d\""
+					bat 'ssh -i %EC2_CERTIFICATE% %EC2_USERNAME%@%EC2_HOST% "cd ~/ && docker-compose pull && docker-compose up -d"'
                 }
             }
         }

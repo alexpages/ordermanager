@@ -20,18 +20,18 @@ server:
     whitelabel:
       enabled: false
 
-#logging:
-#  level:
-#    root: INFO
-#    org.springframework: INFO
-#    org:
-#      hibernate:
-#        SQL: INFO
-#        type:
-#          descriptor: INFO
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    org:
+      hibernate:
+        SQL: INFO
+        type:
+          descriptor: INFO
 
 thirdparties:
   google:
-    key: AIzaSyDFW_s8pzd3mG1OKTsZkLeKec0aYh5zVEw
+    key: "${GOOGLE_API_KEY:AIzaSyDFW_s8pzd3mG1OKTsZkLeKec0aYh5zVEw}"
   jwt:
     key: "${JWT_KEY:javax.crypto.spec.SecretKeySpec@5881a62}"

@@ -27,9 +27,8 @@ import lombok.NoArgsConstructor;
 @Validated @OptimisticLocking
 @Entity 
 @Table(name = "orders")
-public class OrderEntity 
-implements Serializable 
-{		
+public class OrderEntity implements Serializable {		
+	
 	private static final long serialVersionUID = 1L;
 	
     @Column(name = "ID")

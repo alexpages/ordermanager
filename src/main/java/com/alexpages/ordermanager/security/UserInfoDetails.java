@@ -11,8 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.alexpages.ordermanager.entity.UserEntity;
 
-public class UserInfoDetails implements UserDetails 
-{ 
+public class UserInfoDetails implements UserDetails { 
 	  
 	private static final long serialVersionUID = 1L;
 	private String name; 

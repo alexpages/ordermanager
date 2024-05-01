@@ -21,9 +21,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor 
 @Entity 
 @Table(name = "users")
-public class UserEntity 
-implements Serializable 
-{		
+public class UserEntity implements Serializable {
+	
 	private static final long serialVersionUID = 1L;
 	
     @Column(name = "ID")

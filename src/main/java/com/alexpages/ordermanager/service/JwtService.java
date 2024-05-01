@@ -7,8 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import io.jsonwebtoken.Claims;
 
-public interface JwtService 
-{
+public interface JwtService {
 	
 	public String generateToken(String username);
 
