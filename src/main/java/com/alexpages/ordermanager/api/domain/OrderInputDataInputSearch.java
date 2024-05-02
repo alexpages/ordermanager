@@ -36,7 +36,7 @@ public class OrderInputDataInputSearch implements Serializable {
   }
 
   /**
-   * id of order request
+   * Order request identifier
    * @return orderId
   */
   

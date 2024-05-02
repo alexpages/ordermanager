@@ -21,7 +21,7 @@ public class AuthenticateResponse implements Serializable {
   }
 
   /**
-   * Client temporary JWT
+   * User temporary JWT
    * @return jwt
   */
   

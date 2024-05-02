@@ -35,7 +35,7 @@ public class UserInputAudit implements Serializable {
   }
 
   /**
-   * name of the user
+   * Username value of the user
    * @return username
   */
   
@@ -54,7 +54,7 @@ public class UserInputAudit implements Serializable {
   }
 
   /**
-   * user identifier
+   * User identifier
    * @return userId
   */
   

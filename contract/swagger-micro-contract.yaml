@@ -215,9 +215,7 @@ paths:
           description: No Content
         '400':
           $ref: '#/components/responses/400'        
-        '500':
-          $ref: '#/components/responses/500'
-  
+
   /users/{userId}:
     get:
       tags:
@@ -286,7 +284,7 @@ components:
     UserId:
       in: path
       name: userId
-      description: Identifier of a user id value
+      description: Identifier of a user 
       required: true
       schema:
         type: integer
@@ -295,7 +293,7 @@ components:
     OrderId:
       in: path
       name: orderId
-      description: Identifier of a user id value
+      description: Identifier of an order
       required: true
       schema:
         type: integer
@@ -360,11 +358,11 @@ components:
       type: object
       properties:
         username:
-          description: User name of the client
+          description: Username value of the user
           type: string  
           example: username123 
         password:
-          description: Password of the client
+          description: Password value of the user
           type: string   
           example: password123  
       required:
@@ -375,7 +373,7 @@ components:
       type: object
       properties:  
         jwt:
-          description: Client temporary JWT
+          description: User temporary JWT
           type: string
           example: jwt0000001
     UserInputAudit:
@@ -383,11 +381,11 @@ components:
       properties:
         username:
           type: string
-          description: name of the user
+          description: Username value of the user
           example: Alex
         userId:
           type: integer
-          description: user identifier
+          description: User identifier
           example: 1
         role:
           $ref: '#/components/schemas/Role'  
@@ -407,7 +405,7 @@ components:
           properties:
             username:
               type: string
-              description: name of the user
+              description: Username value of the user
               example: Alex
             userId:
               type: integer
@@ -437,12 +435,14 @@ components:
       type: object
       properties:
         username:
-          description: Name of the user
+          description: Username value of the user
           type: string
           example: Alex
         id:
+          description: User identifier
           type: integer
           format: int64
+          example: 1
         password:
           description: Password of the account
           type: string
@@ -456,7 +456,7 @@ components:
           type: integer
           format: int64
           example: 1
-          description: id of the order to which the action was performed
+          description: Identifier of the order to which the action was performed
         startDate:
           type: string
           format: date
@@ -507,7 +507,7 @@ components:
               type: integer
               format: int64
               example: 1
-              description: id of order request
+              description: Order request identifier
             status:
               $ref: '#/components/schemas/Status'
             startCreationDate:
@@ -565,7 +565,7 @@ components:
         description:
           type: string
           example: "Pickup for Carlos"
-          description: description of the order
+          description: Description of the order
         time:
           type: string
           example: '17 mins'
@@ -659,29 +659,29 @@ components:
       properties:
         totalPages:
           type: integer
-          description: Número total de páginas existentes
+          description: Number of existing pages 
         totalElements:
           type: integer
           format: int64
-          description: Número total de registros existentes
+          description: Number of existing registers
         size:
           type: integer
-          description: Número total de registros por página
+          description: Number of registers per page
         number:
           type: integer
-          description: Número de registro de la primera página
+          description: Number of registers in the first page
         numberOfElements:
           type: integer
-          description: Número de registros de la página devuelta
+          description: Number of registers in the returned page
         last:
           type: boolean
-          description: true si es la última página
+          description: true if it is last page
         first:
           type: boolean
-          description: true si es la primera página
+          description: true if it is first page
         empty:
           type: boolean
-          description: true si la página devuelta no contiene registros
+          description: true if the returned page does not contain registers
         sort:
           $ref: '#/components/schemas/Sort'
       required:

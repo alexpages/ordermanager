@@ -59,7 +59,7 @@ public class PageResponse implements Serializable {
   }
 
   /**
-   * Número total de páginas existentes
+   * Number of existing pages
    * @return totalPages
   */
   @NotNull 
@@ -78,7 +78,7 @@ public class PageResponse implements Serializable {
   }
 
   /**
-   * Número total de registros existentes
+   * Number of existing registers
    * @return totalElements
   */
   @NotNull 
@@ -97,7 +97,7 @@ public class PageResponse implements Serializable {
   }
 
   /**
-   * Número total de registros por página
+   * Number of registers per page
    * @return size
   */
   @NotNull 
@@ -116,7 +116,7 @@ public class PageResponse implements Serializable {
   }
 
   /**
-   * Número de registro de la primera página
+   * Number of registers in the first page
    * @return number
   */
   @NotNull 
@@ -135,7 +135,7 @@ public class PageResponse implements Serializable {
   }
 
   /**
-   * Número de registros de la página devuelta
+   * Number of registers in the returned page
    * @return numberOfElements
   */
   @NotNull 
@@ -154,7 +154,7 @@ public class PageResponse implements Serializable {
   }
 
   /**
-   * true si es la última página
+   * true if it is last page
    * @return last
   */
   @NotNull 
@@ -173,7 +173,7 @@ public class PageResponse implements Serializable {
   }
 
   /**
-   * true si es la primera página
+   * true if it is first page
    * @return first
   */
   @NotNull 
@@ -192,7 +192,7 @@ public class PageResponse implements Serializable {
   }
 
   /**
-   * true si la página devuelta no contiene registros
+   * true if the returned page does not contain registers
    * @return empty
   */
   @NotNull 

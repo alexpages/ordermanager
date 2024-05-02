@@ -37,7 +37,7 @@ public class AuthenticateRequest implements Serializable {
   }
 
   /**
-   * User name of the client
+   * Username value of the user
    * @return username
   */
   @NotNull 
@@ -56,7 +56,7 @@ public class AuthenticateRequest implements Serializable {
   }
 
   /**
-   * Password of the client
+   * Password value of the user
    * @return password
   */
   @NotNull 

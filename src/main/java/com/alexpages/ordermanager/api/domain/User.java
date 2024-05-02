@@ -29,7 +29,7 @@ public class User implements Serializable {
   }
 
   /**
-   * Name of the user
+   * Username value of the user
    * @return username
   */
   
@@ -48,7 +48,7 @@ public class User implements Serializable {
   }
 
   /**
-   * Get id
+   * User identifier
    * @return id
   */
   

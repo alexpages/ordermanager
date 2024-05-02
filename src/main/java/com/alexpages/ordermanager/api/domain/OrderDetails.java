@@ -62,7 +62,7 @@ public class OrderDetails implements Serializable {
   }
 
   /**
-   * description of the order
+   * Description of the order
    * @return description
   */
   

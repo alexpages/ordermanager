@@ -37,7 +37,7 @@ public class OrderInputAudit implements Serializable {
   }
 
   /**
-   * id of the order to which the action was performed
+   * Identifier of the order to which the action was performed
    * @return orderId
   */
   

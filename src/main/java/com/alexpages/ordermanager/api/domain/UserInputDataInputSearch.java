@@ -35,7 +35,7 @@ public class UserInputDataInputSearch implements Serializable {
   }
 
   /**
-   * name of the user
+   * Username value of the user
    * @return username
   */
   
