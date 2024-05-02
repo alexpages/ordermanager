@@ -5,7 +5,17 @@
  */
 package com.alexpages.ordermanager.api;
 
+import javax.validation.Valid;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
 import com.alexpages.ordermanager.api.domain.AddUser201Response;
+import com.alexpages.ordermanager.api.domain.AddUser409Response;
 import com.alexpages.ordermanager.api.domain.AuthenticateRequest;
 import com.alexpages.ordermanager.api.domain.AuthenticateResponse;
 import com.alexpages.ordermanager.api.domain.GetOrderById404Response;
@@ -15,44 +25,30 @@ import com.alexpages.ordermanager.api.domain.PostOrder500Response;
 import com.alexpages.ordermanager.api.domain.User;
 import com.alexpages.ordermanager.api.domain.UserInputData;
 import com.alexpages.ordermanager.api.domain.UserOuputData;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.NativeWebRequest;
-
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import java.util.Optional;
-import javax.annotation.Generated;
 
 @Validated
 public interface UsersApi {
 
-    @Operation(operationId = "addUser", summary = "Allows you to create a user", description = "Create a new user profile.",    tags = { "users" },  responses = {  @ApiResponse(responseCode = "201", description = "Client created successfully", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = AddUser201Response.class))  }),  @ApiResponse(responseCode = "400", description = "Bad request. The request body does not follow the expected format.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = PostOrder400Response.class))  }),  @ApiResponse(responseCode = "500", description = "Internal Server Error.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = PostOrder500Response.class))  })  })
+    @Operation(operationId = "addUser", summary = "Allows you to create a user", description = "Create a new user profile.",    tags = { "users" },  responses = {  @ApiResponse(responseCode = "201", description = "Client created successfully", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = AddUser201Response.class))  }),  @ApiResponse(responseCode = "400", description = "Bad request. The request body does not follow the expected format.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = PostOrder400Response.class))  }),  @ApiResponse(responseCode = "409", description = "Resource not found.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = AddUser409Response.class))  })  })
     @RequestMapping( method = RequestMethod.POST, value = "/users", produces = { "application/json" }, consumes = { "application/json" })      
     ResponseEntity<AddUser201Response> addUser( @Parameter(name = "User", description = "") @Valid @RequestBody(required = false) User user);
 
-    @Operation(operationId = "authenticateUser", summary = "Allows you to authenticate a user and receive JWT", description = "This method allows you to retrieve a **JWT** for the user after it has ben authenticated.",    tags = { "users" },  responses = {  @ApiResponse(responseCode = "200", description = "JWT created successfully", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticateResponse.class))  }),  @ApiResponse(responseCode = "404", description = "Resource not found.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = GetOrderById404Response.class))  }),  @ApiResponse(responseCode = "500", description = "Internal Server Error.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = PostOrder500Response.class))  })  })
+    @Operation(operationId = "authenticateUser", summary = "Allows you to authenticate a user and receive JWT", description = "This method allows you to retrieve a **JWT** for the user after it has ben authenticated.",    tags = { "users" },  responses = {  @ApiResponse(responseCode = "200", description = "JWT created successfully", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticateResponse.class))  }),  @ApiResponse(responseCode = "403", description = "Unauthorized request. The user is not authorized or JWT was expired.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = PostOrder403Response.class))  }),  @ApiResponse(responseCode = "404", description = "Resource not found.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = GetOrderById404Response.class))  }),  @ApiResponse(responseCode = "500", description = "Internal Server Error.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = PostOrder500Response.class))  })  })
     @RequestMapping( method = RequestMethod.POST, value = "/users/authenticate", produces = { "application/json" }, consumes = { "application/json" })      
     ResponseEntity<AuthenticateResponse> authenticateUser( @Parameter(name = "AuthenticateRequest", description = "") @Valid @RequestBody(required = false) AuthenticateRequest authenticateRequest);
 
-    @Operation(operationId = "deleteUserById", summary = "Allows you to delete a user", description = "Service that allows you to delete a user.",    tags = { "users" },  responses = {  @ApiResponse(responseCode = "204", description = "No Content"),  @ApiResponse(responseCode = "403", description = "Unauthorized request. The user is not authorized or JWT was expired.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = PostOrder403Response.class))  }),  @ApiResponse(responseCode = "404", description = "Resource not found.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = GetOrderById404Response.class))  }),  @ApiResponse(responseCode = "500", description = "Internal Server Error.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = PostOrder500Response.class))  })  })
+    @Operation(operationId = "deleteUserById", summary = "Allows you to delete a user", description = "Service that allows you to delete a user.",    tags = { "users" },  responses = {  @ApiResponse(responseCode = "204", description = "No Content"),  @ApiResponse(responseCode = "403", description = "Unauthorized request. The user is not authorized or JWT was expired.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = PostOrder403Response.class))  }),  @ApiResponse(responseCode = "404", description = "Resource not found.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = GetOrderById404Response.class))  })  })
     @RequestMapping( method = RequestMethod.DELETE, value = "/users/{userId}", produces = { "application/json" })      
     ResponseEntity<Void> deleteUserById( @Parameter(name = "userId", description = "Identifier of a user id value", required = true, in = ParameterIn.PATH) @PathVariable("userId") Long userId);
 
-    @Operation(operationId = "getUserById", summary = "Allows you to request user details", description = "Service that allows you to recover all the information related to a user.",    tags = { "users" },  responses = {  @ApiResponse(responseCode = "200", description = "OK", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))  }),  @ApiResponse(responseCode = "404", description = "Resource not found.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = GetOrderById404Response.class))  }),  @ApiResponse(responseCode = "500", description = "Internal Server Error.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = PostOrder500Response.class))  })  })
+    @Operation(operationId = "getUserById", summary = "Allows you to request user details", description = "Service that allows you to recover all the information related to a user.",    tags = { "users" },  responses = {  @ApiResponse(responseCode = "200", description = "OK", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))  }),  @ApiResponse(responseCode = "400", description = "Bad request. The request body does not follow the expected format.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = PostOrder400Response.class))  }),  @ApiResponse(responseCode = "404", description = "Resource not found.", content = {  @Content(mediaType = "application/json", schema = @Schema(implementation = GetOrderById404Response.class))  })  })
     @RequestMapping( method = RequestMethod.GET, value = "/users/{userId}", produces = { "application/json" })      
     ResponseEntity<User> getUserById( @Parameter(name = "userId", description = "Identifier of a user id value", required = true, in = ParameterIn.PATH) @PathVariable("userId") Long userId);
 
