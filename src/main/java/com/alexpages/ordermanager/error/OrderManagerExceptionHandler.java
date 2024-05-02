@@ -2,6 +2,8 @@ package com.alexpages.ordermanager.error;
 
 import java.time.LocalDateTime;
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -65,36 +68,56 @@ public class OrderManagerExceptionHandler extends ResponseEntityExceptionHandler
         exception.setThrowable(e.getCause());
 		return new ResponseEntity<>(exception, HttpStatus.FORBIDDEN);
 	}
-		
-	@Override
-	protected ResponseEntity<Object> handleHttpMessageNotReadable(	HttpMessageNotReadableException ex, HttpHeaders headers,
-            													HttpStatus status, WebRequest request) 
+	
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<Object> handleExceptions(ConstraintViolationException e, WebRequest webRequest) 
 	{
-		OrderManagerException exception = new OrderManagerException(ex.getMessage());
+		OrderManagerException exception = new OrderManagerException(e.getMessage());
         exception.setStatus(HttpStatus.BAD_REQUEST);
         exception.setTimestamp(LocalDateTime.now());
-        exception.setThrowable(null); //ex.getMessage is enough, no need to throw entire stack trace
+        exception.setThrowable(e.getCause());
+		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public ResponseEntity<Object> handleExceptions(MethodArgumentTypeMismatchException e, WebRequest webRequest) 
+	{
+		OrderManagerException exception = new OrderManagerException(e.getMessage());
+        exception.setStatus(HttpStatus.BAD_REQUEST);
+        exception.setTimestamp(LocalDateTime.now());
+        exception.setThrowable(null);	//e.getMessage is enough, no need to throw entire stack trace
+		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
+	}
+			
+	@Override
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(	HttpMessageNotReadableException e, HttpHeaders headers,
+            														HttpStatus status, WebRequest request) 
+	{
+		OrderManagerException exception = new OrderManagerException(e.getMessage());
+        exception.setStatus(HttpStatus.BAD_REQUEST);
+        exception.setTimestamp(LocalDateTime.now());
+        exception.setThrowable(null); 	//e.getMessage is enough, no need to throw entire stack trace
         return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
 	}
 	
 	@Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(	MethodArgumentNotValidException ex, HttpHeaders headers, 
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(	MethodArgumentNotValidException e, HttpHeaders headers, 
 																	HttpStatus status, WebRequest request) 
 	{
-		OrderManagerException exception = new OrderManagerException(ex.getMessage());
+		OrderManagerException exception = new OrderManagerException(e.getMessage());
         exception.setStatus(HttpStatus.BAD_REQUEST);
         exception.setTimestamp(LocalDateTime.now());
 		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
 	}
 	
 	@Override
-	protected ResponseEntity<Object> handleNoHandlerFoundException(	NoHandlerFoundException ex, HttpHeaders headers, 
+	protected ResponseEntity<Object> handleNoHandlerFoundException(	NoHandlerFoundException e, HttpHeaders headers, 
 																	HttpStatus status, WebRequest request )
 	{
-		OrderManagerException exception = new OrderManagerException(ex.getMessage());
+		OrderManagerException exception = new OrderManagerException(e.getMessage());
         exception.setStatus(HttpStatus.NOT_FOUND);
         exception.setTimestamp(LocalDateTime.now());
-        exception.setThrowable(ex.getCause());
+        exception.setThrowable(e.getCause());
 		return new ResponseEntity<>(exception, HttpStatus.NOT_FOUND);
 	}
 

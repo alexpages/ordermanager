@@ -17,6 +17,7 @@ import com.alexpages.ordermanager.api.domain.User;
 import com.alexpages.ordermanager.api.domain.UserInputData;
 import com.alexpages.ordermanager.api.domain.UserOuputData;
 import com.alexpages.ordermanager.error.OrderManagerException403;
+import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.service.impl.JwtServiceImpl;
 import com.alexpages.ordermanager.service.impl.UserServiceImpl;
 import com.alexpages.ordermanager.utils.ListUtils;
@@ -54,7 +55,8 @@ public class UserController implements UsersApi {
 	}
 	
 	@Override
-	public ResponseEntity<Void> deleteUserById(Long userId) {
+	public ResponseEntity<Void> deleteUserById(Long userId) 
+	{
 		userService.deleteUserById(userId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
@@ -66,12 +68,13 @@ public class UserController implements UsersApi {
 		if (user != null) {
 			return new ResponseEntity<>(user, HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw new OrderManagerException404("User with ID: [" + userId + "] was not found");
 		}
 	}
 
 	@Override
-	public ResponseEntity<UserOuputData> getUsers(@Valid UserInputData userInputData) {
+	public ResponseEntity<UserOuputData> getUsers(@Valid UserInputData userInputData) 
+	{
 		UserOuputData response = userService.getUsers(userInputData);
 		if (ListUtils.isBlank(response.getUsers())){
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -79,5 +82,4 @@ public class UserController implements UsersApi {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
-
 }

@@ -1,5 +1,6 @@
 package com.alexpages.ordermanager.web;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -30,6 +31,7 @@ import org.springframework.web.util.NestedServletException;
 
 import com.alexpages.ordermanager.api.domain.User;
 import com.alexpages.ordermanager.api.domain.UserOuputData;
+import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.service.impl.JwtServiceImpl;
 import com.alexpages.ordermanager.service.impl.UserServiceImpl;
 
@@ -63,8 +65,7 @@ public class UserControllerTest {
     }
     
 	@Test
-	void testAddUser_success() 
-	throws JSONException, Exception 
+	void testAddUser_success() throws JSONException, Exception 
 	{	
     	when(userService.addUser(any())).thenReturn("any String"); 
         mockMvc.perform(post("/users")
@@ -75,8 +76,7 @@ public class UserControllerTest {
 	}
 	
     @Test
-    void testAuthenticateUser_success() 
-    throws Exception 
+    void testAuthenticateUser_success() throws Exception 
     {
         Authentication authentication = mock(Authentication.class);
         when(authentication.isAuthenticated()).thenReturn(true);
@@ -89,8 +89,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void testAuthenticateUser_error() 
-	throws Exception 
+    void testAuthenticateUser_error() throws Exception 
     {
     	try {
             Authentication authentication = mock(Authentication.class);
@@ -108,8 +107,7 @@ public class UserControllerTest {
     }
     
     @Test
-    void testDeleteUser_success() 
-	throws Exception 
+    void testDeleteUser_success() throws Exception 
     {
     	doNothing().when(userService).deleteUserById(any());
         mockMvc.perform(delete("/users/{userId}", 1L)
@@ -120,8 +118,7 @@ public class UserControllerTest {
     
     
     @Test
-    void testGetUserById_success() 
-	throws Exception 
+    void testGetUserById_success() throws Exception 
     {
     	when(userService.getUserById(any())).thenReturn(new User());
         mockMvc.perform(get("/users/{userId}", 1L)
@@ -131,19 +128,22 @@ public class UserControllerTest {
     }	
     
     @Test
-    void testGetUserById_error() 
-	throws Exception 
+    void testGetUserById_error() throws Exception 
     {
     	when(userService.getUserById(any())).thenReturn(null);
-        mockMvc.perform(get("/users/{userId}", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{}"))
-        .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
-    }	
+    	assertThrows(OrderManagerException404.class, () -> {
+        	try {
+        		mockMvc.perform(get("/users/{userId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"));
+        	} catch (NestedServletException e) {
+ 	            throw (Exception) e.getCause(); 
+ 	        }
+    	});
+    }
     
     @Test
-    void testGetUsers_200()
-	throws Exception 
+    void testGetUsers_200() throws Exception 
     {
     	when(userService.getUsers(any())).thenReturn(generateUserOutputData());
         mockMvc.perform(post("/users/request")
@@ -153,8 +153,7 @@ public class UserControllerTest {
     }
     
     @Test
-    void testGetUsers_204()
-	throws Exception 
+    void testGetUsers_204()	throws Exception 
     {
     	when(userService.getUsers(any())).thenReturn(new UserOuputData());
         mockMvc.perform(post("/users/request")

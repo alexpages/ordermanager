@@ -24,12 +24,12 @@ import com.alexpages.ordermanager.service.impl.UserServiceImpl;
 public class JwtAuthFilter extends OncePerRequestFilter {
 	
 	@Autowired
-    private JwtServiceImpl jwtUtils; 
+    private JwtServiceImpl jwtServiceImpl; 
 	@Autowired
-    private UserServiceImpl userDetailsService;
+    private UserServiceImpl userServiceImpl;
 	
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException { 
+	@Override
+    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException { 
         String authHeader = request.getHeader("Authorization"); 
         String token = null; 
         String username = null; 
@@ -37,13 +37,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         	if (authHeader != null && authHeader.startsWith("Bearer ")) 
         	{ 
                 token = authHeader.substring(7); 
-                username = jwtUtils.extractUsername(token); 
+                username = jwtServiceImpl.extractUsername(token); 
             } 
         	
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) 
             { 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username); 
-                if (Boolean.TRUE.equals(jwtUtils.validateToken(token, userDetails))) 
+                UserDetails userDetails = userServiceImpl.loadUserByUsername(username); 
+                if (Boolean.TRUE.equals(jwtServiceImpl.validateToken(token, userDetails))) 
                 { 
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()); 
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); 
@@ -60,6 +60,5 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         	response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(jsonResponse.toString());
         }
-
     }
 }

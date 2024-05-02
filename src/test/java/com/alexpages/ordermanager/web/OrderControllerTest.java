@@ -1,5 +1,6 @@
 package com.alexpages.ordermanager.web;
 
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -26,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.util.NestedServletException;
 
 import com.alexpages.ordermanager.api.domain.OrderAudit;
 import com.alexpages.ordermanager.api.domain.OrderDetails;
@@ -33,6 +35,7 @@ import com.alexpages.ordermanager.api.domain.OrderOutputAudit;
 import com.alexpages.ordermanager.api.domain.OrderOutputData;
 import com.alexpages.ordermanager.api.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.api.domain.OrderPostResponse;
+import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
@@ -166,14 +169,19 @@ public class OrderControllerTest {
 	void testGetOrderDetail_404() throws Exception 
 	{
 	    when(orderServiceImpl.getOrderDetail(1L)).thenReturn(null);
-	    mockMvc.perform(get("/orders/{id}", 1L)
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .headers(header())
-	            .content("{}"))
-	            .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
+	    assertThrows(OrderManagerException404.class, () -> {
+	        try {
+	            mockMvc.perform(get("/orders/{id}", 1L)
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .headers(header())
+	                    .content("{}"));
+	        } catch (NestedServletException e) {
+	            throw (Exception) e.getCause(); 
+	        }
+	    });
 	}
 
-	private String generateValidPlaceOrderRequestContent() 
+	private String generateValidPlaceOrderRequestContent()
 	throws JSONException 
 	{
 	    JSONObject coordinates = new JSONObject()

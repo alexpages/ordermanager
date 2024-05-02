@@ -190,8 +190,8 @@ paths:
                     example: 1
         '400':
           $ref: '#/components/responses/400'
-        '500':
-          $ref: '#/components/responses/500'
+        '409':
+          $ref: '#/components/responses/409'
 
   /users/request:
     post:
@@ -234,10 +234,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/400'
         '404':
           $ref: '#/components/responses/404'
-        '500':
-          $ref: '#/components/responses/500'
     delete:
       tags:
         - users
@@ -254,8 +254,6 @@ paths:
           $ref: '#/components/responses/403'
         '404':
           $ref: '#/components/responses/404'
-        '500':
-          $ref: '#/components/responses/500'
           
   /users/authenticate:
     post:
@@ -276,6 +274,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthenticateResponse'
+        '403':
+          $ref: '#/components/responses/403'        
         '404':
           $ref: '#/components/responses/404'
         '500':
@@ -747,6 +747,7 @@ components:
             properties:
               error:
                 type: string
+                example: "The payload is not correct"
     '403':
       description: Unauthorized request. The user is not authorized or JWT was expired.
       content:
@@ -767,6 +768,16 @@ components:
               error:
                 type: string
                 example: "Resource not found"
+    '409':
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "There was a conflict when executing the endpoint"    
     '500':
       description: Internal Server Error.
       content:

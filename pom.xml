@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.alexpages</groupId>
 	<artifactId>ordermanager</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>ordermanager</name>
 	<description>Order Manager microservice</description>
 	<properties>

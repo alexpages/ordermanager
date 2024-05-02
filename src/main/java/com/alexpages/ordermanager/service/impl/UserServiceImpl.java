@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     { 
         Optional<UserEntity> userDetail = repository.findByUsername(username); 
         return userDetail.map(UserInfoDetails::new) 
-                .orElseThrow(() -> new OrderManagerException403("User with username: [" + username + "] not found")); 
+                .orElseThrow(() -> new OrderManagerException404("User with username: [" + username + "] not found")); 
     } 
     
     @Transactional

@@ -18,7 +18,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest req, HttpServletResponse response, AuthenticationException authException) 
 	throws IOException, ServletException 
     {
-        String message = "Access denied, ensure your user is registered and you have a valid token";
+        String message = "Access denied. Please ensure that your credentials are correct or that you have a valid token.";
         JSONObject jsonResponse = OrderManagerException403.constructJsonResponse(authException, message);
     	response.setContentType("application/json;charset=UTF-8");
     	response.setStatus(HttpServletResponse.SC_FORBIDDEN);

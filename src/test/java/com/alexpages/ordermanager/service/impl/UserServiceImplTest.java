@@ -93,7 +93,7 @@ public class UserServiceImplTest {
 	void testLoadUserByUsername_error() 
 	{
 	    when(repository.findByUsername(any())).thenReturn(Optional.empty());
-	    assertThrows(OrderManagerException403.class, () -> service.loadUserByUsername("username"));
+	    assertThrows(OrderManagerException404.class, () -> service.loadUserByUsername("username"));
 	}	
 	
 	@Test

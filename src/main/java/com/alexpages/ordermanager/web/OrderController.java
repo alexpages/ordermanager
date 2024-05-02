@@ -16,6 +16,7 @@ import com.alexpages.ordermanager.api.domain.OrderPatchInput;
 import com.alexpages.ordermanager.api.domain.OrderPatchResponse;
 import com.alexpages.ordermanager.api.domain.OrderPostRequest;
 import com.alexpages.ordermanager.api.domain.OrderPostResponse;
+import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.service.impl.OrderServiceImpl;
 
 import lombok.RequiredArgsConstructor;
@@ -74,7 +75,7 @@ public class OrderController implements OrdersApi {
 		if (orderDetails != null) {
 			return new ResponseEntity<>(orderDetails, HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw new OrderManagerException404("Order with ID: [" + orderId + "] was not found");
 		}
 	}
 
