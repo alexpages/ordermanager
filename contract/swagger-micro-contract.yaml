@@ -1,12 +1,7 @@
 openapi: 3.0.3
 info:
   description: >-
-    Service that allows you to place logistic orders that relates origin and
-    destination addresses. In addition, you can also consult
-    detailed order information and audit / Servicio que permite crear pedidos de
-    logística en relación a direcciones de origen y destino.
-    Además, también se podrá consultar la información detallada de las órdenes y su
-    auditoría
+    **Ordermanager** is an API that manages CRUD operations for orders, auditing the modifications made to them. It also facilitates user registration and authentication for accessing the endpoints. This microservice provides a total of 11 endpoints across two interfaces, each implemented by a separate controller within the same microservice. The user interface is integrated with Spring Security, while the order interface is linked to Spring Boot and handles communication with the database / **Ordermanager** es una API que gestiona las operaciones CRUD de órdenes, auditando las modificaciones que se realizan en estas, y también permite el registro y autenticación de los usuarios que harán uso de los endpoints mencionados. Este microservicio habilita un total de 11 endpoints en dos interfaces que serán implementadas en dos controladores distintos en el mismo microservicio. La parte de usuarios está relacionada con Spring Security mientras que la parte de órdenes está vinculada a Spring Boot y la comunicación con la base de datos.
   version: 1.0.0
   title: ordermanager
   termsOfService: 'http://swagger.io/terms/'
