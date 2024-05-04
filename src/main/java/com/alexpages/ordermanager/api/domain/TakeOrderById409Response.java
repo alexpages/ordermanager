@@ -7,17 +7,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * PostOrder404Response
+ * TakeOrderById409Response
  */
 
-@JsonTypeName("postOrder_404_response")
-public class PostOrder404Response implements Serializable {
+@JsonTypeName("takeOrderById_409_response")
+public class TakeOrderById409Response implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   private String error;
 
-  public PostOrder404Response error(String error) {
+  public TakeOrderById409Response error(String error) {
     this.error = error;
     return this;
   }
@@ -44,8 +44,8 @@ public class PostOrder404Response implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    PostOrder404Response postOrder404Response = (PostOrder404Response) o;
-    return Objects.equals(this.error, postOrder404Response.error);
+    TakeOrderById409Response takeOrderById409Response = (TakeOrderById409Response) o;
+    return Objects.equals(this.error, takeOrderById409Response.error);
   }
 
   @Override
@@ -56,7 +56,7 @@ public class PostOrder404Response implements Serializable {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class PostOrder404Response {\n");
+    sb.append("class TakeOrderById409Response {\n");
     sb.append("    error: ").append(toIndentedString(error)).append("\n");
     sb.append("}");
     return sb.toString();
