@@ -39,12 +39,10 @@ thirdparties:
 - Secondly, make sure that Docker Desktop (or similar) is running on your computer; otherwise, the script will fail.
 
 
-- Lastly, to run this code, you need to run the start.sh:
-
-Open the terminal, navigate to the root of the project, and execute the `start.sh` file. 
+- Lastly, to run this code, you need to either execute it in your IDE as a Spring Boot application or run it via Docker. If Docker is preferred, navigate to the root of the project in the terminal and execute the following command
 
 ```
-./start.sh
+docker-compose up -d
 ```
 
 ### Note for Mac M1 users
