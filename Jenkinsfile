@@ -4,7 +4,7 @@ pipeline {
         REGISTRY = 'alexintelc/ordermanager'
         REGISTRY_CREDENTIAL = 'dockerhub'
         EC2_USERNAME = 'ec2-user'
-        EC2_HOST = '52.210.181.148'   
+        EC2_HOST = '52.215.15.168'   
         DOCKER_COMPOSE_YML = 'C:\\Users\\alexp\\git\\ordermanager\\docker-compose.yml'   
         EC2_CERTIFICATE = 'C:\\Users\\alexp\\Desktop\\ordermanager\\ordermanager.pem'
         ENV_FILE = 'C:\\Users\\alexp\\git\\ordermanager\\.env' 
