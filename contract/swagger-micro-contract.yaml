@@ -38,10 +38,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderPostResponse'
+        '400':
+          $ref: '#/components/responses/400'   
         '403':
           $ref: '#/components/responses/403'  
-        '400':
-          $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
   /orders/request:
@@ -155,7 +155,7 @@ paths:
         '204':
           $ref: '#/components/responses/204'
         '400':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/400'
         '403':
           $ref: '#/components/responses/403'
         '404':
@@ -213,7 +213,7 @@ paths:
         '400':
           $ref: '#/components/responses/400'    
         '500':
-          $ref: '#/components/responses/400'      
+          $ref: '#/components/responses/500'      
 
   /users/{userId}:
     get:
@@ -248,7 +248,7 @@ paths:
         '204':
           $ref: '#/components/responses/204'
         '400':
-          $ref: '#/components/responses/403'
+          $ref: '#/components/responses/400'
         '403':
           $ref: '#/components/responses/403'
         '404':
@@ -274,7 +274,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticateResponse'
         '400':
-          $ref: '#/components/responses/403'             
+          $ref: '#/components/responses/400'             
         '403':
           $ref: '#/components/responses/403'        
         '404':
