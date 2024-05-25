@@ -12,8 +12,6 @@ services:
       ports:
          - "8080:8080" 
       restart: on-failure
-      networks:
-         - internal-net
       env_file:
          - .env
 
@@ -25,12 +23,8 @@ services:
          - rv-volume:/var/lib/mysql
       env_file:
          - .env
-      networks:
-         - internal-net
-
-networks:
-   internal-net:
-      driver: bridge
+      ports:
+         - "3036:3036" 
 
 volumes:
    rv-volume:
