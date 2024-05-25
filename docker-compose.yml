@@ -30,6 +30,7 @@ services:
 
 networks:
    internal-net:
+      driver: bridge
 
 volumes:
    rv-volume:
