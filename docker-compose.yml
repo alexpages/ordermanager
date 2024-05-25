@@ -1,20 +1,18 @@
-version: '3.9'
-
 services:
    ordermanager:
       container_name: ordermanager
       depends_on:
          - mysql
-      image: alexintelc/ordermanager:latest
-#      build:                              #use this instead of image if you want to run MySQL + SpringBoot app locally on docker
+      image: alexintelc/ordermanager:latest   #In case this is executed from Mac M1, comment line 6 and uncomment lines 7-10
+#      build:
 #         context: .
-#         dockerfile: Dockerfile 
+#         dockerfile: Dockerfile
+#         platform: linux/amd64      #Specifies platform
       ports:
          - "8080:8080" 
       restart: on-failure
       env_file:
          - .env
-
    mysql:
       container_name: mysql
       image: mysql:latest
@@ -25,6 +23,5 @@ services:
          - .env
       ports:
          - "3036:3036" 
-
 volumes:
    rv-volume:
