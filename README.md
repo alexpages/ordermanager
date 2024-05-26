@@ -26,7 +26,9 @@ Here are some features from the overall configuration:
 
 ### How to run this MS
 
-- First, as an invoker, you need to use your Google Maps API Key or use the provided one (which is for testing purpose). Replace both `keys` if a non test key is preferred. These variables are located within `application.yml` file:
+- First, clone this repository to your localhost
+
+- Secondly, as an invoker, you need to use your Google Maps API Key or use the provided one (which is for testing purpose). Replace both `keys` if a non test key is preferred. These variables are located within `application.yml` file:
 
 ```
 thirdparties:
@@ -36,14 +38,21 @@ thirdparties:
     key: "${JWT_KEY:javax.crypto.spec.SecretKeySpec@5881a62}"
 ```
 
-- Secondly, make sure that Docker Desktop (or similar) is running on your computer; otherwise, the script will fail.
+- Lastly, to run this code, you need to either execute it in your IDE as a Spring Boot application or run it via Docker. 
+    - If the IDE is preferred, make sure to compile the project first by creating a Maven configuration with the commands `clean install`. Then execute the application by running it as a Spring Boot Application
+    - If Docker is preferred. First make sure that Docker Desktop (or similar) is running on your computer; otherwise, the execution will fail. Then, navigate to the root of the project in the terminal and execute the following command:
 
+	```
+	docker-compose up -d
+	```
 
-- Lastly, to run this code, you need to either execute it in your IDE as a Spring Boot application or run it via Docker. If Docker is preferred, navigate to the root of the project in the terminal and execute the following command
+### EC2 instance on AWS
 
-```
-docker-compose up -d
-```
+An AWS EC2 instance has been configured with Docker and Docker Compose to facilitate a multi-container setup, exposing port 8080 at the above IP address. 
+This microservice is configured with a Jenkinsfile to enable Continuous Integration (CI) and Continuous Deployment (CD) using Docker on an EC2 instance. 
+In addition to being able to run the application locally and within Docker as specified in the [How to Run this MS](#how-to-run-this-ms) section, you can also interact with the service using Postman by targeting the IP address just as you would with `localhost` when running the microservice from the IDE or when running it from Docker.
+
+The service is currently available at the following IP and port: [http://54.155.41.99:8080](http://54.155.41.99:8080).
 
 ### Note for Mac M1 users
 NOTE: The project is designed with the assumption that Docker runs on a Windows operating system. Due to compatibility issues between certain versions of JDK and Mac M1 devices, and the limitation of docker-compose.yml in supporting multiplatform image building at runtime, it is necessary to include the following information:
