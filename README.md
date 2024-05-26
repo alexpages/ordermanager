@@ -1,4 +1,13 @@
 ## Ordermanager
+This README is organized into the following sections:
+
+- [Functional Description](#functional-description)
+- [How to Run this MS](#how-to-run-this-ms)
+- [EC2 instance on AWS](#ec2-instance-on-aws)
+- [Note for Mac M1 users](#note-for-mac-m1-users)
+
+Each section provides information to help understand and use the microservice correctly.
+
 ### Functional Description
 
 **Ordermanager** is an API that manages CRUD operations for orders, auditing the modifications made to them. It also facilitates user registration and authentication for accessing the endpoints. This microservice provides a total of 11 endpoints across two interfaces, each implemented by a separate controller within the same microservice. The user interface is integrated with Spring Security, while the order interface is linked to Spring Boot and handles communication with the database
