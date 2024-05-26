@@ -45,6 +45,7 @@ thirdparties:
 	```
 	docker-compose up -d
 	```
+- Note: Postman files (environments and collection) have been provided to ease the testing and are located in the following folder `/ordermanager/src/main/resources/postman`. Make sure to change `http://<<your_ip>>:<<port>>` from AWS environment for `http://54.155.41.99:8080`
 
 ### EC2 instance on AWS
 
