@@ -10,22 +10,14 @@ Each section provides information to help understand and use the microservice co
 
 ### Functional Description
 
-**Ordermanager** is an API that manages CRUD operations for orders, auditing the modifications made to them. It also facilitates user registration and authentication for accessing the endpoints. This microservice provides a total of 11 endpoints across two interfaces, each implemented by a separate controller within the same microservice. The user interface is integrated with Spring Security, while the order interface is linked to Spring Boot and handles communication with the database
-
-This API integrates the Google Maps API to fetch distance data between origin and destination coordinates. Also it calculate time and provides human readable directions to be inserted on the orders to be created.
-
-This microservice can be run on local environment or on docker:
-- Local: Ensure your IDE has Spring Boot installed, do `mvn clean install` and run the project as a Spring Boot Application.
-- Docker: Ensure docker daemon is running on your computer, open a terminal session on the docker-compose.yml file location (located in the root of the project) and execute `docker-compose up -d`. This microservice runs on Docker and sets up two main containers:
-    - **ordermanager**: Java + Spring Boot application that enables 11 endpoints for order management and user management through two different interfaces. Please refer to the swagger contract to visualize the endpoints and the expected request body.   
-    - **mysql**: Database related to MySQL 5
+**Ordermanager** microservice manages CRUD operations for orders, auditing changes and it handles user registration, authentication, ending up with a total of 11 endpoints available via two interfaces. It integrates Spring Boot for the business layer and Spring Security for security. Refer to the Swagger contract for endpoint specifics. It utilizes the Google Maps API to fetch distance data, estimate times, and offer clear directions for order creation.
 
 Here are some features from the overall configuration:
 
-* Exception handling with custom exceptions through Controller Advice
 * Data validation
+* Exception handling with custom exceptions through Controller Advice
 * Thread safety ensured via optimistic locking and versioning
-* API-first design facilitated by OpenAPI contract and OpenAPI Generator for both domain and API layers
+* API-first design facilitated by OpenAPI contract and OpenAPIGenerator Maven plugin for both domain and API layers
 * Domain-Driven Design (DDD) project structure
 * Adherence to SOLID principles and modularity
 * Unit testing and integration testing implemented using JUnit and MockMVC
@@ -35,46 +27,54 @@ Here are some features from the overall configuration:
 
 ### How to run this MS
 
-- First, clone this repository to your localhost
+- First, clone this repository to your localhost.
 
-- Secondly, as an invoker, you need to use your Google Maps API Key or use the provided one (which is for testing purpose). Replace both `keys` if a non test key is preferred. These variables are located within `application.yml` file:
+- Secondly, as an invoker, you need to use your Google Maps API Key or use the provided one (which is for testing purpose). Replace both `keys` if a non-test key is preferred. These variables are located within the `application.yml` file:
 
-```
-thirdparties:
-  google:
-    key: "${GOOGLE_API_KEY:AIzaSyDFW_s8pzd3mG1OKTsZkLeKec0aYh5zVEw}"
-  jwt:
-    key: "${JWT_KEY:javax.crypto.spec.SecretKeySpec@5881a62}"
-```
+    ```yaml
+    thirdparties:
+      google:
+        key: "${GOOGLE_API_KEY:AIzaSyDFW_s8pzd3mG1OKTsZkLeKec0aYh5zVEw}"
+      jwt:
+        key: "${JWT_KEY:javax.crypto.spec.SecretKeySpec@5881a62}"
+    ```
 
-- Lastly, to run this code, you need to either execute it in your IDE as a Spring Boot application or run it via Docker. 
-    - If the IDE is preferred, make sure to compile the project first by creating a Maven configuration with the commands `clean install`. Then execute the application by running it as a Spring Boot Application
-    - If Docker is preferred. First make sure that Docker Desktop (or similar) is running on your computer; otherwise, the execution will fail. Then, navigate to the root of the project in the terminal and execute the following command:
+- Lastly, to run this code, you need to either execute it in your IDE as a Spring Boot application or run it via Docker.
+  
+    - **IDE** is preferred:
+       - Ensure your IDE has Lombok and Spring Boot installed
+       - Make sure to compile the project first by creating a Maven configuration with the commands `clean install`
+       - Then execute the application by running it as a Spring Boot Application
+    - **Docker** is preferred:
+        - First, make sure that Docker Desktop (or similar) is running on your computer; otherwise, the execution will fail
+        - Then, navigate to the root of the project in the terminal and execute the following command:
+        
+        ```
+        docker-compose up -d
+        ```
+        
+- Note: Postman files (environments and collection) have been provided to ease the testing and are located in the following folder `/ordermanager/src/main/resources/postman`. Make sure to change `http://<<your_ip>>:<<port>>` from AWS environment to `http://54.155.41.99:8080`.
 
-	```
-	docker-compose up -d
-	```
-- Note: Postman files (environments and collection) have been provided to ease the testing and are located in the following folder `/ordermanager/src/main/resources/postman`. Make sure to change `http://<<your_ip>>:<<port>>` from AWS environment for `http://54.155.41.99:8080`
 
 ### EC2 instance on AWS
 
-An AWS EC2 instance has been configured with Docker and Docker Compose to facilitate a multi-container setup, exposing port 8080 at the above IP address. 
-This microservice is configured with a Jenkinsfile to enable Continuous Integration (CI) and Continuous Deployment (CD) using Docker on an EC2 instance. 
-In addition to being able to run the application locally and within Docker as specified in the [How to Run this MS](#how-to-run-this-ms) section, you can also interact with the service using Postman by targeting the IP address just as you would with `localhost` when running the microservice from the IDE or when running it from Docker.
+An AWS EC2 instance is configured with Docker and Docker Compose for a multi-container setup, exposing port 8080 to communicate with the microservice running. This microservice uses a Jenkinsfile for Continuous Integration (CI) and Continuous Deployment (CD) with Docker on EC2. 
 
-The service is currently available at the following IP and port: [http://54.155.41.99:8080](http://54.155.41.99:8080).
 
-### Note for Mac M1 users
-NOTE: The project is designed with the assumption that Docker runs on a Windows operating system. Due to compatibility issues between certain versions of JDK and Mac M1 devices, and the limitation of docker-compose.yml in supporting multiplatform image building at runtime, it is necessary to include the following information:
+In addition to being able to run the application locally as specified in the [How to Run this MS](#how-to-run-this-ms) section, you can also interact with the service using Postman by targeting the IP address and port available: [http://54.155.41.99:8080](http://54.155.41.99:8080).
+### Note for Mac M1 Users
 
-Considering that the image pulled for the Spring Boot application in the docker-compose.yml file is generated from a Windows OS, it is necessary to utilize the Dockerfile provided in the root of the project and define the compilation method on the ordermanager container in the docker-compose.yml file. This involves adding a specific line in the docker-compose.yml file to specify the platform, enabling users to run the microservice on Mac M1 devices.
+**Important:** This project assumes Docker runs on a Windows operating system. However, due to compatibility issues between certain JDK versions and Mac M1 devices, as well as limitations of docker-compose.yml in supporting multiplatform image building at runtime, please note the following:
+
+The Spring Boot application image referenced in the docker-compose.yml file is built on a Windows OS. This could lead to compatibility issues for Mac M1 users. To address this, it's necessary to use the Dockerfile for image creation instead of pulling an existing one. Follow these steps to modify the `docker-compose.yml` file accordingly:
 
 ```
       build:
          context: .
          dockerfile: Dockerfile
-         platform: linux/amd64      #Specifies platform
-      ports:
+      platform: linux/amd64      #Specifies platform
 ```
 
-Additionally, it is necessary to remove the `image: alexintelc/ordermanager:latest` line. By doing this, users will create an image at runtime adapted to the macOS instead of pulling a Windows image.
+Additionally, it is necessary to remove the `image: alexintelc/ordermanager:latest` line from the `docker-compose.yml` file. This ensures that users create an image at runtime adapted to macOS instead of pulling a Windows image.
+
+Note: While specifying the platform and pulling the image from Docker Hub with the `image: alexintelc/ordermanager:latest` line might work, compatibility is not ensured. Therefore, it is suggested to follow the previous steps.
