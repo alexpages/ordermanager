@@ -186,7 +186,6 @@ public class OrderServiceImpl implements OrderService {
 	    } else {
 			addOrderAuditEntity(deletedEntity.get(), Action.DELETE.getValue());	
 		    orderRepository.deleteById(orderId);	
-		    //TODO remove order from userEntity
 	    }
 	}
 	

@@ -146,6 +146,20 @@ public class OrderServiceImplTest {
 	}
 	
 	@Test
+	void testDeleteOrder_errorAudit() throws Exception {
+		when(orderRepository.findById(any())).thenReturn(Optional.of(generateValidOrderEntity()));
+		when(orderAuditRepository.save(any())).thenThrow(new RuntimeException("Some Error"));
+	    mockSecurityContext();
+	    assertThrows(OrderManagerException500.class, () -> orderServiceImpl.deleteOrderById(1L));
+	}
+	
+	@Test
+	void testDeleteOrder_notFound() throws Exception {
+		when(orderRepository.findById(any())).thenReturn(Optional.empty());
+		assertThrows(OrderManagerException404.class, () -> orderServiceImpl.deleteOrderById(1L));
+	}
+	
+	@Test
 	void testGetOrders_nullparams_success() 
 	{
 	    List<OrderEntity> lOrderEntities = new ArrayList<>();
