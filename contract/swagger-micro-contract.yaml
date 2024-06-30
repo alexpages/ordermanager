@@ -450,15 +450,16 @@ components:
           type: string
           example: encryptedPassword
         role:
-          $ref: '#/components/schemas/Role'  
+          $ref: '#/components/schemas/Role' 
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderDetails'
     OrderInputAudit:
       type: object
       properties:
         orderId:
-          type: integer
-          format: int64
-          example: 1
-          description: Identifier of the order to which the action was performed
+          $ref: '#/components/schemas/OrderId'
         startDate:
           type: string
           format: date
@@ -497,6 +498,11 @@ components:
         - DELETE
       description: Action performed on the order
       example: CREATE
+    OrderId:
+      type: integer
+      format: int64
+      example: 1
+      description: Identifier of the order to which the action was performed
     OrderInputData:
       type: object
       description: PostOrdersBodyRequest with params to filter
@@ -506,10 +512,7 @@ components:
           type: object
           properties:
             orderId:
-              type: integer
-              format: int64
-              example: 1
-              description: Order request identifier
+              $ref: '#/components/schemas/OrderId'
             status:
               $ref: '#/components/schemas/Status'
             startCreationDate:
@@ -533,10 +536,7 @@ components:
           example: 1
           description: Unique identifier for the order audit
         orderId:
-          type: integer
-          format: int64
-          example: 14
-          description: Unique identifier for the order that has had any action performed
+          $ref: '#/components/schemas/OrderId'
         actionDate:
           type: string
           format: date
@@ -594,6 +594,11 @@ components:
           format: int64
           description: Version of the order
           example: 1
+        userId:
+          type: integer
+          format: int64
+          description: Identifier of the user that created the order
+          example: 1
     OrderPostRequest:
       required:
         - coordinates
@@ -627,10 +632,7 @@ components:
         status:
           $ref: '#/components/schemas/Status'
         orderId:
-          type: integer
-          format: int64
-          example: 1
-          description: id of order creation    
+          $ref: '#/components/schemas/OrderId'  
     Distance:
       type: integer
       example: 12746

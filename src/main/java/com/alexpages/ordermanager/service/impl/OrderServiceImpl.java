@@ -6,7 +6,9 @@ import java.util.Optional;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ import com.alexpages.ordermanager.api.domain.OrderPostResponse;
 import com.alexpages.ordermanager.api.domain.Status;
 import com.alexpages.ordermanager.entity.OrderAuditEntity;
 import com.alexpages.ordermanager.entity.OrderEntity;
+import com.alexpages.ordermanager.entity.UserEntity;
 import com.alexpages.ordermanager.error.OrderManagerException400;
 import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.error.OrderManagerException409;
@@ -51,6 +54,7 @@ public class OrderServiceImpl implements OrderService {
 	private final OrderAuditRepository orderAuditRepository;
 	private final GoogleMapsServiceImpl googleMapsServiceImpl;
 	private final OrderManagerMapper orderMapper;
+	private final UserServiceImpl userServiceImpl;
 	
 	private static final String LATITUDE_PATTERN = "^(\\+|-)?(?:90(?:(?:\\.0{1,7})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,7})?))$";
 	private static final String LONGITUDE_PATTERN = "^(\\+|-)?(?:180(?:(?:\\.0{1,7})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,7})?))$";
@@ -67,6 +71,10 @@ public class OrderServiceImpl implements OrderService {
 			log.info(LOG_PREFIX + "PlaceOrderRequest validated correctly");
 			GoogleOrderData googleOrderData = googleMapsServiceImpl.getGoogleOrderDataFromDistanceMatrix(orderPostRequest);
 
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); 
+	        String currentUser = authentication.getName();
+	        UserEntity currentUserEntity = userServiceImpl.findUserByUsername(currentUser).get();
+			
 			OrderEntity savedEntity = orderRepository.save(OrderEntity.builder()
 					.distance(googleOrderData.getDistance())
 					.origin(googleOrderData.getOriginAddress())
@@ -75,7 +83,12 @@ public class OrderServiceImpl implements OrderService {
 					.description(orderPostRequest.getDescription())
 					.creationDate(LocalDateTime.now())
 					.status("UNASSIGNED")
+					.user(currentUserEntity)
 					.build());
+			
+	        currentUserEntity.getOrders().add(savedEntity);
+	        userServiceImpl.saveUser(currentUserEntity);
+			
 			addOrderAuditEntity(savedEntity, Action.CREATE.getValue());
 			
 			OrderPostResponse response = new OrderPostResponse();
@@ -89,10 +102,11 @@ public class OrderServiceImpl implements OrderService {
 			return response;
 			
 		} catch (Exception e) {
-			log.error(LOG_PREFIX + "There was an issue placing the order: {}", e);
-			throw new OrderManagerException500(LOG_PREFIX + "There was an issue placing the order: {}", e);
+			log.error(LOG_PREFIX + "There was an issue placing the order: [" + e.getMessage() + "]");
+			throw new OrderManagerException500(LOG_PREFIX + "There was an issue placing the order: [" + e.getMessage() + "]");
 		}
 	}
+	
 	@Transactional(readOnly = true)
 	@Override
 	public OrderOutputData getOrders(OrderInputData orderInputData) {
@@ -172,6 +186,7 @@ public class OrderServiceImpl implements OrderService {
 	    } else {
 			addOrderAuditEntity(deletedEntity.get(), Action.DELETE.getValue());	
 		    orderRepository.deleteById(orderId);	
+		    //TODO remove order from userEntity
 	    }
 	}
 	

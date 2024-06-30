@@ -48,6 +48,7 @@ import com.alexpages.ordermanager.api.domain.PaginationBody;
 import com.alexpages.ordermanager.api.domain.Status;
 import com.alexpages.ordermanager.entity.OrderAuditEntity;
 import com.alexpages.ordermanager.entity.OrderEntity;
+import com.alexpages.ordermanager.entity.UserEntity;
 import com.alexpages.ordermanager.error.OrderManagerException404;
 import com.alexpages.ordermanager.error.OrderManagerException409;
 import com.alexpages.ordermanager.error.OrderManagerException500;
@@ -71,6 +72,8 @@ public class OrderServiceImplTest {
 	@Mock
 	private OrderManagerMapper orderMapper;
 	@Mock
+	private UserServiceImpl userServiceImpl;
+	@Mock
     private AuthenticationManager authenticationManager; 
 
 	private EasyRandom easyRandom;
@@ -86,8 +89,9 @@ public class OrderServiceImplTest {
 	void testPlaceOrder_success() throws Exception 
     {
     	when(googleMapsServiceImpl.getGoogleOrderDataFromDistanceMatrix(any())).thenReturn(generateValidGoogleOrderData());
-    	when(orderRepository.save(any(OrderEntity.class))).thenReturn(generateValidOrderEntity());
-    	mockSecurityContext();
+       	mockSecurityContext();
+    	when(userServiceImpl.findUserByUsername(any())).thenReturn(Optional.of(easyRandom.nextObject(UserEntity.class)));
+       	when(orderRepository.save(any(OrderEntity.class))).thenReturn(generateValidOrderEntity());
     	assertNotNull(orderServiceImpl.postOrder(generateValidOrderPostRequest()));
     }
 	

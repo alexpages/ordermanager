@@ -31,16 +31,27 @@ public interface OrderManagerMapper {
 	
 	@Mapping(target = "creationDate", source = "creationDate", qualifiedByName = "localDateTimeToLocalDate")
 	@Mapping(target = "status", source = "status", qualifiedByName = "stringToStatus")
+	@Mapping(target = "userId" , source = "user", qualifiedByName = "userEntityToUserId")
 	OrderDetails toOrderDetails(OrderEntity content);
 
 	@Mapping(target = "actionDate", source = "actionDate", qualifiedByName = "localDateTimeToLocalDate")
 	List<OrderAudit> toOrderAuditList(List<OrderAuditEntity> content);
+	
+	@Named("userEntityToUserId")
+	default Long userEntityToUserId(UserEntity userEntity)
+	{
+		return userEntity.getId();
+	}
 	
 	@Named("localDateTimeToLocalDate")
 	default LocalDate localDateTimeToLocalDate(LocalDateTime localDatetime)
 	{
 		return localDatetime.toLocalDate();
 	}
+	
+    default Long map(OrderEntity order) {
+        return order == null ? null : order.getId();
+    }
 	
 	@Named("stringToStatus")
 	default Status stringToStatus(String status)

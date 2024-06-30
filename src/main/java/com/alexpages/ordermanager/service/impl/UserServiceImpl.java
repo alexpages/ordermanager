@@ -47,10 +47,24 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public UserDetails loadUserByUsername(String username) 
     { 
-        Optional<UserEntity> userDetail = repository.findByUsername(username); 
+        Optional<UserEntity> userDetail = findUserByUsername(username); 
         return userDetail.map(UserInfoDetails::new) 
                 .orElseThrow(() -> new OrderManagerException404("User with username: [" + username + "] not found")); 
     } 
+	
+	@Transactional(readOnly = true)
+	@Override
+	public Optional<UserEntity> findUserByUsername(String username)
+	{
+		return repository.findByUsername(username); 
+	}
+	
+	@Transactional()
+	@Override
+	public UserEntity saveUser(UserEntity userEntity)
+	{
+		return repository.save(userEntity); 
+	}
     
     @Transactional
     @Override

@@ -1,5 +1,6 @@
 package com.alexpages.ordermanager.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListUtils {
@@ -13,6 +14,18 @@ public class ListUtils {
     {
     	return (list == null || list.isEmpty());
     }
+	
+	
+	public static void main(String[] args) {
+		
+		List<String> newList = new ArrayList<>();
+		newList.add("Pedro");
+		newList.add("José");
+		System.out.println(ListUtils.toString(newList));
+		System.out.println(newList.toString());
+
+		
+	}
 	
 	public static String toString(List<?> list)
     {
